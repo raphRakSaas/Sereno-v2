@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { AppStore } from '../../store/app.store';
 import { SerenoLogo } from '../../../shared/components/sereno-logo/sereno-logo';
 
 interface NavItem {
@@ -49,25 +50,29 @@ interface NavItem {
       </nav>
 
       <div class="mt-auto space-y-1 border-t border-border pt-4">
+        <a
+          routerLink="/reglages"
+          class="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-text-muted transition-colors hover:text-accent"
+        >
+          <span class="material-symbols-outlined" aria-hidden="true">lock</span>
+          <span class="label-caps">Données locales</span>
+        </a>
         <button
           type="button"
           class="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-text-muted transition-colors hover:text-accent"
+          [attr.aria-label]="'Thème actuel : ' + themeLabel()"
+          (click)="toggleTheme()"
         >
-          <span class="material-symbols-outlined" aria-hidden="true">person_off</span>
-          <span class="label-caps">Mode invité</span>
-        </button>
-        <button
-          type="button"
-          class="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-text-muted transition-colors hover:text-accent"
-        >
-          <span class="material-symbols-outlined" aria-hidden="true">dark_mode</span>
-          <span class="label-caps">Thème</span>
+          <span class="material-symbols-outlined" aria-hidden="true">{{ themeIcon() }}</span>
+          <span class="label-caps">{{ themeLabel() }}</span>
         </button>
       </div>
     </aside>
   `,
 })
 export class Sidebar {
+  private readonly appStore = inject(AppStore);
+
   protected readonly navItems: NavItem[] = [
     { label: 'Accueil', route: '/', icon: 'home' },
     { label: 'Activité', route: '/activite', icon: 'history' },
@@ -78,4 +83,30 @@ export class Sidebar {
     { label: 'Récurrences', route: '/recurrences', icon: 'repeat' },
     { label: 'Réglages', route: '/reglages', icon: 'settings' },
   ];
+
+  protected readonly themeLabel = computed(() => {
+    switch (this.appStore.settings().theme) {
+      case 'dark':
+        return 'Thème sombre';
+      case 'light':
+        return 'Thème clair';
+      default:
+        return 'Thème système';
+    }
+  });
+
+  protected readonly themeIcon = computed(() => {
+    switch (this.appStore.settings().theme) {
+      case 'dark':
+        return 'dark_mode';
+      case 'light':
+        return 'light_mode';
+      default:
+        return 'contrast';
+    }
+  });
+
+  protected toggleTheme(): void {
+    this.appStore.toggleTheme();
+  }
 }

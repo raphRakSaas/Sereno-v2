@@ -16,20 +16,28 @@ describe('SerenoLogo', () => {
     fixture.detectChanges();
   });
 
-  it('should render the full logo image (unit)', () => {
+  it('should render the icon and theme-aware wordmark for the full variant (unit)', () => {
     const image = fixture.debugElement.query(By.css('img'));
+    const wordmark = fixture.debugElement.query(By.css('span[aria-hidden="true"]'));
+    const root = fixture.debugElement.query(By.css('[role="img"]'));
+
     expect(image).toBeTruthy();
-    expect(image.nativeElement.getAttribute('src')).toBe(SERENO_BRAND.fullLogoSrc);
-    expect(image.nativeElement.getAttribute('alt')).toBe('Sereno');
+    expect(image.nativeElement.getAttribute('src')).toBe(SERENO_BRAND.iconSrc);
+    expect(image.nativeElement.getAttribute('aria-hidden')).toBe('true');
+    expect(wordmark.nativeElement.textContent.trim()).toBe('sereno');
+    expect(wordmark.nativeElement.className).toContain('text-text');
+    expect(root.nativeElement.getAttribute('aria-label')).toBe('Sereno');
   });
 
-  it('should render the icon variant without alt text (integration)', () => {
+  it('should render the icon variant without the wordmark (integration)', () => {
     fixture.componentRef.setInput('variant', 'icon');
     fixture.detectChanges();
 
     const image = fixture.debugElement.query(By.css('img'));
+    const wordmark = fixture.debugElement.query(By.css('span.lowercase'));
+
     expect(image.nativeElement.getAttribute('src')).toBe(SERENO_BRAND.iconSrc);
-    expect(image.nativeElement.getAttribute('aria-hidden')).toBe('true');
+    expect(wordmark).toBeNull();
   });
 
   it('should apply the selected size class', () => {
@@ -37,6 +45,9 @@ describe('SerenoLogo', () => {
     fixture.detectChanges();
 
     const image = fixture.debugElement.query(By.css('img'));
+    const wordmark = fixture.debugElement.query(By.css('span.lowercase'));
+
     expect(image.nativeElement.className).toContain('h-14');
+    expect(wordmark.nativeElement.className).toContain('text-2xl');
   });
 });

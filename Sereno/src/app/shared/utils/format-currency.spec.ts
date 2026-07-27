@@ -1,6 +1,10 @@
-import { calculateProgressPercent, formatCurrency } from './format-currency';
+import { calculateProgressPercent, configureCurrencyFormat, formatCurrency } from './format-currency';
 
 describe('formatCurrency', () => {
+  beforeEach(() => {
+    configureCurrencyFormat({ currency: 'EUR', showCents: true });
+  });
+
   it('should format positive amounts in French locale', () => {
     expect(formatCurrency(123456)).toBe('1\u202f234,56\u00a0€');
   });
@@ -11,6 +15,11 @@ describe('formatCurrency', () => {
 
   it('should prefix positive amounts with plus when showSign is true', () => {
     expect(formatCurrency(345000, { showSign: true })).toBe('+3\u202f450,00\u00a0€');
+  });
+
+  it('should respect currency and hide cents when configured', () => {
+    configureCurrencyFormat({ currency: 'USD', showCents: false });
+    expect(formatCurrency(123456)).toBe('1\u202f234\u00a0$');
   });
 });
 

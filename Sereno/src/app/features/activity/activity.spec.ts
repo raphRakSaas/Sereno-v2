@@ -6,6 +6,8 @@ import { AppStore } from '../../core/store/app.store';
 import { SYSTEM_CATEGORIES } from '../../core/data/system-categories';
 
 const deleteTransaction = vi.fn().mockResolvedValue(undefined);
+const setSearchQuery = vi.fn();
+const searchQuery = signal('');
 
 const mockAppStore = {
   transactions: signal([
@@ -22,6 +24,8 @@ const mockAppStore = {
   ]),
   categories: signal(SYSTEM_CATEGORIES),
   goals: signal([]),
+  searchQuery,
+  setSearchQuery,
   deleteTransaction,
 };
 
@@ -29,6 +33,8 @@ const emptyAppStore = {
   transactions: signal([]),
   categories: signal(SYSTEM_CATEGORIES),
   goals: signal([]),
+  searchQuery: signal(''),
+  setSearchQuery: vi.fn(),
   deleteTransaction,
 };
 

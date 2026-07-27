@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { Sidebar } from './sidebar';
+import { AppStore } from '../../store/app.store';
+import { DEFAULT_SETTINGS } from '../../models/settings.model';
 
 describe('Sidebar', () => {
   let fixture: ComponentFixture<Sidebar>;
@@ -8,7 +11,16 @@ describe('Sidebar', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Sidebar],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        {
+          provide: AppStore,
+          useValue: {
+            settings: signal(DEFAULT_SETTINGS),
+            toggleTheme: vi.fn(),
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Sidebar);
@@ -26,5 +38,9 @@ describe('Sidebar', () => {
   it('should expose eight navigation items', () => {
     const links = fixture.nativeElement.querySelectorAll('nav a');
     expect(links.length).toBe(8);
+  });
+
+  it('should show a theme toggle button', () => {
+    expect(fixture.nativeElement.textContent).toContain('Thème');
   });
 });

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import {
   SERENO_BRAND,
   SERENO_LOGO_SIZE_CLASSES,
+  SERENO_WORDMARK_SIZE_CLASSES,
   SerenoLogoSize,
   SerenoLogoVariant,
 } from '../../brand/sereno-brand';
@@ -13,15 +14,11 @@ import {
     class: 'inline-flex items-center',
   },
   template: `
-    @if (variant() === 'full') {
-      <img
-        [src]="fullLogoSrc"
-        [alt]="altText()"
-        class="w-auto object-contain"
-        [class]="sizeClass()"
-        decoding="async"
-      />
-    } @else {
+    <span
+      class="inline-flex items-center gap-2"
+      role="img"
+      [attr.aria-label]="altText()"
+    >
       <img
         [src]="iconSrc"
         alt=""
@@ -30,7 +27,16 @@ import {
         [class]="sizeClass()"
         decoding="async"
       />
-    }
+      @if (variant() === 'full') {
+        <span
+          class="font-semibold tracking-tight text-text lowercase"
+          [class]="wordmarkClass()"
+          aria-hidden="true"
+        >
+          {{ brandName }}
+        </span>
+      }
+    </span>
   `,
 })
 export class SerenoLogo {
@@ -38,8 +44,9 @@ export class SerenoLogo {
   readonly size = input<SerenoLogoSize>('md');
   readonly altText = input<string>(SERENO_BRAND.name);
 
-  protected readonly fullLogoSrc = SERENO_BRAND.fullLogoSrc;
   protected readonly iconSrc = SERENO_BRAND.iconSrc;
+  protected readonly brandName = SERENO_BRAND.name.toLowerCase();
 
   protected readonly sizeClass = computed(() => SERENO_LOGO_SIZE_CLASSES[this.size()]);
+  protected readonly wordmarkClass = computed(() => SERENO_WORDMARK_SIZE_CLASSES[this.size()]);
 }

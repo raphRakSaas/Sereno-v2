@@ -2,11 +2,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs/operators';
 import { AppStore } from '../../core/store/app.store';
 import { Transaction } from '../../core/models/transaction.model';
 import { RecentTransaction, TransactionType } from '../home/models/home.models';
@@ -53,7 +56,7 @@ type SortKey = 'date-desc' | 'date-asc' | 'amount-desc' | 'amount-asc';
             <input
               type="search"
               [ngModel]="searchQuery()"
-              (ngModelChange)="searchQuery.set($event)"
+              (ngModelChange)="onSearchQueryChange($event)"
               placeholder="Rechercher…"
               class="w-full rounded-lg border border-border bg-page py-2 pr-3 pl-9 text-[13px] text-text outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20"
             />
@@ -263,12 +266,32 @@ type SortKey = 'date-desc' | 'date-asc' | 'amount-desc' | 'amount-asc';
 })
 export class Activity {
   private readonly appStore = inject(AppStore);
+  private readonly route = inject(ActivatedRoute);
 
   protected readonly formatCurrency = formatCurrency;
-  protected readonly searchQuery = signal('');
   protected readonly typeFilter = signal<TransactionType | ''>('');
   protected readonly categoryFilter = signal('');
   protected readonly sortKey = signal<SortKey>('date-desc');
+
+  private readonly queryParamSearch = toSignal(
+    this.route.queryParamMap.pipe(map((params) => params.get('q') ?? '')),
+    { initialValue: '' },
+  );
+
+  protected readonly searchQuery = computed(() => this.appStore.searchQuery());
+
+  constructor() {
+    effect(() => {
+      const fromUrl = this.queryParamSearch();
+      if (fromUrl && fromUrl !== this.appStore.searchQuery()) {
+        this.appStore.setSearchQuery(fromUrl);
+      }
+    });
+  }
+
+  protected onSearchQueryChange(query: string): void {
+    this.appStore.setSearchQuery(query);
+  }
 
   protected readonly allTransactions = computed(() => {
     const categoriesById = new Map(
@@ -321,7 +344,7 @@ export class Activity {
   );
 
   protected clearFilters(): void {
-    this.searchQuery.set('');
+    this.appStore.setSearchQuery('');
     this.typeFilter.set('');
     this.categoryFilter.set('');
   }

@@ -1,13 +1,21 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { formatMonthLabel } from '../../../shared/utils/format-month';
 
 @Component({
   selector: 'app-top-bar',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [FormsModule],
   template: `
-    <header
-      class="fixed top-0 right-0 left-sidebar z-10 h-16 border-b border-border bg-page/95"
-    >
+    <header class="fixed top-0 right-0 left-sidebar z-10 h-16 border-b border-border bg-page/95">
       <div class="mx-auto flex h-full max-w-content-max items-center justify-between px-page">
         <div class="flex items-center gap-4">
           <h1 class="text-[20px] font-semibold text-text">{{ pageTitle() }}</h1>
@@ -43,19 +51,24 @@ import { formatMonthLabel } from '../../../shared/utils/format-month';
 
           <div class="h-6 w-px bg-border" aria-hidden="true"></div>
 
-          <label class="relative">
-            <span class="sr-only">Rechercher</span>
-            <span
-              class="material-symbols-outlined absolute top-1/2 left-3 -translate-y-1/2 text-[18px] text-text-muted"
-              aria-hidden="true"
-              >search</span
-            >
-            <input
-              type="search"
-              class="w-64 rounded-full border border-border bg-surface py-1.5 pr-4 pl-10 text-[13px] text-text outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20"
-              placeholder="Rechercher..."
-            />
-          </label>
+          <form class="relative" (submit)="onSubmit($event)">
+            <label class="relative block">
+              <span class="sr-only">Rechercher</span>
+              <span
+                class="material-symbols-outlined absolute top-1/2 left-3 -translate-y-1/2 text-[18px] text-text-muted"
+                aria-hidden="true"
+                >search</span
+              >
+              <input
+                type="search"
+                class="w-64 rounded-full border border-border bg-surface py-1.5 pr-4 pl-10 text-[13px] text-text outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20"
+                placeholder="Rechercher une transaction…"
+                [ngModel]="draftQuery()"
+                (ngModelChange)="onQueryChange($event)"
+                name="globalSearch"
+              />
+            </label>
+          </form>
         </div>
       </div>
     </header>
@@ -65,11 +78,30 @@ export class TopBar {
   readonly pageTitle = input('Aperçu global');
   readonly year = input.required<number>();
   readonly monthIndex = input.required<number>();
+  readonly searchQuery = input('');
 
   readonly previousMonth = output<void>();
   readonly nextMonth = output<void>();
+  readonly searchChange = output<string>();
+  readonly searchSubmit = output<string>();
+
+  protected readonly draftQuery = signal('');
 
   protected readonly monthLabel = computed(() =>
     formatMonthLabel(this.year(), this.monthIndex()),
   );
+
+  constructor() {
+    // Keep draft in sync when parent updates (ex. clear from Activité).
+  }
+
+  protected onQueryChange(value: string): void {
+    this.draftQuery.set(value);
+    this.searchChange.emit(value);
+  }
+
+  protected onSubmit(event: Event): void {
+    event.preventDefault();
+    this.searchSubmit.emit(this.draftQuery().trim());
+  }
 }

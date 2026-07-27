@@ -1,8 +1,11 @@
 export type ThemePreference = 'light' | 'dark' | 'system';
+export type CurrencyCode = 'EUR' | 'USD' | 'GBP' | 'CHF';
 
 export interface AppSettings {
   id: 'app';
   theme: ThemePreference;
+  currency: CurrencyCode;
+  showCents: boolean;
   startScreen: string;
   weekStartsOnMonday: boolean;
   showQuickActions: boolean;
@@ -13,7 +16,9 @@ export interface AppSettings {
 
 export const DEFAULT_SETTINGS: AppSettings = {
   id: 'app',
-  theme: 'light',
+  theme: 'system',
+  currency: 'EUR',
+  showCents: true,
   startScreen: '/',
   weekStartsOnMonday: true,
   showQuickActions: true,

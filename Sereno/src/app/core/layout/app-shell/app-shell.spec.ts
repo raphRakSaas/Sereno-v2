@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
 import { AppShell } from './app-shell';
 import { AppStore } from '../../store/app.store';
+import { DEFAULT_SETTINGS } from '../../models/settings.model';
 
 describe('AppShell (integration)', () => {
   beforeEach(async () => {
@@ -14,7 +15,11 @@ describe('AppShell (integration)', () => {
           provide: AppStore,
           useValue: {
             selectedMonthKey: signal('2026-07'),
+            searchQuery: signal(''),
+            settings: signal(DEFAULT_SETTINGS),
             setSelectedMonth: vi.fn(),
+            setSearchQuery: vi.fn(),
+            toggleTheme: vi.fn(),
           },
         },
       ],

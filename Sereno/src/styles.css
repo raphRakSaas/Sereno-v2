@@ -32,11 +32,31 @@
     background-color: var(--color-page);
     color: var(--color-text);
     -webkit-font-smoothing: antialiased;
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+    --color-page: #12100f;
+    --color-surface: #1c1917;
+    --color-border: #2f2a27;
+    --color-text: #f5f1ed;
+    --color-text-muted: #a8a09a;
+    --color-accent: #ff6b84;
+    --color-accent-surface: #3a1820;
+    --color-income: #2bb892;
+    --color-warning: #d4a04a;
+    --color-chart-1: #ff6b84;
+    --color-chart-2: #ff8fa3;
+    --color-chart-3: #c45c6e;
+    --color-chart-4: #8a3d4c;
   }
 
   body {
     margin: 0;
     min-height: 100dvh;
+    background-color: var(--color-page);
+    color: var(--color-text);
   }
 }
 

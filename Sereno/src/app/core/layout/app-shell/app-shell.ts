@@ -46,8 +46,11 @@ function resolvePageTitle(url: string): string {
       [pageTitle]="pageTitle()"
       [year]="selectedYear()"
       [monthIndex]="selectedMonthIndex()"
+      [searchQuery]="appStore.searchQuery()"
       (previousMonth)="goToPreviousMonth()"
       (nextMonth)="goToNextMonth()"
+      (searchChange)="onSearchChange($event)"
+      (searchSubmit)="onSearchSubmit($event)"
     />
     <main class="ml-sidebar min-h-screen pt-16">
       <div class="mx-auto max-w-content-max px-page py-6">
@@ -57,7 +60,7 @@ function resolvePageTitle(url: string): string {
   `,
 })
 export class AppShell {
-  private readonly appStore = inject(AppStore);
+  protected readonly appStore = inject(AppStore);
   private readonly router = inject(Router);
 
   private readonly currentUrl = toSignal(
@@ -89,5 +92,16 @@ export class AppShell {
   protected goToNextMonth(): void {
     const next = shiftMonth(this.selectedYear(), this.selectedMonthIndex(), 1);
     this.appStore.setSelectedMonth(next.year, next.monthIndex);
+  }
+
+  protected onSearchChange(query: string): void {
+    this.appStore.setSearchQuery(query);
+  }
+
+  protected onSearchSubmit(query: string): void {
+    this.appStore.setSearchQuery(query);
+    void this.router.navigate(['/activite'], {
+      queryParams: query ? { q: query } : {},
+    });
   }
 }

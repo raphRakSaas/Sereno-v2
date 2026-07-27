@@ -20,15 +20,14 @@ describe('TopBar', () => {
     expect(compiled.textContent).toContain('Juillet 2026');
   });
 
-  it('should emit previousMonth when clicking previous button', () => {
-    const previousSpy = vi.fn();
-    fixture.componentInstance.previousMonth.subscribe(previousSpy);
+  it('should emit searchSubmit when the search form is submitted', () => {
+    const submitSpy = vi.fn();
+    fixture.componentInstance.searchSubmit.subscribe(submitSpy);
+    fixture.componentInstance['draftQuery'].set('loyer');
+    fixture.detectChanges();
 
-    const button = fixture.nativeElement.querySelector(
-      '[aria-label="Mois précédent"]',
-    ) as HTMLButtonElement;
-    button.click();
-
-    expect(previousSpy).toHaveBeenCalled();
+    const form = fixture.nativeElement.querySelector('form') as HTMLFormElement;
+    form.dispatchEvent(new Event('submit'));
+    expect(submitSpy).toHaveBeenCalledWith('loyer');
   });
 });

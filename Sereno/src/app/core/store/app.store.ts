@@ -1,10 +1,16 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { SYSTEM_CATEGORIES } from '../data/system-categories';
 import { Budget } from '../models/budget.model';
 import { Category } from '../models/category.model';
 import { GoalContribution, SavingsGoal } from '../models/goal.model';
 import { Recurrence } from '../models/recurrence.model';
-import { AppSettings, DEFAULT_SETTINGS } from '../models/settings.model';
+import {
+  AppSettings,
+  CurrencyCode,
+  DEFAULT_SETTINGS,
+  ThemePreference,
+} from '../models/settings.model';
 import { Transaction, TransactionType } from '../models/transaction.model';
 import { SerenoDatabase } from '../persistence/sereno-database';
 import {
@@ -14,12 +20,24 @@ import {
   RecentTransaction,
   SavingsGoalSummary,
 } from '../../features/home/models/home.models';
-import { calculateProgressPercent } from '../../shared/utils/format-currency';
+import { calculateProgressPercent, configureCurrencyFormat } from '../../shared/utils/format-currency';
 import { getCurrentMonthKey, isDateInMonth } from '../../shared/utils/month-key';
 import {
   getTodayIsoDate,
   listDueOccurrenceDates,
 } from '../../shared/utils/recurrence-dates';
+import { applyThemeClass } from '../../shared/utils/theme';
+
+export interface SerenoExportPayload {
+  version: 1;
+  exportedAt: string;
+  settings: AppSettings;
+  categories: Category[];
+  transactions: Transaction[];
+  budgets: Budget[];
+  goals: SavingsGoal[];
+  recurrences: Recurrence[];
+}
 
 export interface OnboardingPayload {
   initialBalanceInCents: number;
@@ -69,6 +87,9 @@ export interface CreateRecurrenceInput {
 @Injectable({ providedIn: 'root' })
 export class AppStore {
   private readonly database = inject(SerenoDatabase);
+  private readonly documentRef = inject(DOCUMENT);
+  private readonly platformId = inject(PLATFORM_ID);
+  private themeMediaCleanup: (() => void) | null = null;
 
   readonly settings = signal<AppSettings>(DEFAULT_SETTINGS);
   readonly categories = signal<Category[]>([]);
@@ -77,12 +98,25 @@ export class AppStore {
   readonly goals = signal<SavingsGoal[]>([]);
   readonly recurrences = signal<Recurrence[]>([]);
   readonly isReady = signal(false);
+  /** Recherche globale (barre du haut → page Activité). */
+  readonly searchQuery = signal('');
 
   readonly selectedMonthKey = signal(getCurrentMonthKey());
 
   readonly activeCategories = computed(() =>
     this.categories().filter((category) => !category.archivedAt),
   );
+
+  readonly resolvedTheme = computed(() => {
+    const theme = this.settings().theme;
+    if (theme !== 'system') {
+      return theme;
+    }
+    if (!isPlatformBrowser(this.platformId) || typeof window.matchMedia !== 'function') {
+      return 'light';
+    }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
 
   readonly dashboardData = computed<HomeDashboardData>(() => {
     const monthKey = this.selectedMonthKey();
@@ -192,15 +226,118 @@ export class AppStore {
       this.database.getAllRecurrences(),
     ]);
 
-    this.settings.set(settings ?? DEFAULT_SETTINGS);
+    const normalizedSettings = normalizeSettings(settings ?? DEFAULT_SETTINGS);
+
+    this.settings.set(normalizedSettings);
     this.categories.set(categories);
     this.transactions.set(transactions);
     this.budgets.set(budgets);
     this.goals.set(goals);
     this.recurrences.set(recurrences);
 
+    this.syncDisplayPreferences(normalizedSettings);
+    this.applyThemeToDom();
+    this.watchSystemTheme();
+
     await this.generateDueRecurrences();
     this.isReady.set(true);
+  }
+
+  setSearchQuery(query: string): void {
+    this.searchQuery.set(query);
+  }
+
+  async updateSettings(patch: Partial<Omit<AppSettings, 'id'>>): Promise<void> {
+    const updated: AppSettings = {
+      ...normalizeSettings(this.settings()),
+      ...patch,
+      id: 'app',
+    };
+
+    await this.database.putSettings(updated);
+    this.settings.set(updated);
+    this.syncDisplayPreferences(updated);
+    this.applyThemeToDom();
+  }
+
+  toggleTheme(): void {
+    const current = this.settings().theme;
+    const next: ThemePreference =
+      current === 'light' ? 'dark' : current === 'dark' ? 'system' : 'light';
+    void this.updateSettings({ theme: next });
+  }
+
+  exportData(): SerenoExportPayload {
+    return {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      settings: this.settings(),
+      categories: this.categories(),
+      transactions: this.transactions(),
+      budgets: this.budgets(),
+      goals: this.goals(),
+      recurrences: this.recurrences(),
+    };
+  }
+
+  async importData(payload: SerenoExportPayload): Promise<void> {
+    if (!payload || payload.version !== 1) {
+      throw new Error('Fichier d\'export Sereno invalide');
+    }
+
+    await this.database.clearAll();
+
+    const settings = normalizeSettings({
+      ...DEFAULT_SETTINGS,
+      ...payload.settings,
+      id: 'app',
+      onboardingCompleted: true,
+    });
+
+    await this.database.putSettings(settings);
+    await Promise.all([
+      ...(payload.categories ?? []).map((category) => this.database.putCategory(category)),
+      ...(payload.transactions ?? []).map((transaction) =>
+        this.database.putTransaction(transaction),
+      ),
+      ...(payload.budgets ?? []).map((budget) => this.database.putBudget(budget)),
+      ...(payload.goals ?? []).map((goal) => this.database.putGoal(goal)),
+      ...(payload.recurrences ?? []).map((recurrence) => this.database.putRecurrence(recurrence)),
+    ]);
+
+    if ((payload.categories ?? []).length === 0) {
+      await this.seedCategoriesIfNeeded();
+    }
+
+    this.settings.set(settings);
+    this.categories.set(payload.categories?.length ? payload.categories : SYSTEM_CATEGORIES);
+    this.transactions.set(payload.transactions ?? []);
+    this.budgets.set(payload.budgets ?? []);
+    this.goals.set(payload.goals ?? []);
+    this.recurrences.set(payload.recurrences ?? []);
+    this.syncDisplayPreferences(settings);
+    this.applyThemeToDom();
+    await this.generateDueRecurrences();
+  }
+
+  async resetAllData(): Promise<void> {
+    await this.database.clearAll();
+    const settings: AppSettings = {
+      ...DEFAULT_SETTINGS,
+      onboardingCompleted: false,
+    };
+    await this.database.putSettings(settings);
+    await Promise.all(SYSTEM_CATEGORIES.map((category) => this.database.putCategory(category)));
+
+    this.settings.set(settings);
+    this.categories.set(SYSTEM_CATEGORIES);
+    this.transactions.set([]);
+    this.budgets.set([]);
+    this.goals.set([]);
+    this.recurrences.set([]);
+    this.searchQuery.set('');
+    this.syncDisplayPreferences(settings);
+    this.applyThemeToDom();
   }
 
   async completeOnboarding(payload: OnboardingPayload): Promise<void> {
@@ -291,6 +428,8 @@ export class AppStore {
     this.budgets.set(demoBudgets);
     this.goals.set([]);
     this.recurrences.set([]);
+    this.syncDisplayPreferences(settings);
+    this.applyThemeToDom();
   }
 
   async addTransaction(input: CreateTransactionInput): Promise<Transaction> {
@@ -665,6 +804,42 @@ export class AppStore {
     this.selectedMonthKey.set(`${year}-${month}`);
   }
 
+  private syncDisplayPreferences(settings: AppSettings): void {
+    configureCurrencyFormat({
+      currency: settings.currency,
+      showCents: settings.showCents,
+    });
+  }
+
+  private applyThemeToDom(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    const matchMediaFn =
+      typeof window.matchMedia === 'function'
+        ? (query: string) => window.matchMedia(query)
+        : undefined;
+
+    applyThemeClass(this.settings().theme, this.documentRef, matchMediaFn);
+  }
+
+  private watchSystemTheme(): void {
+    if (!isPlatformBrowser(this.platformId) || typeof window.matchMedia !== 'function') {
+      return;
+    }
+
+    this.themeMediaCleanup?.();
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const onChange = (): void => {
+      if (this.settings().theme === 'system') {
+        this.applyThemeToDom();
+      }
+    };
+    mediaQuery.addEventListener('change', onChange);
+    this.themeMediaCleanup = () => mediaQuery.removeEventListener('change', onChange);
+  }
+
   private async syncTransactionGoalContribution(
     previous: Transaction,
     next: Transaction,
@@ -741,6 +916,17 @@ function createDemoTransaction(
     date,
     categoryId,
     note,
+  };
+}
+
+function normalizeSettings(settings: AppSettings): AppSettings {
+  return {
+    ...DEFAULT_SETTINGS,
+    ...settings,
+    id: 'app',
+    theme: settings.theme ?? DEFAULT_SETTINGS.theme,
+    currency: (settings.currency as CurrencyCode | undefined) ?? DEFAULT_SETTINGS.currency,
+    showCents: settings.showCents ?? DEFAULT_SETTINGS.showCents,
   };
 }
 

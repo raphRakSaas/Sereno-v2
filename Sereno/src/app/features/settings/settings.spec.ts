@@ -1,19 +1,34 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { signal } from '@angular/core';
 import { Settings } from './settings';
+import { AppStore } from '../../core/store/app.store';
+import { DEFAULT_SETTINGS } from '../../core/models/settings.model';
 
-describe('Settings (unit)', () => {
-  it('should have default theme value as system', () => {
-    const defaultTheme = 'system';
-    expect(defaultTheme).toBe('system');
-  });
-});
+const updateSettings = vi.fn().mockResolvedValue(undefined);
+const exportData = vi.fn().mockReturnValue({ version: 1, settings: DEFAULT_SETTINGS });
+const loadDemoData = vi.fn().mockResolvedValue(undefined);
+const resetAllData = vi.fn().mockResolvedValue(undefined);
+
+const mockAppStore = {
+  settings: signal(DEFAULT_SETTINGS),
+  resolvedTheme: signal('light' as const),
+  updateSettings,
+  exportData,
+  importData: vi.fn(),
+  loadDemoData,
+  resetAllData,
+};
 
 describe('Settings (integration)', () => {
   beforeEach(async () => {
+    updateSettings.mockClear();
     await TestBed.configureTestingModule({
       imports: [Settings],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        { provide: AppStore, useValue: mockAppStore },
+      ],
     }).compileComponents();
   });
 
@@ -43,5 +58,12 @@ describe('Settings (integration)', () => {
     expect(selects.length).toBeGreaterThanOrEqual(2);
     expect(element.textContent).toContain('Thème');
     expect(element.textContent).toContain('Devise');
+  });
+
+  it('should persist theme changes through the store', async () => {
+    const fixture = TestBed.createComponent(Settings);
+    fixture.detectChanges();
+    await fixture.componentInstance['onThemeChange']('dark');
+    expect(updateSettings).toHaveBeenCalledWith({ theme: 'dark' });
   });
 });
