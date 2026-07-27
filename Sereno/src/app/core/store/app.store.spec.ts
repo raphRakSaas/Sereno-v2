@@ -143,6 +143,62 @@ describe('AppStore', () => {
     expect(appStore.recurrences()[0].lastGeneratedAt).toBe('2026-07-05');
   });
 
+  it('should generate missing recurrence transactions up to today', async () => {
+    await appStore.addRecurrence({
+      type: 'expense',
+      amountInCents: 1000,
+      categoryId: 'cat-subscriptions',
+      note: 'Café quotidien',
+      frequency: 'daily',
+      startDate: '2026-07-25',
+    });
+
+    // addRecurrence already generates for startDate..today (real today).
+    // Force a controlled generation window with an older lastGeneratedAt.
+    const recurrence = appStore.recurrences()[0];
+    appStore.recurrences.set([
+      {
+        ...recurrence,
+        lastGeneratedAt: '2026-07-25',
+      },
+    ]);
+    // Keep only the first generated transaction if any, then regenerate.
+    const linked = appStore.transactions().filter((transaction) => transaction.recurrenceId === recurrence.id);
+    appStore.transactions.set(
+      linked.filter((transaction) => transaction.date === '2026-07-25'),
+    );
+
+    const createdCount = await appStore.generateDueRecurrences('2026-07-27');
+
+    expect(createdCount).toBe(2);
+    const dates = appStore
+      .transactions()
+      .filter((transaction) => transaction.recurrenceId === recurrence.id)
+      .map((transaction) => transaction.date)
+      .sort();
+    expect(dates).toEqual(['2026-07-25', '2026-07-26', '2026-07-27']);
+    expect(appStore.recurrences()[0].lastGeneratedAt).toBe('2026-07-27');
+  });
+
+  it('should not generate transactions for paused recurrences', async () => {
+    await appStore.addRecurrence({
+      type: 'expense',
+      amountInCents: 5000,
+      categoryId: 'cat-leisure',
+      note: 'Pause test',
+      frequency: 'daily',
+      startDate: '2026-07-01',
+    });
+
+    const recurrence = appStore.recurrences()[0];
+    await appStore.updateRecurrence(recurrence.id, { isPaused: true });
+    appStore.transactions.set([]);
+    appStore.recurrences.set([{ ...appStore.recurrences()[0], lastGeneratedAt: undefined }]);
+
+    const createdCount = await appStore.generateDueRecurrences('2026-07-05');
+    expect(createdCount).toBe(0);
+  });
+
   it('should delete a transaction', async () => {
     const transaction = await appStore.addTransaction({
       type: 'expense',

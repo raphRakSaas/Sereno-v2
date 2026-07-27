@@ -16,6 +16,10 @@ import {
 } from '../../features/home/models/home.models';
 import { calculateProgressPercent } from '../../shared/utils/format-currency';
 import { getCurrentMonthKey, isDateInMonth } from '../../shared/utils/month-key';
+import {
+  getTodayIsoDate,
+  listDueOccurrenceDates,
+} from '../../shared/utils/recurrence-dates';
 
 export interface OnboardingPayload {
   initialBalanceInCents: number;
@@ -194,6 +198,8 @@ export class AppStore {
     this.budgets.set(budgets);
     this.goals.set(goals);
     this.recurrences.set(recurrences);
+
+    await this.generateDueRecurrences();
     this.isReady.set(true);
   }
 
@@ -530,7 +536,96 @@ export class AppStore {
 
     await this.database.putRecurrence(recurrence);
     this.recurrences.update((recurrences) => [...recurrences, recurrence]);
-    return recurrence;
+
+    await this.generateDueRecurrences();
+    return this.recurrences().find((item) => item.id === recurrence.id) ?? recurrence;
+  }
+
+  /**
+   * Crée les transactions manquantes pour chaque récurrence active jusqu'à aujourd'hui.
+   * Idempotent : ne duplique pas si une transaction existe déjà pour (récurrence, date).
+   */
+  async generateDueRecurrences(today = getTodayIsoDate()): Promise<number> {
+    let createdCount = 0;
+    const now = new Date().toISOString();
+
+    for (const recurrence of this.recurrences()) {
+      if (recurrence.isPaused) {
+        continue;
+      }
+
+      const dueDates = listDueOccurrenceDates({
+        startDate: recurrence.startDate,
+        frequency: recurrence.frequency,
+        today,
+        lastGeneratedAt: recurrence.lastGeneratedAt,
+        endDate: recurrence.endDate,
+      });
+
+      if (dueDates.length === 0) {
+        continue;
+      }
+
+      const existingDates = new Set(
+        this.transactions()
+          .filter((transaction) => transaction.recurrenceId === recurrence.id)
+          .map((transaction) => transaction.date),
+      );
+
+      const datesToCreate = dueDates.filter((date) => !existingDates.has(date));
+      if (datesToCreate.length === 0) {
+        const latestDue = dueDates[dueDates.length - 1];
+        if (
+          latestDue &&
+          (!recurrence.lastGeneratedAt || latestDue > recurrence.lastGeneratedAt)
+        ) {
+          await this.persistRecurrenceGeneratedAt(recurrence, latestDue, now);
+        }
+        continue;
+      }
+
+      const createdTransactions: Transaction[] = [];
+
+      for (const date of datesToCreate) {
+        const transaction: Transaction = {
+          id: crypto.randomUUID(),
+          type: recurrence.type,
+          amountInCents: recurrence.amountInCents,
+          date,
+          categoryId: recurrence.categoryId,
+          note: recurrence.note,
+          recurrenceId: recurrence.id,
+          createdAt: now,
+          updatedAt: now,
+        };
+        await this.database.putTransaction(transaction);
+        createdTransactions.push(transaction);
+      }
+
+      this.transactions.update((transactions) => [...transactions, ...createdTransactions]);
+      createdCount += createdTransactions.length;
+
+      const lastDate = datesToCreate[datesToCreate.length - 1];
+      await this.persistRecurrenceGeneratedAt(recurrence, lastDate, now);
+    }
+
+    return createdCount;
+  }
+
+  private async persistRecurrenceGeneratedAt(
+    recurrence: Recurrence,
+    lastGeneratedAt: string,
+    updatedAt: string,
+  ): Promise<void> {
+    const updated: Recurrence = {
+      ...recurrence,
+      lastGeneratedAt,
+      updatedAt,
+    };
+    await this.database.putRecurrence(updated);
+    this.recurrences.update((recurrences) =>
+      recurrences.map((item) => (item.id === recurrence.id ? updated : item)),
+    );
   }
 
   async updateRecurrence(
@@ -656,13 +751,6 @@ function formatShortDate(isoDate: string): string {
     month: 'short',
     year: 'numeric',
   });
-}
-
-function getTodayIsoDate(): string {
-  const today = new Date();
-  const month = (today.getMonth() + 1).toString().padStart(2, '0');
-  const day = today.getDate().toString().padStart(2, '0');
-  return `${today.getFullYear()}-${month}-${day}`;
 }
 
 function sumContributions(contributions: GoalContribution[]): number {
