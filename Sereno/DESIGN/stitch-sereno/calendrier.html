@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sereno - Calendrier</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fff8f5;
+            color: #1e1b19;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        /* Custom scrollbar for dense data */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e2bec0; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #8e6f71; }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            border-top: 1px solid #e2bec0;
+            border-left: 1px solid #e2bec0;
+        }
+        .calendar-cell {
+            aspect-ratio: 1 / 1;
+            border-right: 1px solid #e2bec0;
+            border-bottom: 1px solid #e2bec0;
+            padding: 8px;
+            transition: background-color 0.2s ease;
+        }
+        .calendar-cell:hover {
+            background-color: #faf2ee;
+        }
+        .calendar-cell.active {
+            background-color: #fff0f2;
+            border: 2px solid #b60e3d;
+            margin: -1px;
+            z-index: 5;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-fixed-dim": "#ffb2b8",
+                      "error-container": "#ffdad6",
+                      "surface-bright": "#fff8f5",
+                      "secondary": "#006b56",
+                      "on-background": "#1e1b19",
+                      "inverse-on-surface": "#f7efeb",
+                      "surface-container-low": "#faf2ee",
+                      "on-surface-variant": "#5a4042",
+                      "on-secondary-container": "#00705a",
+                      "primary": "#b60e3d",
+                      "on-primary-fixed": "#40000f",
+                      "on-primary-container": "#fffbff",
+                      "primary-container": "#da3054",
+                      "tertiary-container": "#a2671c",
+                      "on-tertiary-fixed": "#2c1700",
+                      "primary-fixed": "#ffdadb",
+                      "on-secondary-fixed": "#002018",
+                      "outline": "#8e6f71",
+                      "surface-tint": "#ba1340",
+                      "surface-container-highest": "#e9e1dd",
+                      "secondary-fixed": "#96f4d7",
+                      "secondary-fixed-dim": "#79d8bc",
+                      "tertiary": "#855000",
+                      "surface-container-high": "#efe7e3",
+                      "surface-container": "#f4ece8",
+                      "on-tertiary": "#ffffff",
+                      "error": "#ba1a1a",
+                      "on-primary-fixed-variant": "#91002d",
+                      "surface-dim": "#e0d8d5",
+                      "outline-variant": "#e2bec0",
+                      "on-tertiary-container": "#fffbff",
+                      "on-secondary-fixed-variant": "#005140",
+                      "on-error-container": "#93000a",
+                      "inverse-surface": "#33302d",
+                      "inverse-primary": "#ffb2b8",
+                      "on-surface": "#1e1b19",
+                      "on-secondary": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "background": "#fff8f5",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-container": "#93f2d4",
+                      "surface-variant": "#e9e1dd",
+                      "tertiary-fixed-dim": "#ffb86a",
+                      "on-error": "#ffffff",
+                      "tertiary-fixed": "#ffdcbc",
+                      "surface": "#fff8f5",
+                      "on-tertiary-fixed-variant": "#683d00"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack_sm": "8px",
+                      "sidebar_width": "240px",
+                      "content_max_width": "1180px",
+                      "grid_columns": "12",
+                      "stack_md": "16px",
+                      "gutter": "24px",
+                      "stack_lg": "24px",
+                      "stack_xs": "4px",
+                      "margin_page": "40px"
+              },
+              "fontFamily": {
+                      "page-title": ["Inter"],
+                      "label-caps": ["Inter"],
+                      "secondary": ["Inter"],
+                      "section-title": ["Inter"],
+                      "monetary-sm": ["Inter"],
+                      "monetary-lg": ["Inter"],
+                      "body": ["Inter"]
+              },
+              "fontSize": {
+                      "page-title": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.06em", "fontWeight": "600"}],
+                      "secondary": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                      "section-title": ["15px", {"lineHeight": "20px", "fontWeight": "600"}],
+                      "monetary-sm": ["14px", {"fontWeight": "500"}],
+                      "monetary-lg": ["24px", {"fontWeight": "600"}],
+                      "body": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-[240px] bg-surface border-r border-outline-variant flex flex-col py-stack_lg px-stack_md gap-stack_md z-20">
+<!-- Brand Header -->
+<div class="flex items-center gap-3 px-2 mb-4">
+<div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-lg" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+</div>
+<div>
+<h1 class="font-page-title text-page-title font-bold text-primary tracking-tight leading-none">sereno</h1>
+<p class="font-label-caps text-[9px] uppercase tracking-[0.1em] text-on-surface-variant opacity-70">Technical Finance</p>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary py-3 px-4 rounded-lg font-section-title text-section-title flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all mb-4">
+<span class="material-symbols-outlined text-sm">add</span>
+            Nouvelle transaction
+        </button>
+<nav class="flex-1 flex flex-col gap-1 overflow-y-auto">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container-high transition-colors font-body text-body" href="#">
+<span class="material-symbols-outlined">home</span>
+                Accueil
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container-high transition-colors font-body text-body" href="#">
+<span class="material-symbols-outlined">history</span>
+                Activité
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-md text-primary font-semibold bg-primary-container/10 transition-colors font-body text-body" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+                Calendrier
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container-high transition-colors font-body text-body" href="#">
+<span class="material-symbols-outlined">query_stats</span>
+                Statistiques
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container-high transition-colors font-body text-body" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+                Budgets
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container-high transition-colors font-body text-body" href="#">
+<span class="material-symbols-outlined">ads_click</span>
+                Objectifs
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container-high transition-colors font-body text-body" href="#">
+<span class="material-symbols-outlined">repeat</span>
+                Récurrences
+            </a>
+</nav>
+<div class="mt-auto pt-4 border-t border-outline-variant/30 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container-high transition-colors font-body text-body" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Réglages
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container-high transition-colors font-body text-body" href="#">
+<span class="material-symbols-outlined">person_off</span>
+                Mode invité
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container-high transition-colors font-body text-body" href="#">
+<span class="material-symbols-outlined">dark_mode</span>
+                Thème
+            </a>
+</div>
+</aside>
+<!-- Main Wrapper -->
+<div class="ml-[240px] flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-10 bg-background border-b border-outline-variant flex items-center justify-between h-16 px-margin_page">
+<div class="flex items-center gap-4">
+<h2 class="font-page-title text-page-title text-on-background">Juillet 2026</h2>
+<div class="flex bg-surface-container rounded-lg p-1 border border-outline-variant/50">
+<button class="px-4 py-1 text-on-surface-variant font-label-caps rounded-md bg-white border border-outline-variant/30 shadow-sm transition-all">Mois</button>
+<button class="px-4 py-1 text-on-surface-variant font-label-caps rounded-md hover:bg-surface-container-high transition-all">Semaine</button>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex items-center bg-surface-container rounded-lg p-1 border border-outline-variant/50 mr-4">
+<button class="p-1 hover:bg-white rounded transition-colors"><span class="material-symbols-outlined text-[20px]">chevron_left</span></button>
+<button class="px-2 font-label-caps text-on-surface-variant">Aujourd'hui</button>
+<button class="p-1 hover:bg-white rounded transition-colors"><span class="material-symbols-outlined text-[20px]">chevron_right</span></button>
+</div>
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all">
+<span class="material-symbols-outlined">search</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-primary-container/20 flex items-center justify-center border border-primary/20">
+<span class="material-symbols-outlined text-primary text-sm">person</span>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex flex-1 p-margin_page gap-gutter max-w-[1600px] mx-auto w-full">
+<!-- Calendar Grid (Left Side) -->
+<div class="flex-grow bg-white border border-outline-variant rounded-xl overflow-hidden flex flex-col">
+<!-- Day Names Header -->
+<div class="grid grid-cols-7 border-b border-outline-variant bg-surface-container-low">
+<div class="py-3 text-center font-label-caps text-on-surface-variant">Lun</div>
+<div class="py-3 text-center font-label-caps text-on-surface-variant">Mar</div>
+<div class="py-3 text-center font-label-caps text-on-surface-variant">Mer</div>
+<div class="py-3 text-center font-label-caps text-on-surface-variant">Jeu</div>
+<div class="py-3 text-center font-label-caps text-on-surface-variant">Ven</div>
+<div class="py-3 text-center font-label-caps text-on-surface-variant">Sam</div>
+<div class="py-3 text-center font-label-caps text-on-surface-variant">Dim</div>
+</div>
+<!-- Calendar Content -->
+<div class="calendar-grid flex-1">
+<!-- Placeholder days from June -->
+<div class="calendar-cell bg-surface-bright/50 opacity-40 flex flex-col">
+<span class="font-label-caps">29</span>
+</div>
+<div class="calendar-cell bg-surface-bright/50 opacity-40 flex flex-col">
+<span class="font-label-caps">30</span>
+</div>
+<!-- July Days -->
+<!-- Day 1 to 13 -->
+<script>
+                        const grid = document.currentScript.parentElement;
+                        const data = [
+                            {day: 1, inc: 0, exp: 2}, {day: 2, inc: 1, exp: 1}, {day: 3, inc: 0, exp: 3},
+                            {day: 4, inc: 0, exp: 1}, {day: 5, inc: 0, exp: 0}, {day: 6, inc: 1, exp: 4},
+                            {day: 7, inc: 0, exp: 2}, {day: 8, inc: 0, exp: 1}, {day: 9, inc: 0, exp: 1},
+                            {day: 10, inc: 0, exp: 5}, {day: 11, inc: 2, exp: 0}, {day: 12, inc: 0, exp: 1},
+                            {day: 13, inc: 0, exp: 2}
+                        ];
+                        data.forEach(d => {
+                            const cell = document.createElement('div');
+                            cell.className = 'calendar-cell flex flex-col group cursor-pointer';
+                            cell.innerHTML = `
+                                <div class="flex justify-between items-start">
+                                    <span class="font-label-caps text-on-surface-variant">${d.day}</span>
+                                    <div class="flex gap-1">
+                                        ${Array(d.inc).fill('<div class="w-1.5 h-1.5 rounded-full bg-secondary"></div>').join('')}
+                                        ${Array(d.exp).fill('<div class="w-1.5 h-1.5 rounded-full bg-primary"></div>').join('')}
+                                    </div>
+                                </div>
+                            `;
+                            grid.appendChild(cell);
+                        });
+                    </script>
+<!-- Day 14 (Selected) -->
+<div class="calendar-cell active flex flex-col">
+<div class="flex justify-between items-start">
+<span class="font-label-caps text-primary font-bold">14</span>
+<div class="flex gap-1">
+<div class="w-1.5 h-1.5 rounded-full bg-primary"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-primary"></div>
+</div>
+</div>
+<div class="mt-auto hidden lg:block">
+<div class="bg-primary/10 text-primary text-[10px] px-1 rounded truncate mb-1">Essence ...</div>
+<div class="bg-primary/10 text-primary text-[10px] px-1 rounded truncate">Carrefour ...</div>
+</div>
+</div>
+<!-- Remaining Days 15-31 -->
+<script>
+                        for(let i=15; i<=31; i++) {
+                            const cell = document.createElement('div');
+                            const hasInc = Math.random() > 0.8;
+                            const hasExp = Math.random() > 0.4;
+                            cell.className = 'calendar-cell flex flex-col group cursor-pointer';
+                            cell.innerHTML = `
+                                <div class="flex justify-between items-start">
+                                    <span class="font-label-caps text-on-surface-variant">${i}</span>
+                                    <div class="flex gap-1">
+                                        ${hasInc ? '<div class="w-1.5 h-1.5 rounded-full bg-secondary"></div>' : ''}
+                                        ${hasExp ? '<div class="w-1.5 h-1.5 rounded-full bg-primary"></div>' : ''}
+                                    </div>
+                                </div>
+                            `;
+                            grid.appendChild(cell);
+                        }
+                    </script>
+<!-- Aug fillers -->
+<div class="calendar-cell bg-surface-bright/50 opacity-40"><span class="font-label-caps">1</span></div>
+<div class="calendar-cell bg-surface-bright/50 opacity-40"><span class="font-label-caps">2</span></div>
+</div>
+</div>
+<!-- Detail Panel (Right Side) -->
+<aside class="w-[320px] shrink-0 flex flex-col gap-stack_lg">
+<div class="bg-white border border-outline-variant rounded-xl p-6 flex flex-col">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-section-title text-section-title">Détail du jour</h3>
+<span class="font-label-caps text-primary bg-primary/10 px-2 py-0.5 rounded">14 JUIL.</span>
+</div>
+<div class="space-y-4">
+<!-- Transaction 1 -->
+<div class="flex items-center gap-4 group cursor-pointer">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">shopping_cart</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-section-title text-section-title truncate">Courses Carrefour</p>
+<p class="font-secondary text-secondary text-on-surface-variant opacity-60">Alimentation</p>
+</div>
+<div class="text-right">
+<p class="font-monetary-sm text-primary">-84,50 €</p>
+<p class="font-label-caps text-[10px] text-on-surface-variant/50">14:22</p>
+</div>
+</div>
+<!-- Transaction 2 -->
+<div class="flex items-center gap-4 group cursor-pointer">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">local_gas_station</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-section-title text-section-title truncate">Essence</p>
+<p class="font-secondary text-secondary text-on-surface-variant opacity-60">Transport</p>
+</div>
+<div class="text-right">
+<p class="font-monetary-sm text-primary">-62,00 €</p>
+<p class="font-label-caps text-[10px] text-on-surface-variant/50">09:15</p>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-outline-variant">
+<div class="flex justify-between items-center mb-2">
+<span class="font-label-caps text-on-surface-variant">Dépense Totale</span>
+<span class="font-monetary-lg text-monetary-lg text-primary">-146,50 €</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-on-surface-variant">Revenus</span>
+<span class="font-monetary-sm text-secondary">0,00 €</span>
+</div>
+</div>
+<button class="mt-8 w-full py-3 rounded-lg border border-outline-variant font-section-title text-on-surface hover:bg-surface-container-low transition-colors active:scale-95">
+                        Voir tout le relevé
+                    </button>
+</div>
+<!-- Summary Card -->
+<div class="bg-primary text-white rounded-xl p-6 relative overflow-hidden">
+
+<div class="relative z-10">
+<h4 class="font-label-caps text-white/80 mb-1">BUDGET JUILLET</h4>
+<p class="font-monetary-lg text-white">2 450,00 € restant</p>
+<div class="mt-4 h-1.5 bg-white/20 rounded-full overflow-hidden">
+<div class="h-full bg-white w-2/3"></div>
+</div>
+<p class="mt-2 font-secondary text-[12px] text-white/70">Vous avez utilisé 33% de votre budget mensuel.</p>
+</div>
+</div>
+</aside>
+</main>
+</div>
+<!-- Micro-interaction script -->
+<script>
+        document.querySelectorAll('.calendar-cell:not(.active):not(.opacity-40)').forEach(cell => {
+            cell.addEventListener('click', () => {
+                // Remove active from all
+                document.querySelectorAll('.calendar-cell').forEach(c => c.classList.remove('active'));
+                // Add active to current
+                cell.classList.add('active');
+                
+                // For demo purposes, we'd update the side panel here
+                console.log('Selected date:', cell.querySelector('.font-label-caps').innerText);
+            });
+        });
+    </script>
+</body></html>

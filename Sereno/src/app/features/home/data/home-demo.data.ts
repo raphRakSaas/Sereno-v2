@@ -136,9 +136,10 @@ export const HOME_DEMO_DATA: HomeDashboardData = {
     { id: 'slice-transport', label: 'Transport', percent: 15, colorClass: 'bg-chart-3' },
     { id: 'slice-other', label: 'Autres', percent: 15, colorClass: 'bg-chart-4' },
   ],
+  /** Fixture de tests uniquement — le store renvoie toujours savingsGoal: null. */
   savingsGoal: {
-    id: 'goal-japan',
-    name: 'Voyage Japon 2027',
+    id: 'goal-fixture',
+    name: 'Objectif fixture tests',
     targetDateLabel: 'Objectif : mai 2027',
     savedInCents: 342000,
     targetInCents: 800000,

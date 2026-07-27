@@ -1,0 +1,72 @@
+[
+  {
+    "slug": "activite",
+    "title": "Sereno — Activité",
+    "width": "2560",
+    "height": "2566",
+    "htmlBytes": 35445,
+    "htmlContentType": "text/html",
+    "imageBytes": 67931,
+    "imageContentType": "image/png"
+  },
+  {
+    "slug": "calendrier",
+    "title": "Sereno — Calendrier",
+    "width": "2560",
+    "height": "2048",
+    "htmlBytes": 20775,
+    "htmlContentType": "text/html",
+    "imageBytes": 36719,
+    "imageContentType": "image/png"
+  },
+  {
+    "slug": "statistiques",
+    "title": "Sereno — Statistiques",
+    "width": "2560",
+    "height": "2410",
+    "htmlBytes": 25944,
+    "htmlContentType": "text/html",
+    "imageBytes": 60013,
+    "imageContentType": "image/png"
+  },
+  {
+    "slug": "budgets",
+    "title": "Sereno — Budgets",
+    "width": "2560",
+    "height": "2290",
+    "htmlBytes": 22729,
+    "htmlContentType": "text/html",
+    "imageBytes": 52276,
+    "imageContentType": "image/png"
+  },
+  {
+    "slug": "recurrences",
+    "title": "Sereno — Récurrences",
+    "width": "2560",
+    "height": "2048",
+    "htmlBytes": 24914,
+    "htmlContentType": "text/html",
+    "imageBytes": 55552,
+    "imageContentType": "image/png"
+  },
+  {
+    "slug": "objectifs",
+    "title": "Sereno — Objectifs d'épargne",
+    "width": "2560",
+    "height": "2516",
+    "htmlBytes": 26428,
+    "htmlContentType": "text/html",
+    "imageBytes": 69372,
+    "imageContentType": "image/png"
+  },
+  {
+    "slug": "reglages",
+    "title": "Sereno — Réglages",
+    "width": "2560",
+    "height": "2176",
+    "htmlBytes": 23970,
+    "htmlContentType": "text/html",
+    "imageBytes": 66851,
+    "imageContentType": "image/png"
+  }
+]

@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sereno - Activité</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .centimes {
+            font-size: 0.85em;
+        }
+        .tabular-nums {
+            font-variant-numeric: tabular-nums;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e2bec0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8e6f71;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#e0d8d5",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#e9e1dd",
+                        "secondary": "#006b56",
+                        "on-tertiary-container": "#fffbff",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#93f2d4",
+                        "outline-variant": "#e2bec0",
+                        "on-surface": "#1e1b19",
+                        "surface-tint": "#ba1340",
+                        "tertiary-fixed-dim": "#ffb86a",
+                        "tertiary-fixed": "#ffdcbc",
+                        "on-secondary-fixed-variant": "#005140",
+                        "on-secondary-fixed": "#002018",
+                        "error": "#ba1a1a",
+                        "primary-container": "#da3054",
+                        "on-surface-variant": "#5a4042",
+                        "surface": "#fff8f5",
+                        "tertiary-container": "#a2671c",
+                        "surface-variant": "#e9e1dd",
+                        "on-primary-fixed-variant": "#91002d",
+                        "on-secondary-container": "#00705a",
+                        "on-error": "#ffffff",
+                        "tertiary": "#855000",
+                        "secondary-fixed-dim": "#79d8bc",
+                        "surface-container-high": "#efe7e3",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#ffb2b8",
+                        "background": "#fff8f5",
+                        "inverse-on-surface": "#f7efeb",
+                        "secondary-fixed": "#96f4d7",
+                        "primary-fixed": "#ffdadb",
+                        "surface-container": "#f4ece8",
+                        "surface-bright": "#fff8f5",
+                        "outline": "#8e6f71",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#1e1b19",
+                        "on-tertiary-fixed": "#2c1700",
+                        "inverse-surface": "#33302d",
+                        "on-primary-fixed": "#40000f",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#683d00",
+                        "surface-container-low": "#faf2ee",
+                        "primary-fixed-dim": "#ffb2b8",
+                        "primary": "#b60e3d",
+                        "on-primary-container": "#fffbff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "content_max_width": "1180px",
+                        "sidebar_width": "240px",
+                        "grid_columns": "12",
+                        "stack_sm": "8px",
+                        "margin_page": "40px",
+                        "stack_lg": "24px",
+                        "gutter": "24px",
+                        "stack_xs": "4px",
+                        "stack_md": "16px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Inter"],
+                        "page-title": ["Inter"],
+                        "section-title": ["Inter"],
+                        "body": ["Inter"],
+                        "secondary": ["Inter"],
+                        "monetary-lg": ["Inter"],
+                        "monetary-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.06em", "fontWeight": "600"}],
+                        "page-title": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "section-title": ["15px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "body": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "secondary": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "monetary-lg": ["24px", {"fontWeight": "600"}],
+                        "monetary-sm": ["14px", {"fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body min-h-screen">
+<!-- Fixed SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-[240px] bg-surface border-r border-outline-variant flex flex-col py-stack_lg px-stack_md gap-stack_md z-20">
+<div class="flex items-center gap-stack_sm px-2 mb-stack_md">
+<div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+</div>
+<div>
+<h1 class="font-page-title text-page-title font-bold text-primary tracking-tight leading-none">sereno</h1>
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest opacity-70">Technical Finance</p>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[20px]">home</span>
+<span class="font-label-caps text-label-caps uppercase">Accueil</span>
+</a>
+<!-- Active Tab: Activité -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary font-semibold bg-primary-container/10 transition-all cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">history</span>
+<span class="font-label-caps text-label-caps uppercase">Activité</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[20px]">calendar_today</span>
+<span class="font-label-caps text-label-caps uppercase">Calendrier</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[20px]">query_stats</span>
+<span class="font-label-caps text-label-caps uppercase">Statistiques</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+<span class="font-label-caps text-label-caps uppercase">Budgets</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[20px]">ads_click</span>
+<span class="font-label-caps text-label-caps uppercase">Objectifs</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[20px]">repeat</span>
+<span class="font-label-caps text-label-caps uppercase">Récurrences</span>
+</a>
+<div class="mt-auto pt-stack_md flex flex-col gap-1 border-t border-outline-variant/30">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[20px]">person_off</span>
+<span class="font-label-caps text-label-caps uppercase">Mode invité</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-label-caps text-label-caps uppercase">Réglages</span>
+</a>
+</div>
+</nav>
+</aside>
+<!-- TopAppBar -->
+<header class="sticky top-0 z-10 bg-background border-b border-outline-variant ml-[240px]">
+<div class="flex items-center justify-between h-16 px-margin_page max-w-content_max_width mx-auto">
+<div class="flex items-center gap-stack_md">
+<h2 class="font-page-title text-page-title text-on-background">Juillet 2026</h2>
+<div class="flex items-center bg-surface-container rounded-full p-1 border border-outline-variant/50">
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-stack_md">
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low hover:bg-surface-container border border-outline-variant/20 transition-all">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="bg-primary hover:bg-primary-container text-on-primary px-5 py-2.5 rounded-lg font-label-caps text-label-caps uppercase tracking-wide transition-all active:scale-95">
+                    Nouvelle transaction
+                </button>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-[240px] p-margin_page max-w-content_max_width mx-auto">
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Page Header & Filters -->
+<div class="col-span-12 flex flex-col gap-stack_md mb-stack_lg">
+<div class="flex items-end justify-between">
+<div>
+<h1 class="font-page-title text-page-title text-on-background">Activité</h1>
+<p class="font-secondary text-secondary mt-1">Tu as enregistré 42 transactions ce mois-ci.</p>
+</div>
+</div>
+<!-- Filter Bar -->
+<div class="flex flex-wrap items-center gap-stack_sm bg-white p-2 rounded-xl border border-outline-variant">
+<div class="relative flex-1 min-w-[240px]">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-background border border-outline-variant rounded-lg text-body focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="Rechercher..." type="text"/>
+</div>
+<div class="h-8 w-px bg-outline-variant/50 mx-1"></div>
+<!-- Dropdowns -->
+<button class="flex items-center gap-2 px-3 py-2 bg-background border border-outline-variant rounded-lg hover:bg-surface-container transition-all">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Type:</span>
+<span class="font-body text-body">Touts</span>
+<span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+<button class="flex items-center gap-2 px-3 py-2 bg-background border border-outline-variant rounded-lg hover:bg-surface-container transition-all">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Catégorie:</span>
+<span class="font-body text-body">Toutes</span>
+<span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+<button class="flex items-center gap-2 px-3 py-2 bg-background border border-outline-variant rounded-lg hover:bg-surface-container transition-all">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Période:</span>
+<span class="font-body text-body">Juillet 2026</span>
+<span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+<div class="flex-1"></div>
+<button class="flex items-center gap-2 px-3 py-2 text-on-surface-variant hover:text-primary transition-all">
+<span class="font-label-caps text-label-caps uppercase">Trier par:</span>
+<span class="font-body text-body">Date</span>
+<span class="material-symbols-outlined text-[16px]">sort</span>
+</button>
+</div>
+</div>
+<!-- Transaction Table Container -->
+<div class="col-span-12 bg-white rounded-xl border border-outline-variant overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="w-12 px-4 py-3">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">receipt_long</span>
+</th>
+<th class="px-4 py-3 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Détails</th>
+<th class="px-4 py-3 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Catégorie</th>
+<th class="px-4 py-3 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Date</th>
+<th class="px-4 py-3 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider text-right">Montant</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<!-- Transaction Row 1: Salaire -->
+<tr class="hover:bg-background transition-colors group cursor-pointer">
+<td class="px-4 py-3 text-center">
+<span class="material-symbols-outlined text-outline text-[18px] opacity-20">attachment</span>
+</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-secondary-container/30 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+</div>
+<div>
+<p class="font-section-title text-section-title">Salaire mensuel</p>
+<p class="font-secondary text-secondary leading-none opacity-60">Virement Société Générale</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-secondary/10 text-secondary font-label-caps text-label-caps uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                                    Salaire
+                                </span>
+</td>
+<td class="px-4 py-3 font-secondary text-on-surface-variant">25 juil.</td>
+<td class="px-4 py-3 text-right font-monetary-sm text-secondary tabular-nums text-lg">
+                                +3 200<span class="centimes">,00 €</span>
+</td>
+</tr>
+<!-- Transaction Row 2: Loyer -->
+<tr class="hover:bg-background transition-colors group cursor-pointer">
+<td class="px-4 py-3 text-center">
+<span class="material-symbols-outlined text-primary text-[18px]">attachment</span>
+</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">home</span>
+</div>
+<div>
+<p class="font-section-title text-section-title">Loyer Juillet</p>
+<p class="font-secondary text-secondary leading-none opacity-60">Prélèvement automatique</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                                    Logement
+                                </span>
+</td>
+<td class="px-4 py-3 font-secondary text-on-surface-variant">01 juil.</td>
+<td class="px-4 py-3 text-right font-monetary-sm text-on-surface tabular-nums text-lg">
+                                -1 200<span class="centimes">,00 €</span>
+</td>
+</tr>
+<!-- Row 3: Carrefour -->
+<tr class="hover:bg-background transition-colors group cursor-pointer">
+<td class="px-4 py-3 text-center">
+<span class="material-symbols-outlined text-outline text-[18px] opacity-20">attachment</span>
+</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-tertiary-container/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[20px]">shopping_cart</span>
+</div>
+<div>
+<p class="font-section-title text-section-title">Courses Carrefour</p>
+<p class="font-secondary text-secondary leading-none opacity-60">Carte bancaire *9421</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-tertiary/10 text-tertiary font-label-caps text-label-caps uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                                    Courses
+                                </span>
+</td>
+<td class="px-4 py-3 font-secondary text-on-surface-variant">14 juil.</td>
+<td class="px-4 py-3 text-right font-monetary-sm text-on-surface tabular-nums text-lg">
+                                -85<span class="centimes">,40 €</span>
+</td>
+</tr>
+<!-- Row 4: Essence -->
+<tr class="hover:bg-background transition-colors group cursor-pointer">
+<td class="px-4 py-3 text-center">
+<span class="material-symbols-outlined text-outline text-[18px] opacity-20">attachment</span>
+</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">local_gas_station</span>
+</div>
+<div>
+<p class="font-section-title text-section-title">Plein Essence Total</p>
+<p class="font-secondary text-secondary leading-none opacity-60">Station A13 - Paris</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-primary/10 text-primary font-label-caps text-label-caps uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                    Transport
+                                </span>
+</td>
+<td class="px-4 py-3 font-secondary text-on-surface-variant">12 juil.</td>
+<td class="px-4 py-3 text-right font-monetary-sm text-on-surface tabular-nums text-lg">
+                                -60<span class="centimes">,00 €</span>
+</td>
+</tr>
+<!-- Row 5: Spotify -->
+<tr class="hover:bg-background transition-colors group cursor-pointer">
+<td class="px-4 py-3 text-center">
+<span class="material-symbols-outlined text-outline text-[18px] opacity-20">attachment</span>
+</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-on-secondary-fixed-variant/10 flex items-center justify-center text-on-secondary-fixed-variant">
+<span class="material-symbols-outlined text-[20px]">music_note</span>
+</div>
+<div>
+<p class="font-section-title text-section-title">Abonnement Spotify</p>
+<p class="font-secondary text-secondary leading-none opacity-60">Abonnement Premium</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-on-secondary-fixed-variant/10 text-on-secondary-fixed-variant font-label-caps text-label-caps uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-on-secondary-fixed-variant"></span>
+                                    Loisirs
+                                </span>
+</td>
+<td class="px-4 py-3 font-secondary text-on-surface-variant">08 juil.</td>
+<td class="px-4 py-3 text-right font-monetary-sm text-on-surface tabular-nums text-lg">
+                                -10<span class="centimes">,99 €</span>
+</td>
+</tr>
+<!-- Row 6: Restaurant -->
+<tr class="hover:bg-background transition-colors group cursor-pointer">
+<td class="px-4 py-3 text-center">
+<span class="material-symbols-outlined text-primary text-[18px]">attachment</span>
+</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-tertiary-container/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[20px]">restaurant</span>
+</div>
+<div>
+<p class="font-section-title text-section-title">Le Petit Bistro</p>
+<p class="font-secondary text-secondary leading-none opacity-60">Dîner entre amis</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-tertiary/10 text-tertiary font-label-caps text-label-caps uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                                    Restaurant
+                                </span>
+</td>
+<td class="px-4 py-3 font-secondary text-on-surface-variant">07 juil.</td>
+<td class="px-4 py-3 text-right font-monetary-sm text-on-surface tabular-nums text-lg">
+                                -45<span class="centimes">,00 €</span>
+</td>
+</tr>
+<!-- Row 7: Boulangerie -->
+<tr class="hover:bg-background transition-colors group cursor-pointer">
+<td class="px-4 py-3 text-center">
+<span class="material-symbols-outlined text-outline text-[18px] opacity-20">attachment</span>
+</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-tertiary-container/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[20px]">bakery_dining</span>
+</div>
+<div>
+<p class="font-section-title text-section-title">Boulangerie du Coin</p>
+<p class="font-secondary text-secondary leading-none opacity-60">Pain et viennoiseries</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-tertiary/10 text-tertiary font-label-caps text-label-caps uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                                    Courses
+                                </span>
+</td>
+<td class="px-4 py-3 font-secondary text-on-surface-variant">07 juil.</td>
+<td class="px-4 py-3 text-right font-monetary-sm text-on-surface tabular-nums text-lg">
+                                -4<span class="centimes">,50 €</span>
+</td>
+</tr>
+<!-- Row 8: Pharmacie -->
+<tr class="hover:bg-background transition-colors group cursor-pointer">
+<td class="px-4 py-3 text-center">
+<span class="material-symbols-outlined text-outline text-[18px] opacity-20">attachment</span>
+</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-error-container/40 flex items-center justify-center text-error">
+<span class="material-symbols-outlined text-[20px]">medical_services</span>
+</div>
+<div>
+<p class="font-section-title text-section-title">Pharmacie Centrale</p>
+<p class="font-secondary text-secondary leading-none opacity-60">Médicaments</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-error-container/20 text-error font-label-caps text-label-caps uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                                    Santé
+                                </span>
+</td>
+<td class="px-4 py-3 font-secondary text-on-surface-variant">06 juil.</td>
+<td class="px-4 py-3 text-right font-monetary-sm text-on-surface tabular-nums text-lg">
+                                -12<span class="centimes">,30 €</span>
+</td>
+</tr>
+<!-- Row 9: Amazon -->
+<tr class="hover:bg-background transition-colors group cursor-pointer">
+<td class="px-4 py-3 text-center">
+<span class="material-symbols-outlined text-outline text-[18px] opacity-20">attachment</span>
+</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">shopping_bag</span>
+</div>
+<div>
+<p class="font-section-title text-section-title">Amazon.fr</p>
+<p class="font-secondary text-secondary leading-none opacity-60">Commande #403-12</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-primary-container/5 text-primary font-label-caps text-label-caps uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                    Shopping
+                                </span>
+</td>
+<td class="px-4 py-3 font-secondary text-on-surface-variant">05 juil.</td>
+<td class="px-4 py-3 text-right font-monetary-sm text-on-surface tabular-nums text-lg">
+                                -29<span class="centimes">,99 €</span>
+</td>
+</tr>
+<!-- Row 10: Remboursement -->
+<tr class="hover:bg-background transition-colors group cursor-pointer">
+<td class="px-4 py-3 text-center">
+<span class="material-symbols-outlined text-outline text-[18px] opacity-20">attachment</span>
+</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-error-container/40 flex items-center justify-center text-error">
+<span class="material-symbols-outlined text-[20px]">health_and_safety</span>
+</div>
+<div>
+<p class="font-section-title text-section-title">Remboursement Mutuelle</p>
+<p class="font-secondary text-secondary leading-none opacity-60">Alan Insurance</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-error-container/20 text-error font-label-caps text-label-caps uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                                    Santé
+                                </span>
+</td>
+<td class="px-4 py-3 font-secondary text-on-surface-variant">04 juil.</td>
+<td class="px-4 py-3 text-right font-monetary-sm text-secondary tabular-nums text-lg">
+                                +10<span class="centimes">,00 €</span>
+</td>
+</tr>
+<!-- Row 11: Boulangerie (Again) -->
+<tr class="hover:bg-background transition-colors group cursor-pointer">
+<td class="px-4 py-3 text-center">
+<span class="material-symbols-outlined text-outline text-[18px] opacity-20">attachment</span>
+</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-tertiary-container/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[20px]">bakery_dining</span>
+</div>
+<div>
+<p class="font-section-title text-section-title">Boulangerie du Coin</p>
+<p class="font-secondary text-secondary leading-none opacity-60">Pain</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-tertiary/10 text-tertiary font-label-caps text-label-caps uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                                    Courses
+                                </span>
+</td>
+<td class="px-4 py-3 font-secondary text-on-surface-variant">03 juil.</td>
+<td class="px-4 py-3 text-right font-monetary-sm text-on-surface tabular-nums text-lg">
+                                -1<span class="centimes">,20 €</span>
+</td>
+</tr>
+<!-- Row 12: Netflix -->
+<tr class="hover:bg-background transition-colors group cursor-pointer">
+<td class="px-4 py-3 text-center">
+<span class="material-symbols-outlined text-outline text-[18px] opacity-20">attachment</span>
+</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-on-secondary-fixed-variant/10 flex items-center justify-center text-on-secondary-fixed-variant">
+<span class="material-symbols-outlined text-[20px]">movie</span>
+</div>
+<div>
+<p class="font-section-title text-section-title">Netflix.com</p>
+<p class="font-secondary text-secondary leading-none opacity-60">Abonnement mensuel</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-on-secondary-fixed-variant/10 text-on-secondary-fixed-variant font-label-caps text-label-caps uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-on-secondary-fixed-variant"></span>
+                                    Loisirs
+                                </span>
+</td>
+<td class="px-4 py-3 font-secondary text-on-surface-variant">03 juil.</td>
+<td class="px-4 py-3 text-right font-monetary-sm text-on-surface tabular-nums text-lg">
+                                -17<span class="centimes">,99 €</span>
+</td>
+</tr>
+<!-- Row 13: Starbucks -->
+<tr class="hover:bg-background transition-colors group cursor-pointer">
+<td class="px-4 py-3 text-center">
+<span class="material-symbols-outlined text-primary text-[18px]">attachment</span>
+</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-tertiary-container/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[20px]">coffee</span>
+</div>
+<div>
+<p class="font-section-title text-section-title">Starbucks Coffee</p>
+<p class="font-secondary text-secondary leading-none opacity-60">Café Gare de Lyon</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-tertiary/10 text-tertiary font-label-caps text-label-caps uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                                    Restaurant
+                                </span>
+</td>
+<td class="px-4 py-3 font-secondary text-on-surface-variant">02 juil.</td>
+<td class="px-4 py-3 text-right font-monetary-sm text-on-surface tabular-nums text-lg">
+                                -6<span class="centimes">,45 €</span>
+</td>
+</tr>
+<!-- Row 14: Uber -->
+<tr class="hover:bg-background transition-colors group cursor-pointer">
+<td class="px-4 py-3 text-center">
+<span class="material-symbols-outlined text-outline text-[18px] opacity-20">attachment</span>
+</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">directions_car</span>
+</div>
+<div>
+<p class="font-section-title text-section-title">Uber Trip</p>
+<p class="font-secondary text-secondary leading-none opacity-60">Course de nuit</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-primary/10 text-primary font-label-caps text-label-caps uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                    Transport
+                                </span>
+</td>
+<td class="px-4 py-3 font-secondary text-on-surface-variant">01 juil.</td>
+<td class="px-4 py-3 text-right font-monetary-sm text-on-surface tabular-nums text-lg">
+                                -22<span class="centimes">,10 €</span>
+</td>
+</tr>
+<!-- Row 15: Monoprix -->
+<tr class="hover:bg-background transition-colors group cursor-pointer">
+<td class="px-4 py-3 text-center">
+<span class="material-symbols-outlined text-outline text-[18px] opacity-20">attachment</span>
+</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-tertiary-container/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[20px]">shopping_basket</span>
+</div>
+<div>
+<p class="font-section-title text-section-title">Monoprix City</p>
+<p class="font-secondary text-secondary leading-none opacity-60">Petites courses</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-tertiary/10 text-tertiary font-label-caps text-label-caps uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                                    Courses
+                                </span>
+</td>
+<td class="px-4 py-3 font-secondary text-on-surface-variant">01 juil.</td>
+<td class="px-4 py-3 text-right font-monetary-sm text-on-surface tabular-nums text-lg">
+                                -14<span class="centimes">,20 €</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Conceptual Empty State (Hidden by default, used for search logic) -->
+<div class="hidden col-span-12 flex flex-col items-center justify-center py-24 text-center" id="empty-state">
+<div class="w-20 h-20 rounded-full bg-surface-container flex items-center justify-center mb-stack_md border border-outline-variant/30">
+<span class="material-symbols-outlined text-on-surface-variant text-[40px]">search_off</span>
+</div>
+<h3 class="font-page-title text-page-title text-on-surface mb-2">Aucune transaction trouvée</h3>
+<p class="font-body text-body text-on-surface-variant max-w-xs">
+                    Modifie tes filtres pour voir d'autres résultats ou essaye une autre recherche.
+                </p>
+</div>
+</div>
+</main>
+<!-- Micro-interaction script for the table and filters -->
+<script>
+        // Simple search filter simulation
+        const searchInput = document.querySelector('input[type="text"]');
+        const rows = document.querySelectorAll('tbody tr');
+        const emptyState = document.getElementById('empty-state');
+        const tableBody = document.querySelector('tbody').parentElement.parentElement;
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    row.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    row.classList.add('hidden');
+                }
+            });
+
+            if (visibleCount === 0) {
+                tableBody.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+            } else {
+                tableBody.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+            }
+        });
+
+        // Toggle active state for dropdowns
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                btn.classList.add('scale-95');
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.classList.remove('scale-95');
+            });
+        });
+    </script>
+</body></html>

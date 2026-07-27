@@ -17,6 +17,41 @@ export const routes: Routes = [
         path: '',
         loadComponent: () => import('./features/home/home').then((module) => module.Home),
       },
+      {
+        path: 'activite',
+        loadComponent: () =>
+          import('./features/activity/activity').then((module) => module.Activity),
+      },
+      {
+        path: 'calendrier',
+        loadComponent: () =>
+          import('./features/calendar/calendar').then((module) => module.CalendarPage),
+      },
+      {
+        path: 'statistiques',
+        loadComponent: () =>
+          import('./features/statistics/statistics').then((module) => module.Statistics),
+      },
+      {
+        path: 'budgets',
+        loadComponent: () =>
+          import('./features/budgets/budgets').then((module) => module.Budgets),
+      },
+      {
+        path: 'objectifs',
+        loadComponent: () =>
+          import('./features/goals/goals').then((module) => module.Goals),
+      },
+      {
+        path: 'recurrences',
+        loadComponent: () =>
+          import('./features/recurrences/recurrences').then((module) => module.Recurrences),
+      },
+      {
+        path: 'reglages',
+        loadComponent: () =>
+          import('./features/settings/settings').then((module) => module.Settings),
+      },
     ],
   },
 ];

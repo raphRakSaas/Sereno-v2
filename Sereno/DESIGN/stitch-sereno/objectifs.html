@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sereno - Objectifs d'épargne</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Config Verbatim -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed-dim": "#ffb2b8",
+                    "error-container": "#ffdad6",
+                    "surface-bright": "#fff8f5",
+                    "secondary": "#006b56",
+                    "on-background": "#1e1b19",
+                    "inverse-on-surface": "#f7efeb",
+                    "surface-container-low": "#faf2ee",
+                    "on-surface-variant": "#5a4042",
+                    "on-secondary-container": "#00705a",
+                    "primary": "#b60e3d",
+                    "on-primary-fixed": "#40000f",
+                    "on-primary-container": "#fffbff",
+                    "primary-container": "#da3054",
+                    "tertiary-container": "#a2671c",
+                    "on-tertiary-fixed": "#2c1700",
+                    "primary-fixed": "#ffdadb",
+                    "on-secondary-fixed": "#002018",
+                    "outline": "#8e6f71",
+                    "surface-tint": "#ba1340",
+                    "surface-container-highest": "#e9e1dd",
+                    "secondary-fixed": "#96f4d7",
+                    "secondary-fixed-dim": "#79d8bc",
+                    "tertiary": "#855000",
+                    "surface-container-high": "#efe7e3",
+                    "surface-container": "#f4ece8",
+                    "on-tertiary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed-variant": "#91002d",
+                    "surface-dim": "#e0d8d5",
+                    "outline-variant": "#e2bec0",
+                    "on-tertiary-container": "#fffbff",
+                    "on-secondary-fixed-variant": "#005140",
+                    "on-error-container": "#93000a",
+                    "inverse-surface": "#33302d",
+                    "inverse-primary": "#ffb2b8",
+                    "on-surface": "#1e1b19",
+                    "on-secondary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "background": "#fff8f5",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-container": "#93f2d4",
+                    "surface-variant": "#e9e1dd",
+                    "tertiary-fixed-dim": "#ffb86a",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed": "#ffdcbc",
+                    "surface": "#fff8f5",
+                    "on-tertiary-fixed-variant": "#683d00"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack_sm": "8px",
+                    "sidebar_width": "240px",
+                    "content_max_width": "1180px",
+                    "grid_columns": "12",
+                    "stack_md": "16px",
+                    "gutter": "24px",
+                    "stack_lg": "24px",
+                    "stack_xs": "4px",
+                    "margin_page": "40px"
+            },
+            "fontFamily": {
+                    "page-title": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "secondary": ["Inter"],
+                    "section-title": ["Inter"],
+                    "monetary-sm": ["Inter"],
+                    "monetary-lg": ["Inter"],
+                    "body": ["Inter"]
+            },
+            "fontSize": {
+                    "page-title": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                    "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.06em", "fontWeight": "600" }],
+                    "secondary": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                    "section-title": ["15px", { "lineHeight": "20px", "fontWeight": "600" }],
+                    "monetary-sm": ["14px", { "fontWeight": "500" }],
+                    "monetary-lg": ["24px", { "fontWeight": "600" }],
+                    "body": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #FAF8F6; /* From style guidance foundation */
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .tabular-nums {
+            font-variant-numeric: tabular-nums;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        /* Custom scrollbar for dense finance look */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #E8E4E0; border-radius: 10px; }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- SideNavBar (from JSON) -->
+<aside class="fixed left-0 top-0 h-full w-[240px] bg-surface border-r border-outline-variant flex flex-col py-stack_lg px-stack_md gap-stack_md">
+<!-- Brand Header -->
+<div class="flex flex-col mb-stack_lg">
+<h1 class="font-page-title text-page-title font-bold text-primary tracking-tight">sereno</h1>
+<p class="font-secondary text-secondary opacity-60">Technical Finance</p>
+</div>
+<!-- CTA -->
+<button class="w-full bg-primary text-on-primary py-stack_sm px-stack_md rounded-lg font-semibold text-sm transition-transform active:scale-95 flex items-center justify-center gap-2 mb-stack_md">
+<span class="material-symbols-outlined text-[18px]">add</span>
+            Nouvelle transaction
+        </button>
+<!-- Navigation Tabs -->
+<nav class="flex-1 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-stack_md py-stack_sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-caps text-label-caps uppercase">Accueil</span>
+</a>
+<a class="flex items-center gap-3 px-stack_md py-stack_sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-label-caps text-label-caps uppercase">Activité</span>
+</a>
+<a class="flex items-center gap-3 px-stack_md py-stack_sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-label-caps text-label-caps uppercase">Calendrier</span>
+</a>
+<a class="flex items-center gap-3 px-stack_md py-stack_sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+<span class="font-label-caps text-label-caps uppercase">Statistiques</span>
+</a>
+<a class="flex items-center gap-3 px-stack_md py-stack_sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="font-label-caps text-label-caps uppercase">Budgets</span>
+</a>
+<!-- Active Tab: Objectifs -->
+<a class="flex items-center gap-3 px-stack_md py-stack_sm rounded-lg text-primary font-semibold bg-primary-container/10 transition-colors duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="ads_click" style="font-variation-settings: 'FILL' 1;">ads_click</span>
+<span class="font-label-caps text-label-caps uppercase">Objectifs</span>
+</a>
+<a class="flex items-center gap-3 px-stack_md py-stack_sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="repeat">repeat</span>
+<span class="font-label-caps text-label-caps uppercase">Récurrences</span>
+</a>
+<a class="flex items-center gap-3 px-stack_md py-stack_sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-caps text-label-caps uppercase">Réglages</span>
+</a>
+</nav>
+<!-- Footer Tabs -->
+<div class="mt-auto flex flex-col gap-1 pt-stack_md border-t border-outline-variant">
+<a class="flex items-center gap-3 px-stack_md py-stack_sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="person_off">person_off</span>
+<span class="font-label-caps text-label-caps uppercase">Mode invité</span>
+</a>
+<a class="flex items-center gap-3 px-stack_md py-stack_sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="dark_mode">dark_mode</span>
+<span class="font-label-caps text-label-caps uppercase">Thème</span>
+</a>
+</div>
+</aside>
+<!-- Main Workspace -->
+<main class="ml-[240px] min-h-screen flex flex-col">
+<!-- TopAppBar (from JSON) -->
+<header class="sticky top-0 z-10 bg-background border-b border-outline-variant h-16 flex items-center justify-between px-margin_page">
+<div class="flex items-center gap-4">
+<h2 class="font-page-title text-page-title">Objectifs d'épargne</h2>
+<div class="h-4 w-[1px] bg-outline-variant"></div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<button class="material-symbols-outlined p-1 hover:bg-surface-container transition-all rounded">chevron_left</button>
+<span class="font-secondary text-secondary font-bold text-primary">Juillet 2026</span>
+<button class="material-symbols-outlined p-1 hover:bg-surface-container transition-all rounded">chevron_right</button>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative group">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant text-[20px]">search</span>
+<input class="bg-surface-container-low border border-outline-variant rounded-full py-1.5 pl-10 pr-4 text-sm focus:outline-none focus:border-primary transition-all w-64" placeholder="Rechercher..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">notifications</button>
+<div class="w-8 h-8 rounded-full bg-primary-container/20 border border-primary/20 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a young business woman with a friendly expression, wearing a minimalist blazer. The lighting is soft and natural, against a clean off-white background consistent with a corporate minimalist finance app aesthetic. High-quality portrait photography with soft focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCa2XWw6mK2QD0WZ338j3KsDBmLZC6hOczvU6FiBPCBawshyV0CzrkXPM_E7SMU3FqXq0EVIpWsSXXDIFPRoHtK8NbLysDPG8CZzcS2jJsw-22VgvPgc9R7qawqMi32ydvb4_HFR_aGb3PEC0P_s2N0vIMjc-qVrkOh9YMEcCLguhEBMo2jf9-2wFYYucDm7Nkgq7hW88HtW51u15WZZPGX92x5JNvL_LmPx0SHNxwYnwBXyC9UHEqyUQ"/>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="p-margin_page max-w-content_max_width mx-auto w-full">
+<!-- Grid Layout for Goals -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter mb-stack_lg">
+<!-- Goal Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack_lg flex flex-col gap-stack_md group hover:border-primary/50 transition-all cursor-pointer">
+<div class="flex justify-between items-start">
+<div class="p-3 bg-secondary-container/20 rounded-lg text-secondary">
+<span class="material-symbols-outlined text-[28px]" data-icon="flight">flight</span>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">more_vert</button>
+</div>
+<div>
+<h3 class="font-section-title text-section-title mb-1">Voyage Japon 2027</h3>
+<p class="font-secondary text-secondary text-on-surface-variant uppercase tracking-wider text-[10px]">Loisirs &amp; Culture</p>
+</div>
+<div class="mt-2">
+<div class="flex justify-between items-end mb-2">
+<span class="font-monetary-lg text-monetary-lg text-primary tabular-nums">72%</span>
+<span class="font-secondary text-secondary tabular-nums">4 320 € / 6 000 €</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[72%] rounded-full"></div>
+</div>
+</div>
+<div class="mt-2 pt-stack_md border-t border-outline-variant flex justify-between items-center">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Reste à épargner</span>
+<span class="font-monetary-sm text-monetary-sm tabular-nums">1 680,00 €</span>
+</div>
+<span class="material-symbols-outlined text-primary group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+<!-- Goal Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack_lg flex flex-col gap-stack_md group hover:border-primary/50 transition-all cursor-pointer">
+<div class="flex justify-between items-start">
+<div class="p-3 bg-tertiary-container/20 rounded-lg text-tertiary">
+<span class="material-symbols-outlined text-[28px]" data-icon="home_work">home_work</span>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">more_vert</button>
+</div>
+<div>
+<h3 class="font-section-title text-section-title mb-1">Apport Appartement</h3>
+<p class="font-secondary text-secondary text-on-surface-variant uppercase tracking-wider text-[10px]">Immobilier</p>
+</div>
+<div class="mt-2">
+<div class="flex justify-between items-end mb-2">
+<span class="font-monetary-lg text-monetary-lg text-primary tabular-nums">15%</span>
+<span class="font-secondary text-secondary tabular-nums">12 450 € / 80 000 €</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[15%] rounded-full"></div>
+</div>
+</div>
+<div class="mt-2 pt-stack_md border-t border-outline-variant flex justify-between items-center">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Reste à épargner</span>
+<span class="font-monetary-sm text-monetary-sm tabular-nums">67 550,00 €</span>
+</div>
+<span class="material-symbols-outlined text-primary group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+<!-- Goal Card 3 (Active Selection Trigger) -->
+<div class="bg-surface-container-lowest border-2 border-primary rounded-xl p-stack_lg flex flex-col gap-stack_md group shadow-sm ring-4 ring-primary/5">
+<div class="flex justify-between items-start">
+<div class="p-3 bg-primary-container/10 rounded-lg text-primary">
+<span class="material-symbols-outlined text-[28px]" data-icon="emergency">emergency</span>
+</div>
+<span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Prioritaire</span>
+</div>
+<div>
+<h3 class="font-section-title text-section-title mb-1">Fonds d'urgence</h3>
+<p class="font-secondary text-secondary text-on-surface-variant uppercase tracking-wider text-[10px]">Sécurité</p>
+</div>
+<div class="mt-2">
+<div class="flex justify-between items-end mb-2">
+<span class="font-monetary-lg text-monetary-lg text-primary tabular-nums">85%</span>
+<span class="font-secondary text-secondary tabular-nums">12 750 € / 15 000 €</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[85%] rounded-full"></div>
+</div>
+</div>
+<div class="mt-2 pt-stack_md border-t border-outline-variant flex justify-between items-center">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Reste à épargner</span>
+<span class="font-monetary-sm text-monetary-sm tabular-nums">2 250,00 €</span>
+</div>
+<div class="flex items-center gap-1 text-primary">
+<span class="text-[12px] font-semibold">Détails</span>
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Add Goal Card (Empty state) -->
+<button class="bg-transparent border-2 border-dashed border-outline-variant rounded-xl p-stack_lg flex flex-col items-center justify-center gap-stack_sm group hover:border-primary hover:bg-primary/5 transition-all text-on-surface-variant hover:text-primary">
+<span class="material-symbols-outlined text-[40px] mb-2 group-hover:scale-110 transition-transform">add_circle</span>
+<span class="font-section-title text-section-title">Ajouter un objectif</span>
+<span class="font-secondary text-secondary opacity-60 text-center px-4">Définissez une nouvelle cible d'épargne pour vos projets futurs.</span>
+</button>
+</div>
+<!-- Detailed View: Manual Contributions List -->
+<div class="mt-stack_lg animate-in fade-in slide-in-from-bottom-4 duration-500">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
+<div class="px-stack_lg py-stack_md border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+<div>
+<h3 class="font-section-title text-section-title">Détails : Fonds d'urgence</h3>
+<p class="font-secondary text-secondary opacity-60">Historique des contributions manuelles</p>
+</div>
+<div class="flex gap-stack_sm">
+<button class="px-3 py-1.5 border border-outline-variant rounded-lg text-sm font-medium hover:bg-surface-container-high transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">download</span> Exporter
+                            </button>
+<button class="px-3 py-1.5 bg-primary text-on-primary rounded-lg text-sm font-medium hover:opacity-90 transition-opacity flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span> Verser
+                            </button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-stack_lg py-3 font-label-caps text-label-caps text-on-surface-variant uppercase">Date</th>
+<th class="px-stack_lg py-3 font-label-caps text-label-caps text-on-surface-variant uppercase">Source</th>
+<th class="px-stack_lg py-3 font-label-caps text-label-caps text-on-surface-variant uppercase">Description</th>
+<th class="px-stack_lg py-3 font-label-caps text-label-caps text-on-surface-variant uppercase text-right">Montant</th>
+<th class="px-stack_lg py-3 font-label-caps text-label-caps text-on-surface-variant uppercase text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="px-stack_lg py-4 tabular-nums text-sm font-medium">12 Juil. 2026</td>
+<td class="px-stack_lg py-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]">account_balance</span>
+</div>
+<span class="text-sm">Compte Courant BNP</span>
+</div>
+</td>
+<td class="px-stack_lg py-4 text-sm text-on-surface-variant italic">Virement mensuel automatique</td>
+<td class="px-stack_lg py-4 text-right font-monetary-sm tabular-nums text-secondary">+ 450,00 €</td>
+<td class="px-stack_lg py-4 text-right">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity">edit</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="px-stack_lg py-4 tabular-nums text-sm font-medium">04 Juil. 2026</td>
+<td class="px-stack_lg py-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]">savings</span>
+</div>
+<span class="text-sm">Bonus exceptionnel</span>
+</div>
+</td>
+<td class="px-stack_lg py-4 text-sm text-on-surface-variant italic">Prime de performance Q2</td>
+<td class="px-stack_lg py-4 text-right font-monetary-sm tabular-nums text-secondary">+ 1 200,00 €</td>
+<td class="px-stack_lg py-4 text-right">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity">edit</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="px-stack_lg py-4 tabular-nums text-sm font-medium">28 Juin 2026</td>
+<td class="px-stack_lg py-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]">account_balance</span>
+</div>
+<span class="text-sm">Compte Courant BNP</span>
+</div>
+</td>
+<td class="px-stack_lg py-4 text-sm text-on-surface-variant italic">Virement mensuel automatique</td>
+<td class="px-stack_lg py-4 text-right font-monetary-sm tabular-nums text-secondary">+ 450,00 €</td>
+<td class="px-stack_lg py-4 text-right">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity">edit</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="px-stack_lg py-4 tabular-nums text-sm font-medium">15 Juin 2026</td>
+<td class="px-stack_lg py-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]">payments</span>
+</div>
+<span class="text-sm">Vente Vinted</span>
+</div>
+</td>
+<td class="px-stack_lg py-4 text-sm text-on-surface-variant italic">Vente anciens équipements</td>
+<td class="px-stack_lg py-4 text-right font-monetary-sm tabular-nums text-secondary">+ 85,50 €</td>
+<td class="px-stack_lg py-4 text-right">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity">edit</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-stack_lg py-stack_md bg-surface-container-low/30 border-t border-outline-variant flex justify-between items-center">
+<span class="text-xs text-on-surface-variant">Affichage de 4 contributions</span>
+<div class="flex gap-2">
+<button class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded hover:bg-surface-container-high disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded hover:bg-surface-container-high">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Insights / Analytics for Goals -->
+<div class="mt-stack_lg grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<div class="bg-primary/5 border border-primary/20 rounded-xl p-stack_lg flex items-start gap-stack_md">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined">trending_up</span>
+</div>
+<div>
+<h4 class="font-section-title text-section-title text-primary mb-1">Rythme d'épargne optimal</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">À votre rythme actuel (980 €/mois), vous atteindrez votre objectif <strong class="text-primary">Fonds d'urgence</strong> dans <strong class="text-primary">2 mois</strong> et votre objectif <strong class="text-primary">Voyage Japon</strong> dans <strong class="text-primary">14 mois</strong>.</p>
+</div>
+</div>
+<div class="bg-secondary/5 border border-secondary/20 rounded-xl p-stack_lg flex items-start gap-stack_md">
+<div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined">auto_awesome</span>
+</div>
+<div>
+<h4 class="font-section-title text-section-title text-secondary mb-1">Optimisation suggérée</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">Vous avez un surplus de <strong class="text-secondary">215 €</strong> sur votre budget mensuel. L'allouer à <strong class="text-secondary">Apport Appartement</strong> réduirait votre délai de 4 mois.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple interactive micro-interactions
+        document.querySelectorAll('.group').forEach(el => {
+            el.addEventListener('mousedown', () => {
+                el.style.transform = 'scale(0.98)';
+            });
+            el.addEventListener('mouseup', () => {
+                el.style.transform = 'scale(1)';
+            });
+        });
+
+        // Search highlight logic
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-primary/20');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-primary/20');
+        });
+    </script>
+</body></html>

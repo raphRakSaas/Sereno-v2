@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sereno - Réglages</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        /* Custom Scrollbar for high-density feel */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #FAF8F6; }
+        ::-webkit-scrollbar-thumb { background: #E8E4E0; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #D1CDC9; }
+
+        /* Custom Toggle Switch Styles */
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #b60e3d;
+        }
+        .toggle-checkbox:checked + .toggle-label .toggle-dot {
+            transform: translateX(100%);
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed-dim": "#ffb2b8",
+                    "error-container": "#ffdad6",
+                    "surface-bright": "#fff8f5",
+                    "secondary": "#006b56",
+                    "on-background": "#1e1b19",
+                    "inverse-on-surface": "#f7efeb",
+                    "surface-container-low": "#faf2ee",
+                    "on-surface-variant": "#5a4042",
+                    "on-secondary-container": "#00705a",
+                    "primary": "#b60e3d",
+                    "on-primary-fixed": "#40000f",
+                    "on-primary-container": "#fffbff",
+                    "primary-container": "#da3054",
+                    "tertiary-container": "#a2671c",
+                    "on-tertiary-fixed": "#2c1700",
+                    "primary-fixed": "#ffdadb",
+                    "on-secondary-fixed": "#002018",
+                    "outline": "#8e6f71",
+                    "surface-tint": "#ba1340",
+                    "surface-container-highest": "#e9e1dd",
+                    "secondary-fixed": "#96f4d7",
+                    "secondary-fixed-dim": "#79d8bc",
+                    "tertiary": "#855000",
+                    "surface-container-high": "#efe7e3",
+                    "surface-container": "#f4ece8",
+                    "on-tertiary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed-variant": "#91002d",
+                    "surface-dim": "#e0d8d5",
+                    "outline-variant": "#e2bec0",
+                    "on-tertiary-container": "#fffbff",
+                    "on-secondary-fixed-variant": "#005140",
+                    "on-error-container": "#93000a",
+                    "inverse-surface": "#33302d",
+                    "inverse-primary": "#ffb2b8",
+                    "on-surface": "#1e1b19",
+                    "on-secondary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "background": "#fff8f5",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-container": "#93f2d4",
+                    "surface-variant": "#e9e1dd",
+                    "tertiary-fixed-dim": "#ffb86a",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed": "#ffdcbc",
+                    "surface": "#fff8f5",
+                    "on-tertiary-fixed-variant": "#683d00"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack_sm": "8px",
+                    "sidebar_width": "240px",
+                    "content_max_width": "1180px",
+                    "grid_columns": "12",
+                    "stack_md": "16px",
+                    "gutter": "24px",
+                    "stack_lg": "24px",
+                    "stack_xs": "4px",
+                    "margin_page": "40px"
+            },
+            "fontFamily": {
+                    "page-title": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "secondary": ["Inter"],
+                    "section-title": ["Inter"],
+                    "monetary-sm": ["Inter"],
+                    "monetary-lg": ["Inter"],
+                    "body": ["Inter"]
+            },
+            "fontSize": {
+                    "page-title": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.06em", "fontWeight": "600"}],
+                    "secondary": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "section-title": ["15px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "monetary-sm": ["14px", {"fontWeight": "500"}],
+                    "monetary-lg": ["24px", {"fontWeight": "600"}],
+                    "body": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-container/30">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-full w-[240px] bg-surface dark:bg-surface-dim border-r border-outline-variant dark:border-outline flex flex-col py-stack_lg px-stack_md gap-stack_md z-20">
+<div class="flex items-center gap-3 px-2 mb-4">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'wght' 700;">account_balance</span>
+</div>
+<div>
+<h1 class="font-page-title text-page-title font-bold text-primary dark:text-inverse-primary tracking-tight leading-none">sereno</h1>
+<p class="text-[10px] font-label-caps uppercase tracking-widest text-on-surface-variant">Technical Finance</p>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary py-2.5 rounded font-section-title text-sm flex items-center justify-center gap-2 mb-4 cursor-pointer active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[20px]">add</span>
+            Nouvelle transaction
+        </button>
+<nav class="flex-1 space-y-1 overflow-y-auto">
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors duration-200 rounded cursor-pointer" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps">ACCUEIL</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200 rounded cursor-pointer" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-caps text-label-caps">ACTIVITÉ</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200 rounded cursor-pointer" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-caps text-label-caps">CALENDRIER</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200 rounded cursor-pointer" href="#">
+<span class="material-symbols-outlined">query_stats</span>
+<span class="font-label-caps text-label-caps">STATISTIQUES</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200 rounded cursor-pointer" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="font-label-caps text-label-caps">BUDGETS</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200 rounded cursor-pointer" href="#">
+<span class="material-symbols-outlined">ads_click</span>
+<span class="font-label-caps text-label-caps">OBJECTIFS</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200 rounded cursor-pointer" href="#">
+<span class="material-symbols-outlined">repeat</span>
+<span class="font-label-caps text-label-caps">RÉCURRENCES</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-primary dark:text-inverse-primary font-semibold bg-primary-container/10 rounded cursor-pointer" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps">RÉGLAGES</span>
+</a>
+</div>
+</nav>
+<div class="pt-stack_md border-t border-outline-variant">
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:text-primary transition-colors rounded" href="#">
+<span class="material-symbols-outlined">person_off</span>
+<span class="font-label-caps text-label-caps">MODE INVITÉ</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:text-primary transition-colors rounded" href="#">
+<span class="material-symbols-outlined">dark_mode</span>
+<span class="font-label-caps text-label-caps">THÈME</span>
+</a>
+</div>
+</aside>
+<!-- Top App Bar -->
+<header class="fixed top-0 right-0 left-[240px] bg-background border-b border-outline-variant z-10">
+<div class="flex items-center justify-between h-16 px-margin_page max-w-content_max_width mx-auto">
+<div class="flex items-center gap-4">
+<h2 class="font-page-title text-page-title text-on-background">Réglages</h2>
+<span class="text-on-surface-variant opacity-40">/</span>
+<span class="font-secondary text-secondary">Configuration Système</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-low rounded-lg border border-outline-variant/30">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-48 text-on-surface outline-none" placeholder="Rechercher un paramètre..." type="text"/>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-all active:scale-95">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-all active:scale-95">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-[240px] mt-16 p-margin_page min-h-screen">
+<div class="max-w-content_max_width mx-auto space-y-gutter">
+<!-- Grid Layout for Settings -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Left Column: Preferences & Import/Export -->
+<div class="lg:col-span-8 space-y-gutter">
+<!-- Préférences Section -->
+<section class="bg-surface-container-lowest border border-outline-variant p-stack_lg rounded-lg">
+<div class="flex items-center justify-between mb-stack_lg pb-stack_sm border-b border-outline-variant">
+<h3 class="font-section-title text-section-title flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">tune</span>
+                                Préférences d'affichage
+                            </h3>
+</div>
+<div class="space-y-6">
+<!-- Theme Toggle -->
+<div class="flex items-center justify-between group">
+<div>
+<p class="font-section-title text-sm">Mode Sombre</p>
+<p class="font-secondary text-secondary text-xs opacity-70">Ajuste l'interface pour les environnements peu éclairés.</p>
+</div>
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-2 border-outline-variant appearance-none cursor-pointer focus:ring-0 focus:ring-offset-0" id="toggle-dark" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-5 rounded-full bg-surface-container-high cursor-pointer transition-colors duration-200" for="toggle-dark">
+<span class="toggle-dot absolute block w-5 h-5 rounded-full bg-white border-2 border-outline-variant transform transition-transform duration-200 ease-in-out"></span>
+</label>
+</div>
+</div>
+<!-- Screen Selection -->
+<div class="flex items-center justify-between group">
+<div>
+<p class="font-section-title text-sm">Écran de démarrage</p>
+<p class="font-secondary text-secondary text-xs opacity-70">Définissez la vue par défaut lors de l'ouverture.</p>
+</div>
+<select class="bg-white border border-outline-variant rounded px-3 py-1.5 text-sm font-secondary focus:border-primary focus:ring-0 cursor-pointer">
+<option>Tableau de bord (Accueil)</option>
+<option>Dernières transactions</option>
+<option>Calendrier prévisionnel</option>
+<option>Vue Budget</option>
+</select>
+</div>
+<!-- Currency Selection -->
+<div class="flex items-center justify-between group">
+<div>
+<p class="font-section-title text-sm">Devise principale</p>
+<p class="font-secondary text-secondary text-xs opacity-70">Toutes les conversions seront basées sur cette unité.</p>
+</div>
+<div class="flex gap-2">
+<button class="px-4 py-1.5 border border-primary bg-primary-container/10 text-primary rounded text-xs font-label-caps">EUR (€)</button>
+<button class="px-4 py-1.5 border border-outline-variant text-on-surface-variant hover:bg-surface-container-low rounded text-xs font-label-caps transition-colors">USD ($)</button>
+<button class="px-4 py-1.5 border border-outline-variant text-on-surface-variant hover:bg-surface-container-low rounded text-xs font-label-caps transition-colors">GBP (£)</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Import/Export Section -->
+<section class="bg-surface-container-lowest border border-outline-variant p-stack_lg rounded-lg">
+<div class="flex items-center justify-between mb-stack_lg pb-stack_sm border-b border-outline-variant">
+<h3 class="font-section-title text-section-title flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">database</span>
+                                Gestion des données
+                            </h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="p-4 border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors group cursor-pointer">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-primary">data_object</span>
+<p class="font-section-title text-sm">Exporter en JSON</p>
+</div>
+<p class="text-xs text-on-surface-variant mb-4">Format brut recommandé pour les sauvegardes techniques et migrations.</p>
+<button class="w-full py-2 border border-outline-variant text-xs font-label-caps rounded bg-white hover:border-primary hover:text-primary transition-all">TÉLÉCHARGER .JSON</button>
+</div>
+<div class="p-4 border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors group cursor-pointer">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-secondary">table_view</span>
+<p class="font-section-title text-sm">Exporter en CSV</p>
+</div>
+<p class="text-xs text-on-surface-variant mb-4">Compatible avec Excel et Google Sheets pour vos propres analyses.</p>
+<button class="w-full py-2 border border-outline-variant text-xs font-label-caps rounded bg-white hover:border-secondary hover:text-secondary transition-all">TÉLÉCHARGER .CSV</button>
+</div>
+<div class="md:col-span-2 p-4 border-2 border-dashed border-outline-variant rounded-lg flex flex-col items-center justify-center text-center py-8 hover:bg-primary-container/5 transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-3xl text-on-surface-variant opacity-40 mb-2">cloud_upload</span>
+<p class="font-section-title text-sm">Importer une sauvegarde</p>
+<p class="text-xs text-on-surface-variant max-w-xs">Glissez-déposez votre fichier .json de sauvegarde Sereno pour restaurer vos comptes.</p>
+<input class="hidden" id="import-file" type="file"/>
+<label class="mt-4 px-6 py-2 bg-on-surface text-surface text-xs font-label-caps rounded cursor-pointer active:scale-95 transition-transform" for="import-file">PARCOURIR LES FICHIERS</label>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Storage & Technical Info -->
+<div class="lg:col-span-4 space-y-gutter">
+<!-- Stockage Section -->
+<section class="bg-surface-container-lowest border border-outline-variant p-stack_lg rounded-lg">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-section-title text-section-title flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">hard_drive</span>
+                                Stockage local
+                            </h3>
+</div>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between text-xs font-label-caps mb-2">
+<span class="text-on-surface-variant">Quota justificatifs</span>
+<span class="text-primary font-bold">78% utilisé</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full transition-all duration-1000" style="width: 78.4%"></div>
+</div>
+<div class="flex justify-between mt-2 text-[10px] text-on-surface-variant opacity-60">
+<span>392.2 Mo</span>
+<span>500 Mo Limite</span>
+</div>
+</div>
+<div class="p-3 bg-surface-container-low rounded border border-outline-variant/50">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-sm mt-0.5 text-on-surface-variant">info</span>
+<p class="text-[11px] leading-relaxed text-on-surface-variant">
+                                        Sereno utilise la technologie <strong>IndexedDB</strong> de votre navigateur pour stocker vos données localement. Aucune donnée n'est envoyée sur nos serveurs sans votre action explicite de synchronisation.
+                                    </p>
+</div>
+</div>
+<button class="w-full py-2 bg-error text-on-error text-xs font-label-caps rounded flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]">delete_forever</span>
+                                PURGER LA BASE LOCALE
+                            </button>
+</div>
+</section>
+<!-- Profile Quick View (Asymmetric layout element) -->
+<section class="bg-primary text-on-primary p-stack_lg rounded-lg relative overflow-hidden">
+<!-- Background abstract patterns using tailwind colors/opacity -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-container rounded-full -mr-16 -mt-16 opacity-20"></div>
+<div class="absolute bottom-0 left-0 w-24 h-24 bg-primary-container rounded-full -ml-12 -mb-12 opacity-20"></div>
+<div class="relative z-10">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-12 h-12 rounded-full border-2 border-white/30 overflow-hidden bg-white/10 flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="A sophisticated professional portrait of a tech-savvy finance professional in a bright, modern office with soft daylight. The person is looking directly at the camera with a confident, warm expression. The overall style is clean and minimalist, matching a high-end corporate aesthetic with a warm neutral color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnQRUwUcc1XndNKophEOhrDCwXmsDVBJqrhM7kWOhx3vImGgV6rZr0nYwZVfQAtALhUPFT5QqL6y8AD_m0t-P59UckSnwxaXQvEjMITztSCcu1aQBC0S1TIZEAPIGlZMf1fd6EyM8LvdgjmeZ2ncn6vpXrnbZAoSoLpz11ykz91sGBNoClneUKCySH7d4JZBOd18CdL3OaGy7ppaDB4fVO-99Sd_3x47MBvkui5Swpk3VBe2erYgDj_A"/>
+</div>
+<div>
+<p class="font-page-title text-sm leading-tight">Utilisateur Premium</p>
+<p class="font-label-caps text-[10px] opacity-70">ID: SRN-8829-X</p>
+</div>
+</div>
+<div class="bg-white/10 rounded p-3 mb-4">
+<p class="text-[11px] font-secondary mb-1 opacity-80">Prochaine facturation</p>
+<p class="font-monetary-sm text-sm">12 Janvier 2027 — 49.00€/an</p>
+</div>
+<button class="w-full py-2 bg-white text-primary text-xs font-label-caps rounded transition-colors hover:bg-surface-bright">GÉRER L'ABONNEMENT</button>
+</div>
+</section>
+<!-- Technical Stats (Bento-like tile) -->
+<section class="bg-surface-container-highest border border-outline-variant p-stack_lg rounded-lg">
+<h4 class="font-label-caps text-[10px] text-on-surface-variant mb-4 uppercase tracking-tighter">Diagnostic Système</h4>
+<div class="space-y-3">
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant">Version App</span>
+<span class="font-mono text-[10px] bg-white px-1.5 py-0.5 rounded border border-outline-variant">v2.4.1-stable</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant">Latence API</span>
+<span class="text-secondary font-semibold">14ms</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant">Dernière Sync</span>
+<span class="text-on-surface-variant">Il y a 3 min</span>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- Footer-like Technical Disclaimer -->
+<footer class="pt-gutter border-t border-outline-variant flex flex-col md:flex-row justify-between gap-4">
+<div class="max-w-xl">
+<p class="text-[10px] text-on-surface-variant leading-relaxed opacity-60">
+                        Sereno Technical Finance est une application client-side. Vos données financières ne sont stockées sur nos infrastructures qu'en cas d'activation du module de synchronisation cloud optionnel. L'intégrité de vos backups locaux relève de la responsabilité de l'utilisateur. Conforme RGPD & Privacy by Design.
+                    </p>
+</div>
+<div class="flex gap-4">
+<a class="text-[10px] font-label-caps text-on-surface-variant hover:text-primary transition-colors" href="#">POLITIQUE DE CONFIDENTIALITÉ</a>
+<a class="text-[10px] font-label-caps text-on-surface-variant hover:text-primary transition-colors" href="#">CGU</a>
+</div>
+</footer>
+</div>
+</main>
+<script>
+        // Simple micro-interactions
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                btn.style.transform = 'scale(0.98)';
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.style.transform = 'scale(1)';
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'scale(1)';
+            });
+        });
+
+        // Toggle Switch Interaction Logic
+        const toggles = document.querySelectorAll('.toggle-checkbox');
+        toggles.forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                if(this.id === 'toggle-dark') {
+                    if(this.checked) {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                }
+            });
+        });
+    </script>
+</body></html>

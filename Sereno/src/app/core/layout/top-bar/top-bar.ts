@@ -10,7 +10,7 @@ import { formatMonthLabel } from '../../../shared/utils/format-month';
     >
       <div class="mx-auto flex h-full max-w-content-max items-center justify-between px-page">
         <div class="flex items-center gap-4">
-          <h1 class="text-[24px] font-semibold text-text">{{ pageTitle() }}</h1>
+          <h1 class="text-[20px] font-semibold text-text">{{ pageTitle() }}</h1>
           <div
             class="flex items-center gap-1 rounded-full border border-border bg-surface px-3 py-1"
           >
