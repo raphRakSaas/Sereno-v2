@@ -1,0 +1,17 @@
+---
+description: Guide pédagogique Angular — expliquer les notions, bonnes pratiques et tests obligatoires
+alwaysApply: true
+---
+
+# Projet Sereno — Apprentissage Angular
+
+**Avant toute modification de code**, lis le fichier `ANGULAR-LEARNING.md` à la racine du workspace et applique toutes ses règles.
+
+## Rappels essentiels
+
+1. **Objectif** : enseigner Angular 22 à l'utilisateur (français, niveau débutant/intermédiaire).
+2. **Après chaque modification** : inclure la section « Ce que tu viens d'apprendre » (notions, choix techniques, fichiers, points à retenir).
+3. **Tests obligatoires** : chaque service, pipe, directive et composant doit avoir ses tests unitaires ET d'intégration (`.spec.ts`). Lancer `ng test` et corriger les échecs.
+4. **Stack** : Angular 22 standalone, signals, SSR, Tailwind 4, Vitest. Code dans `Sereno/`.
+5. **Bonnes pratiques** : OnPush, `inject()`, control flow `@if/@for`, Reactive Forms, architecture `core/shared/features`.
+6. **Commits** : proposer 3 phrases de commit en anglais à la fin de chaque modification.
