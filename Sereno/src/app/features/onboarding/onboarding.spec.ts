@@ -145,6 +145,24 @@ describe('Onboarding (integration)', () => {
     expect(activeNames).not.toContain('Loisirs');
   });
 
+  it('should render a refined completion summary with budget details', () => {
+    const fixture = TestBed.createComponent(Onboarding);
+    const state = fixture.debugElement.injector.get(OnboardingState);
+
+    state.setStep('completion');
+    state.updateInitialBalance(100000);
+    state.updateIncome(162500, 'Salaire');
+    state.updateBudgetDraft('cat-groceries', 40000);
+    state.updateBudgetDraft('cat-housing', 65000);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Tout est prêt');
+    expect(fixture.nativeElement.textContent).toContain('Détail des budgets');
+    expect(fixture.nativeElement.textContent).toContain('Courses');
+    expect(fixture.nativeElement.textContent).toContain('Logement');
+    expect(fixture.nativeElement.textContent).toContain('Accéder à Sereno');
+  });
+
   it('should persist onboarding data on completion', async () => {
     const fixture = TestBed.createComponent(Onboarding);
     const state = fixture.debugElement.injector.get(OnboardingState);

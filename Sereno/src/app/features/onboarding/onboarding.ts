@@ -266,58 +266,140 @@ import {
               }
 
               @case ('completion') {
-                <div class="space-y-6">
-                  <header class="space-y-2 text-center">
-                    <p class="label-caps text-accent">Étape 4 sur 4</p>
-                    <h2 class="text-[24px] font-semibold text-text">Tout est prêt</h2>
-                    <p class="text-[14px] text-text-muted">
-                      Vérifie le résumé de ta configuration avant d'accéder à ton tableau de bord.
-                    </p>
+                <div class="space-y-5">
+                  <header class="space-y-3 text-center">
+                    <div
+                      class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-accent-surface text-accent"
+                      aria-hidden="true"
+                    >
+                      <span class="material-symbols-outlined text-[28px]">check_circle</span>
+                    </div>
+                    <div class="space-y-1.5">
+                      <p class="label-caps text-accent">Étape 4 sur 4</p>
+                      <h2 class="text-[26px] font-semibold tracking-tight text-text">
+                        Tout est prêt
+                      </h2>
+                      <p class="mx-auto max-w-sm text-[14px] leading-relaxed text-text-muted">
+                        Voici le résumé de ta configuration. Tu pourras tout ajuster ensuite dans
+                        Sereno.
+                      </p>
+                    </div>
                   </header>
 
-                  <dl class="space-y-3 rounded-lg border border-border bg-page p-4 text-sm">
-                    <div class="flex items-center justify-between gap-4">
-                      <dt class="text-text-muted">Solde initial</dt>
-                      <dd class="font-medium monetary-tabular text-text">
-                        {{ formatCurrency(state.initialBalanceInCents()) }}
-                      </dd>
-                    </div>
-                    <div class="flex items-center justify-between gap-4">
-                      <dt class="text-text-muted">Revenu mensuel</dt>
-                      <dd class="text-right font-medium text-text">
-                        <span class="block text-[13px] text-text-muted">
-                          {{ state.incomeLabel() }}
-                        </span>
-                        <span class="monetary-tabular text-income">
+                  <div class="overflow-hidden rounded-2xl border border-border bg-surface shadow-[0_1px_2px_rgba(23,20,18,0.04)]">
+                    <div class="grid gap-px bg-border sm:grid-cols-3">
+                      <div class="bg-surface px-4 py-4 text-center sm:text-left">
+                        <div class="mb-2 flex items-center justify-center gap-1.5 sm:justify-start">
+                          <span
+                            class="material-symbols-outlined text-[16px] text-accent"
+                            aria-hidden="true"
+                            >account_balance_wallet</span
+                          >
+                          <p class="label-caps text-text-muted">Solde</p>
+                        </div>
+                        <p class="monetary-tabular text-[18px] font-semibold text-text">
+                          {{ formatCurrency(state.initialBalanceInCents()) }}
+                        </p>
+                      </div>
+
+                      <div class="bg-surface px-4 py-4 text-center sm:text-left">
+                        <div class="mb-2 flex items-center justify-center gap-1.5 sm:justify-start">
+                          <span
+                            class="material-symbols-outlined text-[16px] text-income"
+                            aria-hidden="true"
+                            >trending_up</span
+                          >
+                          <p class="label-caps text-text-muted">Revenu</p>
+                        </div>
+                        <p class="monetary-tabular text-[18px] font-semibold text-income">
                           {{
                             state.monthlyIncomeInCents() > 0
                               ? formatCurrency(state.monthlyIncomeInCents(), { showSign: true })
-                              : 'Non renseigné'
+                              : '—'
                           }}
-                        </span>
-                      </dd>
-                    </div>
-                    <div class="flex items-center justify-between gap-4">
-                      <dt class="text-text-muted">Budgets définis</dt>
-                      <dd class="font-medium text-text">{{ state.budgetDrafts().length }}</dd>
-                    </div>
-                  </dl>
+                        </p>
+                        <p class="mt-0.5 truncate text-[12px] text-text-muted">
+                          {{ state.incomeLabel() }}
+                        </p>
+                      </div>
 
-                  <div class="flex gap-2 pt-2">
+                      <div class="bg-surface px-4 py-4 text-center sm:text-left">
+                        <div class="mb-2 flex items-center justify-center gap-1.5 sm:justify-start">
+                          <span
+                            class="material-symbols-outlined text-[16px] text-accent"
+                            aria-hidden="true"
+                            >pie_chart</span
+                          >
+                          <p class="label-caps text-text-muted">Budgets</p>
+                        </div>
+                        <p class="text-[18px] font-semibold text-text">
+                          {{ completionBudgetRows().length }}
+                          <span class="text-[13px] font-medium text-text-muted">
+                            {{ completionBudgetRows().length > 1 ? 'catégories' : 'catégorie' }}
+                          </span>
+                        </p>
+                        <p class="mt-0.5 monetary-tabular text-[12px] text-text-muted">
+                          {{ formatCurrency(completionBudgetsTotalInCents()) }} au total
+                        </p>
+                      </div>
+                    </div>
+
+                    <div class="border-t border-border px-4 py-3">
+                      @if (completionBudgetRows().length > 0) {
+                        <p class="label-caps mb-2.5 text-text-muted">Détail des budgets</p>
+                        <ul class="space-y-2">
+                          @for (budget of completionBudgetRows(); track budget.categoryId) {
+                            <li class="flex items-center gap-3">
+                              <span
+                                class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md"
+                                [style.background-color]="budget.color + '22'"
+                                [style.color]="budget.color"
+                                aria-hidden="true"
+                              >
+                                <span class="material-symbols-outlined text-[15px]">{{
+                                  budget.icon
+                                }}</span>
+                              </span>
+                              <span class="min-w-0 flex-1 truncate text-sm text-text">{{
+                                budget.name
+                              }}</span>
+                              <span
+                                class="monetary-tabular text-sm font-medium text-text"
+                                >{{ formatCurrency(budget.amountInCents) }}</span
+                              >
+                            </li>
+                          }
+                        </ul>
+                      } @else {
+                        <p class="text-center text-[13px] text-text-muted">
+                          Aucun budget chiffré pour l’instant. Tu pourras en ajouter plus tard.
+                        </p>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="flex flex-col gap-2 pt-1 sm:flex-row">
                     <button
                       type="button"
-                      class="flex-1 rounded-lg border border-border px-3 py-2 text-sm font-semibold text-text"
+                      class="rounded-lg border border-border px-3 py-2.5 text-sm font-semibold text-text sm:flex-1"
                       (click)="goToStep('budgets')"
                     >
                       Retour
                     </button>
                     <button
                       type="button"
-                      class="flex-1 rounded-lg bg-accent px-3 py-2 text-sm font-semibold text-white disabled:opacity-60"
+                      class="inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-3 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60 sm:flex-[1.4]"
                       [disabled]="isSaving()"
                       (click)="finishOnboarding()"
                     >
-                      Accéder à Sereno
+                      @if (isSaving()) {
+                        Ouverture…
+                      } @else {
+                        Accéder à Sereno
+                        <span class="material-symbols-outlined text-[18px]" aria-hidden="true"
+                          >arrow_forward</span
+                        >
+                      }
                     </button>
                   </div>
                 </div>
@@ -401,6 +483,43 @@ export class Onboarding {
 
   protected readonly excludedBudgetCategories = computed(() =>
     this.budgetCategories.filter((category) => this.state.isBudgetCategoryExcluded(category.id)),
+  );
+
+  protected readonly completionBudgetRows = computed(() =>
+    this.state
+      .budgetDrafts()
+      .map((draft) => {
+        const category = SYSTEM_CATEGORIES.find(
+          (systemCategory) => systemCategory.id === draft.categoryId,
+        );
+
+        if (!category) {
+          return null;
+        }
+
+        return {
+          categoryId: draft.categoryId,
+          name: category.name,
+          icon: category.icon,
+          color: category.color,
+          amountInCents: draft.amountInCents,
+        };
+      })
+      .filter(
+        (
+          row,
+        ): row is {
+          categoryId: string;
+          name: string;
+          icon: string;
+          color: string;
+          amountInCents: number;
+        } => row !== null,
+      ),
+  );
+
+  protected readonly completionBudgetsTotalInCents = computed(() =>
+    this.completionBudgetRows().reduce((total, budget) => total + budget.amountInCents, 0),
   );
 
   protected readonly currentStepIndex = computed(() => {
