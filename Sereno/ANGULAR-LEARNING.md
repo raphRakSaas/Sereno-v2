@@ -22,7 +22,7 @@ L'agent n'est pas seulement un générateur de code : c'est un **formateur Angul
 | Tests unitaires | Vitest + `@angular/core/testing` (TestBed) |
 | Styles | Tailwind CSS 4 |
 | Rendu | SSR (Server-Side Rendering) via `@angular/ssr` |
-| Package manager | npm |
+| Package manager | pnpm |
 
 Répertoire applicatif : `Sereno/`
 
@@ -187,7 +187,7 @@ describe('LoginComponent (integration)', () => {
 
 ```bash
 cd Sereno
-npm test              # lancer tous les tests (mode watch)
+pnpm test             # lancer tous les tests (mode watch)
 ng test --no-watch    # exécution unique (CI)
 ```
 

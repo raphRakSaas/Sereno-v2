@@ -1,3 +1,75 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import 'tailwindcss';
+
+@theme {
+  --color-page: #faf8f6;
+  --color-surface: #ffffff;
+  --color-border: #e8e4e0;
+  --color-text: #171412;
+  --color-text-muted: #6b635c;
+  --color-accent: #ff4d6d;
+  --color-accent-surface: #fff0f2;
+  --color-income: #17836b;
+  --color-warning: #b4762a;
+  --color-chart-1: #ff4d6d;
+  --color-chart-2: #ff8095;
+  --color-chart-3: #ffb3bf;
+  --color-chart-4: #ffd9df;
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  --spacing-sidebar: 240px;
+  --spacing-content-max: 1180px;
+  --spacing-gutter: 24px;
+  --spacing-page: 40px;
+
+  --radius-card: 12px;
+  --radius-button: 8px;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    background-color: var(--color-page);
+    color: var(--color-text);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+  }
+}
+
+@layer utilities {
+  .monetary-tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .label-caps {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .bento-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    transition: border-color 0.2s ease;
+  }
+
+  .bento-card:hover {
+    border-color: color-mix(in srgb, var(--color-accent) 40%, var(--color-border));
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24;
+    vertical-align: middle;
+    user-select: none;
+  }
+}

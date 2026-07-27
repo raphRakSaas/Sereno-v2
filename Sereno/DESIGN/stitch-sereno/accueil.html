@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sereno - Technical Finance Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .monetary-tabular {
+            font-variant-numeric: tabular-nums;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fff8f5;
+            color: #1e1b19;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fff8f5;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e2bec0;
+            border-radius: 10px;
+        }
+        .bento-card {
+            background-color: #ffffff;
+            border: 1px solid #e2bec0;
+            transition: all 0.2s ease;
+        }
+        .bento-card:hover {
+            border-color: #ba1340;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary": "#ffffff",
+                      "on-tertiary-fixed-variant": "#683d00",
+                      "on-secondary-fixed": "#002018",
+                      "error": "#ba1a1a",
+                      "on-primary-container": "#fffbff",
+                      "surface-bright": "#fff8f5",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-fixed": "#ffdcbc",
+                      "surface-container-high": "#efe7e3",
+                      "on-surface": "#1e1b19",
+                      "surface-tint": "#ba1340",
+                      "inverse-surface": "#33302d",
+                      "surface-dim": "#e0d8d5",
+                      "on-primary-fixed": "#40000f",
+                      "on-background": "#1e1b19",
+                      "background": "#fff8f5",
+                      "inverse-on-surface": "#f7efeb",
+                      "on-tertiary-fixed": "#2c1700",
+                      "secondary-fixed": "#96f4d7",
+                      "outline-variant": "#e2bec0",
+                      "on-error-container": "#93000a",
+                      "error-container": "#ffdad6",
+                      "surface-container-low": "#faf2ee",
+                      "primary-fixed": "#ffdadb",
+                      "tertiary-container": "#a2671c",
+                      "secondary-container": "#93f2d4",
+                      "primary-fixed-dim": "#ffb2b8",
+                      "on-tertiary-container": "#fffbff",
+                      "on-secondary-fixed-variant": "#005140",
+                      "on-error": "#ffffff",
+                      "inverse-primary": "#ffb2b8",
+                      "secondary": "#006b56",
+                      "on-secondary-container": "#00705a",
+                      "surface-container-highest": "#e9e1dd",
+                      "primary-container": "#da3054",
+                      "on-surface-variant": "#5a4042",
+                      "surface": "#fff8f5",
+                      "primary": "#b60e3d",
+                      "tertiary": "#855000",
+                      "secondary-fixed-dim": "#79d8bc",
+                      "on-primary-fixed-variant": "#91002d",
+                      "on-primary": "#ffffff",
+                      "surface-container-lowest": "#ffffff",
+                      "outline": "#8e6f71",
+                      "tertiary-fixed-dim": "#ffb86a",
+                      "surface-container": "#f4ece8",
+                      "surface-variant": "#e9e1dd"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack_md": "16px",
+                      "stack_xs": "4px",
+                      "sidebar_width": "240px",
+                      "content_max_width": "1180px",
+                      "margin_page": "40px",
+                      "gutter": "24px",
+                      "stack_sm": "8px",
+                      "stack_lg": "24px",
+                      "grid_columns": "12"
+              },
+              "fontFamily": {
+                      "page-title": ["Inter"],
+                      "monetary-sm": ["Inter"],
+                      "body": ["Inter"],
+                      "monetary-lg": ["Inter"],
+                      "section-title": ["Inter"],
+                      "secondary": ["Inter"],
+                      "label-caps": ["Inter"]
+              },
+              "fontSize": {
+                      "page-title": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                      "monetary-sm": ["14px", { "fontWeight": "500" }],
+                      "body": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                      "monetary-lg": ["24px", { "fontWeight": "600" }],
+                      "section-title": ["15px", { "lineHeight": "20px", "fontWeight": "600" }],
+                      "secondary": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                      "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.06em", "fontWeight": "600" }]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background antialiased">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-full w-[240px] bg-surface border-r border-outline-variant flex flex-col py-stack_lg px-stack_md gap-stack_md z-20">
+<div class="flex items-center gap-3 px-2 mb-stack_lg">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center text-white font-bold">S</div>
+<div>
+<h1 class="font-page-title text-page-title font-bold text-primary tracking-tight">sereno</h1>
+<p class="font-secondary text-secondary text-on-surface-variant leading-none opacity-70">Technical Finance</p>
+</div>
+</div>
+<button class="w-full bg-primary-container text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 font-section-title hover:opacity-90 transition-all active:scale-95 mb-4">
+<span class="material-symbols-outlined text-[20px]">add</span>
+            Nouvelle transaction
+        </button>
+<nav class="flex-1 space-y-1">
+<!-- Active item -->
+<a class="flex items-center gap-3 px-3 py-2 text-primary font-semibold bg-primary-container/10 rounded-lg group transition-colors" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Accueil</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-high rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Activité</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-high rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Calendrier</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-high rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined">query_stats</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Statistiques</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-high rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Budgets</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-high rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined">ads_click</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Objectifs</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-high rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined">repeat</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Récurrences</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-high rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Réglages</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-outline-variant pt-stack_md space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">person_off</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Mode invité</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">dark_mode</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Thème</span>
+</a>
+</div>
+</aside>
+<!-- Top App Bar -->
+<header class="fixed top-0 left-[240px] right-0 h-16 bg-background/80 backdrop-blur-md border-b border-outline-variant z-10">
+<div class="flex items-center justify-between h-full px-margin_page max-w-content_max_width mx-auto">
+<div class="flex items-center gap-4">
+<h2 class="font-page-title text-page-title text-on-background">Aperçu global</h2>
+<div class="flex items-center gap-1 bg-surface-container-low px-3 py-1 rounded-full border border-outline-variant">
+<span class="material-symbols-outlined text-[18px] text-primary">calendar_month</span>
+<span class="font-secondary text-secondary text-primary font-bold">Juillet 2026</span>
+</div>
+</div>
+<div class="flex items-center gap-stack_md">
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-surface-container-low rounded-full transition-all opacity-80 hover:opacity-100">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="p-2 hover:bg-surface-container-low rounded-full transition-all opacity-80 hover:opacity-100">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<div class="h-6 w-[1px] bg-outline-variant"></div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-60">search</span>
+<input class="bg-surface border border-outline-variant rounded-full pl-10 pr-4 py-1.5 text-secondary font-secondary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all w-64" placeholder="Rechercher..." type="text"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[240px] pt-16 min-h-screen">
+<div class="max-w-content_max_width mx-auto px-margin_page py-stack_lg">
+<div class="grid grid-cols-12 gap-gutter">
+<!-- LEFT COLUMN (8 cols) -->
+<div class="col-span-8 flex flex-col gap-gutter">
+<!-- Balance Card -->
+<section class="bento-card p-stack_lg rounded-xl overflow-hidden relative">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -mr-8 -mt-8"></div>
+<header class="flex justify-between items-start mb-4">
+<div>
+<span class="font-label-caps text-label-caps text-on-surface-variant opacity-70 tracking-widest uppercase">Solde disponible</span>
+<h3 class="font-monetary-lg text-[40px] leading-tight text-on-background monetary-tabular mt-1">12 842,50 €</h3>
+</div>
+<div class="flex flex-col items-end">
+<span class="inline-flex items-center gap-1 text-secondary text-green-600 bg-green-50 px-2 py-0.5 rounded border border-green-100">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                                    +4.2%
+                                </span>
+<span class="text-[10px] text-on-surface-variant opacity-50 mt-1 uppercase">vs mois dernier</span>
+</div>
+</header>
+<div class="grid grid-cols-2 gap-4 mt-6">
+<div class="bg-surface-container-low p-4 rounded-lg border border-outline-variant/40">
+<span class="font-label-caps text-[10px] text-on-surface-variant uppercase">Revenus (Juillet)</span>
+<div class="font-monetary-sm text-lg text-secondary mt-1 monetary-tabular">+5 200,00 €</div>
+<div class="w-full h-1 bg-outline-variant mt-3 overflow-hidden rounded-full">
+<div class="bg-green-500 h-full w-full"></div>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg border border-outline-variant/40">
+<span class="font-label-caps text-[10px] text-on-surface-variant uppercase">Dépenses (Juillet)</span>
+<div class="font-monetary-sm text-lg text-primary mt-1 monetary-tabular">-2 340,12 €</div>
+<div class="w-full h-1 bg-outline-variant mt-3 overflow-hidden rounded-full">
+<div class="bg-primary h-full w-45%" style="width: 45%;"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Monthly Budgets -->
+<section class="bento-card p-stack_lg rounded-xl">
+<header class="flex items-center justify-between mb-stack_lg">
+<h4 class="font-section-title text-section-title uppercase tracking-wide">Budgets mensuels</h4>
+<button class="text-primary font-label-caps text-label-caps hover:underline">Gérer les limites</button>
+</header>
+<div class="space-y-6">
+<!-- Budget Item 1 -->
+<div class="space-y-2">
+<div class="flex justify-between items-end">
+<div>
+<p class="font-body text-body font-semibold">Logement</p>
+<p class="font-secondary text-secondary text-on-surface-variant opacity-70">Loyer, Charges, Assurance</p>
+</div>
+<div class="text-right">
+<span class="font-monetary-sm text-on-surface">1 150,00 €</span>
+<span class="font-secondary text-secondary text-on-surface-variant">/ 1 200 €</span>
+</div>
+</div>
+<div class="h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="bg-secondary h-full" style="width: 95.8%"></div>
+</div>
+</div>
+<!-- Budget Item 2 (Muted Amber/Over-budget) -->
+<div class="space-y-2">
+<div class="flex justify-between items-end">
+<div>
+<div class="flex items-center gap-2">
+<p class="font-body text-body font-semibold">Courses</p>
+<span class="material-symbols-outlined text-tertiary text-lg">warning</span>
+</div>
+<p class="font-secondary text-secondary text-on-surface-variant opacity-70">Supermarché, Marché</p>
+</div>
+<div class="text-right">
+<span class="font-monetary-sm text-tertiary">542,80 €</span>
+<span class="font-secondary text-secondary text-on-surface-variant">/ 500 €</span>
+</div>
+</div>
+<div class="h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="bg-tertiary h-full" style="width: 100%"></div>
+</div>
+</div>
+<!-- Budget Item 3 -->
+<div class="space-y-2">
+<div class="flex justify-between items-end">
+<div>
+<p class="font-body text-body font-semibold">Transport</p>
+<p class="font-secondary text-secondary text-on-surface-variant opacity-70">Navigo, Essence, Parking</p>
+</div>
+<div class="text-right">
+<span class="font-monetary-sm text-on-surface">142,50 €</span>
+<span class="font-secondary text-secondary text-on-surface-variant">/ 250 €</span>
+</div>
+</div>
+<div class="h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="bg-primary h-full opacity-40" style="width: 57%"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Recent Transactions -->
+<section class="bento-card rounded-xl overflow-hidden">
+<header class="p-stack_lg border-b border-outline-variant flex justify-between items-center">
+<h4 class="font-section-title text-section-title uppercase tracking-wide">Transactions récentes</h4>
+<div class="flex gap-2">
+<button class="p-1.5 hover:bg-surface-container-low rounded border border-outline-variant">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container-low rounded border border-outline-variant">
+<span class="material-symbols-outlined text-[18px]">download</span>
+</button>
+</div>
+</header>
+<table class="w-full text-left">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="px-stack_lg py-3 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Détails</th>
+<th class="px-stack_lg py-3 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Catégorie</th>
+<th class="px-stack_lg py-3 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Date</th>
+<th class="px-stack_lg py-3 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest text-right">Montant</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/40">
+<tr class="hover:bg-surface-container-lowest h-[44px] transition-colors cursor-pointer group">
+<td class="px-stack_lg">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">shopping_bag</span>
+</div>
+<div>
+<p class="font-body text-sm font-medium">Monoprix Voltaire</p>
+<p class="text-[11px] text-on-surface-variant opacity-60">Alimentaire hebdo</p>
+</div>
+</div>
+</td>
+<td class="px-stack_lg">
+<span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wide">Courses</span>
+</td>
+<td class="px-stack_lg font-secondary text-secondary text-on-surface-variant">12 Juil 2026</td>
+<td class="px-stack_lg text-right font-monetary-sm monetary-tabular">-64,20 €</td>
+</tr>
+<tr class="hover:bg-surface-container-lowest h-[44px] transition-colors cursor-pointer group">
+<td class="px-stack_lg">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-high flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+</div>
+<div>
+<p class="font-body text-sm font-medium">Salaire Acme Corp</p>
+<p class="text-[11px] text-on-surface-variant opacity-60">Virement mensuel</p>
+</div>
+</div>
+</td>
+<td class="px-stack_lg">
+<span class="px-2 py-0.5 rounded-full bg-secondary/10 text-secondary text-[10px] font-bold uppercase tracking-wide">Revenu</span>
+</td>
+<td class="px-stack_lg font-secondary text-secondary text-on-surface-variant">01 Juil 2026</td>
+<td class="px-stack_lg text-right font-monetary-sm monetary-tabular text-secondary">+3 450,00 €</td>
+</tr>
+<tr class="hover:bg-surface-container-lowest h-[44px] transition-colors cursor-pointer group">
+<td class="px-stack_lg">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-high flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[18px]">train</span>
+</div>
+<div>
+<p class="font-body text-sm font-medium">SNCF Connect</p>
+<p class="text-[11px] text-on-surface-variant opacity-60">Paris-Lyon A/R</p>
+</div>
+</div>
+</td>
+<td class="px-stack_lg">
+<span class="px-2 py-0.5 rounded-full bg-tertiary/10 text-tertiary text-[10px] font-bold uppercase tracking-wide">Transport</span>
+</td>
+<td class="px-stack_lg font-secondary text-secondary text-on-surface-variant">28 Juin 2026</td>
+<td class="px-stack_lg text-right font-monetary-sm monetary-tabular">-112,00 €</td>
+</tr>
+<tr class="hover:bg-surface-container-lowest h-[44px] transition-colors cursor-pointer group">
+<td class="px-stack_lg">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">restaurant</span>
+</div>
+<div>
+<p class="font-body text-sm font-medium">Le Petit Bistro</p>
+<p class="text-[11px] text-on-surface-variant opacity-60">Déjeuner client</p>
+</div>
+</div>
+</td>
+<td class="px-stack_lg">
+<span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wide">Loisirs</span>
+</td>
+<td class="px-stack_lg font-secondary text-secondary text-on-surface-variant">24 Juin 2026</td>
+<td class="px-stack_lg text-right font-monetary-sm monetary-tabular">-42,50 €</td>
+</tr>
+<tr class="hover:bg-surface-container-lowest h-[44px] transition-colors cursor-pointer group">
+<td class="px-stack_lg">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-high flex items-center justify-center text-blue-500">
+<span class="material-symbols-outlined text-[18px]">bolt</span>
+</div>
+<div>
+<p class="font-body text-sm font-medium">EDF S.A.</p>
+<p class="text-[11px] text-on-surface-variant opacity-60">Facture électricité</p>
+</div>
+</div>
+</td>
+<td class="px-stack_lg">
+<span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold uppercase tracking-wide">Factures</span>
+</td>
+<td class="px-stack_lg font-secondary text-secondary text-on-surface-variant">20 Juin 2026</td>
+<td class="px-stack_lg text-right font-monetary-sm monetary-tabular">-89,00 €</td>
+</tr>
+</tbody>
+</table>
+<footer class="p-3 bg-surface-container-lowest flex justify-center">
+<button class="font-label-caps text-label-caps text-primary hover:tracking-widest transition-all">Voir tout l'historique</button>
+</footer>
+</section>
+</div>
+<!-- RIGHT COLUMN (4 cols) -->
+<div class="col-span-4 flex flex-col gap-gutter">
+<!-- Category Donut Chart -->
+<section class="bento-card p-stack_lg rounded-xl flex flex-col items-center">
+<header class="w-full mb-stack_lg text-left">
+<h4 class="font-section-title text-section-title uppercase tracking-wide">Répartition</h4>
+</header>
+<div class="relative w-48 h-48 mb-6">
+<!-- SVG Donut -->
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#e2bec0" stroke-dasharray="100, 100" stroke-width="3"></path>
+<path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#ba1340" stroke-dasharray="45, 100" stroke-width="3"></path>
+<path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#da3054" stroke-dasharray="25, 100" stroke-dashoffset="-45" stroke-width="3"></path>
+<path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#ffb2b8" stroke-dasharray="15, 100" stroke-dashoffset="-70" stroke-width="3"></path>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-monetary-lg text-2xl">2 340 €</span>
+<span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-tighter">Dépenses totales</span>
+</div>
+</div>
+<div class="w-full space-y-3">
+<div class="flex justify-between items-center text-sm">
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-sm bg-primary"></div>
+<span class="font-secondary">Logement</span>
+</div>
+<span class="font-monetary-sm monetary-tabular">45%</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-sm bg-primary-container"></div>
+<span class="font-secondary">Courses</span>
+</div>
+<span class="font-monetary-sm monetary-tabular">25%</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-sm bg-primary-fixed-dim"></div>
+<span class="font-secondary">Transport</span>
+</div>
+<span class="font-monetary-sm monetary-tabular">15%</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-sm bg-outline-variant"></div>
+<span class="font-secondary">Autres</span>
+</div>
+<span class="font-monetary-sm monetary-tabular">15%</span>
+</div>
+</div>
+</section>
+<!-- Savings Goal Card -->
+<section class="bento-card p-stack_lg rounded-xl relative overflow-hidden bg-gradient-to-br from-white to-surface-container-low">
+<div class="absolute top-0 left-0 w-full h-1 bg-primary"></div>
+<header class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">flight_takeoff</span>
+</div>
+<div>
+<h4 class="font-section-title text-section-title">Voyage Japon 2027</h4>
+<span class="font-secondary text-[12px] text-on-surface-variant opacity-70">Objectif : Mai 2027</span>
+</div>
+</header>
+<div class="space-y-4">
+<div class="flex justify-between items-end">
+<span class="font-monetary-lg text-xl monetary-tabular">3 420 €</span>
+<span class="font-secondary text-secondary text-on-surface-variant">sur 8 000 €</span>
+</div>
+<div class="relative pt-1">
+<div class="overflow-hidden h-2.5 mb-4 text-xs flex rounded-full bg-surface-container-high border border-outline-variant/30">
+<div class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary transition-all duration-500" style="width:42.75%"></div>
+</div>
+<div class="flex justify-between text-[11px] font-label-caps uppercase text-on-surface-variant opacity-60">
+<span>Progress: 42.7%</span>
+<span>+450€ ce mois</span>
+</div>
+</div>
+<button class="w-full py-2.5 border border-primary text-primary font-section-title rounded-lg hover:bg-primary/5 transition-all text-sm">
+                                Booster l'épargne
+                            </button>
+</div>
+</section>
+<!-- Quick Insights -->
+<section class="bento-card p-stack_lg rounded-xl border-dashed">
+<h4 class="font-section-title text-section-title uppercase tracking-wide mb-4">Analyse Sereno</h4>
+<div class="space-y-4">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-primary shrink-0">tips_and_updates</span>
+<p class="font-secondary text-secondary text-on-surface-variant text-[13px] leading-snug">
+                                    Vos dépenses en "Loisirs" ont diminué de <span class="font-bold text-secondary">12%</span> par rapport au mois dernier. Continuez comme ça !
+                                </p>
+</div>
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-tertiary shrink-0">notifications_active</span>
+<p class="font-secondary text-secondary text-on-surface-variant text-[13px] leading-snug">
+                                    Facture récurrente (Netflix) prévue demain : <span class="font-bold">17,99 €</span>.
+                                </p>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual FAB (Only on main dashboard) -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-30 group">
+<span class="material-symbols-outlined text-[28px] transition-transform group-hover:rotate-90">add</span>
+</button>
+<script>
+        // Simple micro-interaction for active states
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                if (link.getAttribute('href') === '#') e.preventDefault();
+            });
+        });
+
+        // Search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-primary/20');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-primary/20');
+        });
+    </script>
+</body></html>
