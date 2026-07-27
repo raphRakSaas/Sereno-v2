@@ -1,8 +1,19 @@
+import { Component, input } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { Onboarding } from './onboarding';
 import { AppStore } from '../../core/store/app.store';
 import { OnboardingState } from './services/onboarding-state';
+import { OnboardingLottie } from '../../shared/components/onboarding-lottie/onboarding-lottie';
+
+@Component({
+  selector: 'app-onboarding-lottie',
+  template: '',
+})
+class OnboardingLottieStub {
+  readonly animationPath = input('');
+  readonly ariaLabel = input('');
+}
 
 describe('Onboarding (integration)', () => {
   const completeOnboarding = vi.fn().mockResolvedValue(undefined);
@@ -29,13 +40,24 @@ describe('Onboarding (integration)', () => {
           },
         },
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(Onboarding, {
+        remove: { imports: [OnboardingLottie] },
+        add: { imports: [OnboardingLottieStub] },
+      })
+      .compileComponents();
   });
 
   it('should render welcome step by default', () => {
     const fixture = TestBed.createComponent(Onboarding);
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('Bienvenue sur Sereno');
+  });
+
+  it('should render the lottie panel', () => {
+    const fixture = TestBed.createComponent(Onboarding);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('app-onboarding-lottie')).toBeTruthy();
   });
 
   it('should move to initial balance step', () => {

@@ -8,37 +8,37 @@ import {
 import { AppStore } from '../../core/store/app.store';
 import { formatCurrency } from '../../shared/utils/format-currency';
 import { MoneyInput } from '../../shared/components/money-input/money-input';
+import { OnboardingLottie } from '../../shared/components/onboarding-lottie/onboarding-lottie';
 import { OnboardingState, OnboardingStep } from './services/onboarding-state';
+import {
+  ONBOARDING_LOTTIE_LABELS,
+  ONBOARDING_LOTTIE_PATHS,
+} from './data/onboarding-lottie.config';
 
 @Component({
   selector: 'app-onboarding',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [OnboardingState],
-  imports: [ReactiveFormsModule, MoneyInput],
+  imports: [ReactiveFormsModule, MoneyInput, OnboardingLottie],
   template: `
-    <div class="flex min-h-screen items-center justify-center bg-page px-4 py-10">
-      <div class="w-full max-w-xl">
-        <div class="mb-8 flex items-center justify-center gap-2">
-          @for (step of steps; track step.id; let index = $index) {
-            <span
-              class="h-1.5 rounded-full transition-all"
-              [class.w-8]="step.id === state.currentStep()"
-              [class.w-4]="step.id !== state.currentStep()"
-              [class.bg-accent]="index <= currentStepIndex()"
-              [class.bg-border]="index > currentStepIndex()"
-            ></span>
-          }
-        </div>
+    <div class="grid min-h-screen lg:grid-cols-2">
+      <div class="flex flex-col justify-center bg-white px-4 py-10 sm:px-8 lg:px-12 xl:px-16">
+        <div class="mx-auto w-full max-w-xl">
+          <div class="mb-8 flex items-center justify-center gap-2">
+            @for (step of steps; track step.id; let index = $index) {
+              <span
+                class="h-1.5 rounded-full transition-all"
+                [class.w-8]="step.id === state.currentStep()"
+                [class.w-4]="step.id !== state.currentStep()"
+                [class.bg-accent]="index <= currentStepIndex()"
+                [class.bg-border]="index > currentStepIndex()"
+              ></span>
+            }
+          </div>
 
-        <section class="bento-card p-8">
           @switch (state.currentStep()) {
             @case ('welcome') {
               <div class="space-y-6 text-center">
-                <div
-                  class="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-accent text-2xl font-bold text-white"
-                >
-                  S
-                </div>
                 <div class="space-y-3">
                   <h1 class="text-[28px] font-semibold text-text">Bienvenue sur Sereno</h1>
                   <p class="text-[15px] leading-relaxed text-text-muted">
@@ -245,8 +245,18 @@ import { OnboardingState, OnboardingStep } from './services/onboarding-state';
               </div>
             }
           }
-        </section>
+        </div>
       </div>
+
+      <aside
+        class="flex min-h-[320px] items-center justify-center bg-text p-6 sm:p-10 lg:min-h-screen lg:p-12"
+      >
+        <app-onboarding-lottie
+          class="w-full max-w-xl"
+          [animationPath]="currentLottiePath()"
+          [ariaLabel]="currentLottieLabel()"
+        />
+      </aside>
     </div>
   `,
 })
@@ -278,6 +288,14 @@ export class Onboarding {
     const stepOrder = ['welcome', 'initial-balance', 'income', 'budgets', 'completion'] as const;
     return stepOrder.indexOf(this.state.currentStep());
   });
+
+  protected readonly currentLottiePath = computed(
+    () => ONBOARDING_LOTTIE_PATHS[this.state.currentStep()],
+  );
+
+  protected readonly currentLottieLabel = computed(
+    () => ONBOARDING_LOTTIE_LABELS[this.state.currentStep()],
+  );
 
   protected goToStep(step: OnboardingStep): void {
     this.state.setStep(step);

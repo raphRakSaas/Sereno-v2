@@ -20,7 +20,9 @@
     "@angular/platform-server": "^22.0.0",
     "@angular/router": "^22.0.0",
     "@angular/ssr": "^22.0.8",
+    "@lottiefiles/dotlottie-web": "^0.78.2",
     "express": "^5.1.0",
+    "lottie-web": "^5.13.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
