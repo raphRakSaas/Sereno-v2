@@ -167,29 +167,86 @@ import {
               }
 
               @case ('budgets') {
-                <div class="space-y-6">
-                  <header class="space-y-2">
+                <div class="space-y-4">
+                  <header class="space-y-1.5">
                     <p class="label-caps text-accent">Étape 3 sur 4</p>
                     <h2 class="text-[24px] font-semibold text-text">Budgets de dépenses</h2>
                     <p class="text-[14px] text-text-muted">
-                      Définis un plafond pour les catégories que tu suis le plus. Tu peux laisser
-                      une catégorie vide si tu préfères.
+                      Fixe un plafond pour les catégories que tu veux suivre. Retire celles qui ne
+                      te concernent pas.
                     </p>
                   </header>
 
-                  <ul class="space-y-4">
-                    @for (category of budgetCategories; track category.id) {
-                      <li class="rounded-lg border border-border/70 bg-page p-4">
-                        <app-money-input
-                          [label]="category.name"
-                          [amountInCents]="state.getBudgetAmount(category.id)"
-                          (amountChange)="state.updateBudgetDraft(category.id, $event)"
-                        />
+                  <ul class="overflow-hidden rounded-xl border border-border bg-surface">
+                    @for (category of activeBudgetCategories(); track category.id; let last = $last) {
+                      <li
+                        class="flex items-center gap-3 px-3 py-2.5"
+                        [class.border-b]="!last"
+                        [class.border-border]="!last"
+                      >
+                        <span
+                          class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+                          [style.background-color]="category.color + '22'"
+                          [style.color]="category.color"
+                          aria-hidden="true"
+                        >
+                          <span class="material-symbols-outlined text-[18px]">{{
+                            category.icon
+                          }}</span>
+                        </span>
+
+                        <span class="min-w-0 flex-1 truncate text-sm font-medium text-text">
+                          {{ category.name }}
+                        </span>
+
+                        <div class="w-28 shrink-0 sm:w-32">
+                          <app-money-input
+                            [label]="category.name"
+                            [compact]="true"
+                            [amountInCents]="state.getBudgetAmount(category.id)"
+                            (amountChange)="state.updateBudgetDraft(category.id, $event)"
+                          />
+                        </div>
+
+                        <button
+                          type="button"
+                          class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-text-muted transition-colors hover:bg-page hover:text-accent"
+                          [attr.aria-label]="'Retirer ' + category.name"
+                          (click)="excludeBudgetCategory(category.id)"
+                        >
+                          <span class="material-symbols-outlined text-[18px]" aria-hidden="true"
+                            >delete</span
+                          >
+                        </button>
+                      </li>
+                    } @empty {
+                      <li class="px-4 py-6 text-center text-sm text-text-muted">
+                        Toutes les catégories ont été retirées. Réactive-en une ci-dessous.
                       </li>
                     }
                   </ul>
 
-                  <div class="flex gap-2 pt-2">
+                  @if (excludedBudgetCategories().length > 0) {
+                    <div class="space-y-2">
+                      <p class="text-[12px] font-medium text-text-muted">Catégories retirées</p>
+                      <div class="flex flex-wrap gap-2">
+                        @for (category of excludedBudgetCategories(); track category.id) {
+                          <button
+                            type="button"
+                            class="inline-flex items-center gap-1.5 rounded-full border border-border bg-page px-2.5 py-1 text-[12px] text-text transition-colors hover:border-accent hover:text-accent"
+                            (click)="restoreBudgetCategory(category.id)"
+                          >
+                            <span class="material-symbols-outlined text-[14px]" aria-hidden="true"
+                              >add</span
+                            >
+                            {{ category.name }}
+                          </button>
+                        }
+                      </div>
+                    </div>
+                  }
+
+                  <div class="flex gap-2 pt-1">
                     <button
                       type="button"
                       class="flex-1 rounded-lg border border-border px-3 py-2 text-sm font-semibold text-text"
@@ -336,6 +393,16 @@ export class Onboarding {
     SYSTEM_CATEGORIES.find((category) => category.id === categoryId),
   ).filter((category): category is (typeof SYSTEM_CATEGORIES)[number] => Boolean(category));
 
+  protected readonly activeBudgetCategories = computed(() =>
+    this.budgetCategories.filter(
+      (category) => !this.state.isBudgetCategoryExcluded(category.id),
+    ),
+  );
+
+  protected readonly excludedBudgetCategories = computed(() =>
+    this.budgetCategories.filter((category) => this.state.isBudgetCategoryExcluded(category.id)),
+  );
+
   protected readonly currentStepIndex = computed(() => {
     const stepOrder = ['welcome', 'initial-balance', 'income', 'budgets', 'completion'] as const;
     return stepOrder.indexOf(this.state.currentStep());
@@ -351,6 +418,14 @@ export class Onboarding {
 
   protected goToStep(step: OnboardingStep): void {
     this.state.setStep(step);
+  }
+
+  protected excludeBudgetCategory(categoryId: string): void {
+    this.state.excludeBudgetCategory(categoryId);
+  }
+
+  protected restoreBudgetCategory(categoryId: string): void {
+    this.state.restoreBudgetCategory(categoryId);
   }
 
   protected applyIncomeCategory(typeId: string): void {

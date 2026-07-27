@@ -119,6 +119,32 @@ describe('Onboarding (integration)', () => {
     expect(state.incomeLabel()).toBe('Salaire Acme');
   });
 
+  it('should exclude a budget category with the trash action', () => {
+    const fixture = TestBed.createComponent(Onboarding);
+    fixture.detectChanges();
+
+    fixture.componentInstance['goToStep']('budgets');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Logement');
+    expect(fixture.nativeElement.textContent).toContain('Loisirs');
+
+    const deleteLeisure = [...fixture.nativeElement.querySelectorAll('button')].find(
+      (element: Element) => element.getAttribute('aria-label') === 'Retirer Loisirs',
+    ) as HTMLButtonElement;
+
+    deleteLeisure.click();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Catégories retirées');
+    expect(fixture.nativeElement.textContent).toContain('Loisirs');
+
+    const activeNames = [...fixture.nativeElement.querySelectorAll('ul li span.font-medium')].map(
+      (element: Element) => element.textContent?.trim(),
+    );
+    expect(activeNames).not.toContain('Loisirs');
+  });
+
   it('should persist onboarding data on completion', async () => {
     const fixture = TestBed.createComponent(Onboarding);
     const state = fixture.debugElement.injector.get(OnboardingState);

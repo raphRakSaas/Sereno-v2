@@ -20,4 +20,14 @@ describe('MoneyInput', () => {
 
     expect(emitted).toContain(123456);
   });
+
+  it('should render a compact input without stacked label', () => {
+    const fixture = TestBed.createComponent(MoneyInput);
+    fixture.componentRef.setInput('label', 'Logement');
+    fixture.componentRef.setInput('compact', true);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.label-caps')).toBeNull();
+    expect(fixture.nativeElement.querySelector('input')?.classList.contains('h-9')).toBe(true);
+  });
 });

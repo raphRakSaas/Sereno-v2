@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { ONBOARDING_BUDGET_CATEGORY_IDS } from '../../../core/data/system-categories';
 
 export type OnboardingStep =
   | 'welcome'
@@ -19,6 +20,7 @@ export class OnboardingState {
   readonly monthlyIncomeInCents = signal(0);
   readonly incomeLabel = signal('Salaire');
   readonly budgetDrafts = signal<OnboardingBudgetDraft[]>([]);
+  readonly excludedBudgetCategoryIds = signal<string[]>([]);
 
   setStep(step: OnboardingStep): void {
     this.currentStep.set(step);
@@ -43,6 +45,29 @@ export class OnboardingState {
 
       return [...withoutCategory, { categoryId, amountInCents }];
     });
+  }
+
+  excludeBudgetCategory(categoryId: string): void {
+    this.excludedBudgetCategoryIds.update((categoryIds) =>
+      categoryIds.includes(categoryId) ? categoryIds : [...categoryIds, categoryId],
+    );
+    this.updateBudgetDraft(categoryId, 0);
+  }
+
+  restoreBudgetCategory(categoryId: string): void {
+    this.excludedBudgetCategoryIds.update((categoryIds) =>
+      categoryIds.filter((currentId) => currentId !== categoryId),
+    );
+  }
+
+  isBudgetCategoryExcluded(categoryId: string): boolean {
+    return this.excludedBudgetCategoryIds().includes(categoryId);
+  }
+
+  getActiveBudgetCategoryIds(): string[] {
+    return ONBOARDING_BUDGET_CATEGORY_IDS.filter(
+      (categoryId) => !this.isBudgetCategoryExcluded(categoryId),
+    );
   }
 
   getBudgetAmount(categoryId: string): number {
