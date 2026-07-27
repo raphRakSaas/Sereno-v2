@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { computed, signal } from '@angular/core';
+import { provideRouter } from '@angular/router';
+import { computed } from '@angular/core';
 import { AppStore } from '../../core/store/app.store';
 import { HOME_DEMO_DATA } from './data/home-demo.data';
 import { Home } from './home';
@@ -9,6 +10,7 @@ describe('Home (integration)', () => {
     await TestBed.configureTestingModule({
       imports: [Home],
       providers: [
+        provideRouter([]),
         {
           provide: AppStore,
           useValue: {

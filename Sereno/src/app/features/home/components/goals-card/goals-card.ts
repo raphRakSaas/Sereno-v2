@@ -1,17 +1,19 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { SavingsGoalSummary } from '../../models/home.models';
 import { calculateProgressPercent, formatCurrency } from '../../../../shared/utils/format-currency';
 
 @Component({
   selector: 'app-goals-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterLink],
   template: `
     <section class="bento-card p-5" aria-labelledby="goals-title">
       <header class="mb-4 flex items-center justify-between gap-3">
         <h2 id="goals-title" class="text-[13px] font-semibold uppercase tracking-wide text-text">
           Objectifs
         </h2>
-        <button type="button" class="label-caps text-accent hover:underline">Voir tout</button>
+        <a routerLink="/objectifs" class="label-caps text-accent hover:underline">Voir tout</a>
       </header>
 
       @if (goal(); as activeGoal) {
@@ -68,12 +70,12 @@ import { calculateProgressPercent, formatCurrency } from '../../../../shared/uti
           <p class="mt-1 text-[12px] leading-relaxed text-text-muted">
             Définis un objectif d’épargne pour donner une direction claire à ton mois.
           </p>
-          <button
-            type="button"
-            class="mt-3 rounded-lg bg-accent px-3 py-1.5 text-[12px] font-semibold text-white transition-opacity hover:opacity-90"
+          <a
+            routerLink="/objectifs/creer"
+            class="mt-3 inline-flex rounded-lg bg-accent px-3 py-1.5 text-[12px] font-semibold text-white transition-opacity hover:opacity-90"
           >
             Créer un objectif
-          </button>
+          </a>
         </div>
       }
     </section>

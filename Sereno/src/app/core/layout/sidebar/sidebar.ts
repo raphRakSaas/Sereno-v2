@@ -22,13 +22,13 @@ interface NavItem {
         <p class="mt-2 text-[13px] leading-none text-text-muted">Finance personnelle</p>
       </div>
 
-      <button
-        type="button"
+      <a
+        routerLink="/transactions/nouvelle"
         class="mb-2 flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-4 py-3 text-[15px] font-semibold text-white transition-opacity hover:opacity-90"
       >
         <span class="material-symbols-outlined text-[20px]" aria-hidden="true">add</span>
         Nouvelle transaction
-      </button>
+      </a>
 
       <nav class="flex-1 space-y-1">
         @for (item of navItems; track item.route) {

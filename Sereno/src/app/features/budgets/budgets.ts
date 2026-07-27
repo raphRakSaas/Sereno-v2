@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { AppStore } from '../../core/store/app.store';
 import { BudgetProgress } from '../home/models/home.models';
 
 @Component({
   selector: 'app-budgets',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterLink],
   template: `
     <div class="space-y-6">
       <div class="flex items-center justify-between">
@@ -12,13 +14,13 @@ import { BudgetProgress } from '../home/models/home.models';
           <h2 class="label-caps text-text-muted">Budgets</h2>
           <p class="mt-0.5 text-[12px] text-text-muted">Suivi de tes enveloppes budgétaires</p>
         </div>
-        <button
-          type="button"
+        <a
+          routerLink="/categories/nouvelle"
           class="flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-[12px] font-medium text-text-muted transition-colors hover:border-accent hover:text-accent"
         >
           <span class="material-symbols-outlined text-[16px]" aria-hidden="true">add</span>
           Ajouter une catégorie
-        </button>
+        </a>
       </div>
 
       <!-- Summary card -->

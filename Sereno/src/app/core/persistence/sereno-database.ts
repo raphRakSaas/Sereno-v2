@@ -2,6 +2,8 @@ import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Budget } from '../models/budget.model';
 import { Category } from '../models/category.model';
+import { SavingsGoal } from '../models/goal.model';
+import { Recurrence } from '../models/recurrence.model';
 import { AppSettings } from '../models/settings.model';
 import { Transaction } from '../models/transaction.model';
 import { SERENO_DB_NAME, SERENO_DB_VERSION, SERENO_STORES } from './database.schema';
@@ -44,6 +46,15 @@ export class SerenoDatabase {
         if (!database.objectStoreNames.contains(SERENO_STORES.settings)) {
           database.createObjectStore(SERENO_STORES.settings, { keyPath: 'id' });
         }
+
+        if (!database.objectStoreNames.contains(SERENO_STORES.goals)) {
+          database.createObjectStore(SERENO_STORES.goals, { keyPath: 'id' });
+        }
+
+        if (!database.objectStoreNames.contains(SERENO_STORES.recurrences)) {
+          const store = database.createObjectStore(SERENO_STORES.recurrences, { keyPath: 'id' });
+          store.createIndex('startDate', 'startDate', { unique: false });
+        }
       };
 
       request.onsuccess = () => resolve(request.result);
@@ -59,6 +70,10 @@ export class SerenoDatabase {
     await this.put(SERENO_STORES.categories, category);
   }
 
+  async deleteCategory(categoryId: string): Promise<void> {
+    await this.deleteByKey(SERENO_STORES.categories, categoryId);
+  }
+
   async getAllTransactions(): Promise<Transaction[]> {
     return this.readAll<Transaction>(SERENO_STORES.transactions);
   }
@@ -67,12 +82,44 @@ export class SerenoDatabase {
     await this.put(SERENO_STORES.transactions, transaction);
   }
 
+  async deleteTransaction(transactionId: string): Promise<void> {
+    await this.deleteByKey(SERENO_STORES.transactions, transactionId);
+  }
+
   async getAllBudgets(): Promise<Budget[]> {
     return this.readAll<Budget>(SERENO_STORES.budgets);
   }
 
   async putBudget(budget: Budget): Promise<void> {
     await this.put(SERENO_STORES.budgets, budget);
+  }
+
+  async deleteBudget(budgetId: string): Promise<void> {
+    await this.deleteByKey(SERENO_STORES.budgets, budgetId);
+  }
+
+  async getAllGoals(): Promise<SavingsGoal[]> {
+    return this.readAll<SavingsGoal>(SERENO_STORES.goals);
+  }
+
+  async putGoal(goal: SavingsGoal): Promise<void> {
+    await this.put(SERENO_STORES.goals, goal);
+  }
+
+  async deleteGoal(goalId: string): Promise<void> {
+    await this.deleteByKey(SERENO_STORES.goals, goalId);
+  }
+
+  async getAllRecurrences(): Promise<Recurrence[]> {
+    return this.readAll<Recurrence>(SERENO_STORES.recurrences);
+  }
+
+  async putRecurrence(recurrence: Recurrence): Promise<void> {
+    await this.put(SERENO_STORES.recurrences, recurrence);
+  }
+
+  async deleteRecurrence(recurrenceId: string): Promise<void> {
+    await this.deleteByKey(SERENO_STORES.recurrences, recurrenceId);
   }
 
   async getSettings(): Promise<AppSettings | null> {
@@ -89,6 +136,8 @@ export class SerenoDatabase {
       this.clearStore(SERENO_STORES.transactions),
       this.clearStore(SERENO_STORES.budgets),
       this.clearStore(SERENO_STORES.settings),
+      this.clearStore(SERENO_STORES.goals),
+      this.clearStore(SERENO_STORES.recurrences),
     ]);
   }
 
@@ -131,8 +180,25 @@ export class SerenoDatabase {
     });
   }
 
+  private async deleteByKey(storeName: string, key: string): Promise<void> {
+    const database = await this.getDatabase();
+
+    await new Promise<void>((resolve, reject) => {
+      const transaction = database.transaction(storeName, 'readwrite');
+      const store = transaction.objectStore(storeName);
+      const request = store.delete(key);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error ?? new Error(`Delete failed for ${storeName}`));
+    });
+  }
+
   private async clearStore(storeName: string): Promise<void> {
     const database = await this.getDatabase();
+
+    if (!database.objectStoreNames.contains(storeName)) {
+      return;
+    }
 
     await new Promise<void>((resolve, reject) => {
       const transaction = database.transaction(storeName, 'readwrite');

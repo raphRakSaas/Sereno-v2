@@ -10,13 +10,31 @@ import { TopBar } from '../top-bar/top-bar';
 const PAGE_TITLES: Record<string, string> = {
   '/': 'Aperçu global',
   '/activite': 'Activité',
+  '/transactions/nouvelle': 'Nouvelle transaction',
   '/calendrier': 'Calendrier',
   '/statistiques': 'Statistiques',
   '/budgets': 'Budgets',
+  '/categories/nouvelle': 'Nouvelle catégorie',
   '/objectifs': 'Objectifs',
+  '/objectifs/creer': 'Créer un objectif',
   '/recurrences': 'Récurrences',
+  '/recurrences/creer': 'Nouvelle récurrence',
   '/reglages': 'Réglages',
 };
+
+function resolvePageTitle(url: string): string {
+  const path = url.split('?')[0];
+  if (PAGE_TITLES[path]) {
+    return PAGE_TITLES[path];
+  }
+  if (path.startsWith('/transactions/') && path.endsWith('/modifier')) {
+    return 'Modifier la transaction';
+  }
+  if (path.startsWith('/objectifs/') && path !== '/objectifs/creer') {
+    return 'Détail objectif';
+  }
+  return 'Aperçu global';
+}
 
 @Component({
   selector: 'app-shell',
@@ -51,9 +69,7 @@ export class AppShell {
     { initialValue: this.router.url },
   );
 
-  protected readonly pageTitle = computed(
-    () => PAGE_TITLES[this.currentUrl()] ?? 'Aperçu global',
-  );
+  protected readonly pageTitle = computed(() => resolvePageTitle(this.currentUrl() ?? '/'));
 
   protected readonly selectedYear = computed(() => {
     const [year] = this.appStore.selectedMonthKey().split('-');

@@ -9,6 +9,8 @@ export interface Transaction {
   note: string;
   receiptId?: string;
   recurrenceId?: string;
+  /** Objectif d'épargne alimenté par cette transaction (contribution manuelle liée). */
+  goalId?: string;
   createdAt: string;
   updatedAt: string;
 }

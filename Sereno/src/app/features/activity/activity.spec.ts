@@ -1,24 +1,35 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { computed, signal } from '@angular/core';
+import { signal } from '@angular/core';
 import { Activity } from './activity';
 import { AppStore } from '../../core/store/app.store';
-import { HOME_DEMO_DATA } from '../home/data/home-demo.data';
+import { SYSTEM_CATEGORIES } from '../../core/data/system-categories';
+
+const deleteTransaction = vi.fn().mockResolvedValue(undefined);
 
 const mockAppStore = {
-  dashboardData: computed(() => HOME_DEMO_DATA),
-  selectedMonthKey: signal('2026-07'),
-  transactions: signal([]),
-  budgets: signal([]),
-  categories: signal([]),
+  transactions: signal([
+    {
+      id: 'tx-1',
+      type: 'expense' as const,
+      amountInCents: 1250,
+      date: '2026-07-20',
+      categoryId: 'cat-groceries',
+      note: 'Pain',
+      createdAt: '2026-07-20T10:00:00.000Z',
+      updatedAt: '2026-07-20T10:00:00.000Z',
+    },
+  ]),
+  categories: signal(SYSTEM_CATEGORIES),
+  goals: signal([]),
+  deleteTransaction,
 };
 
 const emptyAppStore = {
-  dashboardData: computed(() => ({ ...HOME_DEMO_DATA, transactions: [] })),
-  selectedMonthKey: signal('2026-07'),
   transactions: signal([]),
-  budgets: signal([]),
-  categories: signal([]),
+  categories: signal(SYSTEM_CATEGORIES),
+  goals: signal([]),
+  deleteTransaction,
 };
 
 describe('Activity (integration)', () => {
@@ -32,12 +43,15 @@ describe('Activity (integration)', () => {
     }).compileComponents();
   });
 
-  it('should render the activity page with store transactions', () => {
+  it('should render transactions with edit and delete actions', () => {
     const fixture = TestBed.createComponent(Activity);
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
     expect(element.textContent).toContain('Activité');
-    expect(element.querySelectorAll('tbody tr').length).toBeGreaterThan(0);
+    expect(element.textContent).toContain('Pain');
+    expect(element.textContent).toContain('Actions');
+    expect(element.querySelector('a[href="/transactions/tx-1/modifier"]')).toBeTruthy();
+    expect(element.querySelectorAll('button[aria-label^="Supprimer"]').length).toBe(1);
   });
 
   it('should display filter controls', () => {
@@ -64,5 +78,6 @@ describe('Activity empty state (integration)', () => {
     const fixture = TestBed.createComponent(Activity);
     fixture.detectChanges();
     expect(fixture.componentInstance['allTransactions']()).toEqual([]);
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Aucune transaction');
   });
 });

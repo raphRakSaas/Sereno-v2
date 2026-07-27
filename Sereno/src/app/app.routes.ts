@@ -23,6 +23,20 @@ export const routes: Routes = [
           import('./features/activity/activity').then((module) => module.Activity),
       },
       {
+        path: 'transactions/nouvelle',
+        loadComponent: () =>
+          import('./features/transactions/transaction-form').then(
+            (module) => module.TransactionForm,
+          ),
+      },
+      {
+        path: 'transactions/:transactionId/modifier',
+        loadComponent: () =>
+          import('./features/transactions/transaction-form').then(
+            (module) => module.TransactionForm,
+          ),
+      },
+      {
         path: 'calendrier',
         loadComponent: () =>
           import('./features/calendar/calendar').then((module) => module.CalendarPage),
@@ -38,14 +52,36 @@ export const routes: Routes = [
           import('./features/budgets/budgets').then((module) => module.Budgets),
       },
       {
+        path: 'categories/nouvelle',
+        loadComponent: () =>
+          import('./features/categories/category-create').then((module) => module.CategoryCreate),
+      },
+      {
         path: 'objectifs',
         loadComponent: () =>
           import('./features/goals/goals').then((module) => module.Goals),
       },
       {
+        path: 'objectifs/creer',
+        loadComponent: () =>
+          import('./features/goals/goal-create').then((module) => module.GoalCreate),
+      },
+      {
+        path: 'objectifs/:goalId',
+        loadComponent: () =>
+          import('./features/goals/goal-detail').then((module) => module.GoalDetail),
+      },
+      {
         path: 'recurrences',
         loadComponent: () =>
           import('./features/recurrences/recurrences').then((module) => module.Recurrences),
+      },
+      {
+        path: 'recurrences/creer',
+        loadComponent: () =>
+          import('./features/recurrences/recurrence-create').then(
+            (module) => module.RecurrenceCreate,
+          ),
       },
       {
         path: 'reglages',

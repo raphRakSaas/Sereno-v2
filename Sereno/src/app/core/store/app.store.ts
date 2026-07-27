@@ -2,14 +2,17 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { SYSTEM_CATEGORIES } from '../data/system-categories';
 import { Budget } from '../models/budget.model';
 import { Category } from '../models/category.model';
+import { GoalContribution, SavingsGoal } from '../models/goal.model';
+import { Recurrence } from '../models/recurrence.model';
 import { AppSettings, DEFAULT_SETTINGS } from '../models/settings.model';
-import { Transaction } from '../models/transaction.model';
+import { Transaction, TransactionType } from '../models/transaction.model';
 import { SerenoDatabase } from '../persistence/sereno-database';
 import {
   BudgetProgress,
   CategorySlice,
   HomeDashboardData,
   RecentTransaction,
+  SavingsGoalSummary,
 } from '../../features/home/models/home.models';
 import { calculateProgressPercent } from '../../shared/utils/format-currency';
 import { getCurrentMonthKey, isDateInMonth } from '../../shared/utils/month-key';
@@ -21,6 +24,38 @@ export interface OnboardingPayload {
   budgets: Array<{ categoryId: string; amountInCents: number }>;
 }
 
+export interface CreateTransactionInput {
+  type: TransactionType;
+  amountInCents: number;
+  date: string;
+  categoryId: string;
+  note: string;
+  goalId?: string;
+}
+
+export interface CreateCategoryInput {
+  name: string;
+  icon: string;
+  color: string;
+}
+
+export interface CreateGoalInput {
+  name: string;
+  targetAmountInCents: number;
+  targetDate?: string;
+  icon: string;
+}
+
+export interface CreateRecurrenceInput {
+  type: TransactionType;
+  amountInCents: number;
+  categoryId: string;
+  note: string;
+  frequency: Recurrence['frequency'];
+  startDate: string;
+  endDate?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AppStore {
   private readonly database = inject(SerenoDatabase);
@@ -29,9 +64,15 @@ export class AppStore {
   readonly categories = signal<Category[]>([]);
   readonly transactions = signal<Transaction[]>([]);
   readonly budgets = signal<Budget[]>([]);
+  readonly goals = signal<SavingsGoal[]>([]);
+  readonly recurrences = signal<Recurrence[]>([]);
   readonly isReady = signal(false);
 
   readonly selectedMonthKey = signal(getCurrentMonthKey());
+
+  readonly activeCategories = computed(() =>
+    this.categories().filter((category) => !category.archivedAt),
+  );
 
   readonly dashboardData = computed<HomeDashboardData>(() => {
     const monthKey = this.selectedMonthKey();
@@ -119,7 +160,7 @@ export class AppStore {
       budgets: budgetProgress,
       transactions: recentTransactions,
       categorySlices,
-      savingsGoal: null,
+      savingsGoal: pickPrimarySavingsGoal(this.goals(), monthKey),
     };
   });
 
@@ -132,17 +173,21 @@ export class AppStore {
     await this.database.open();
     await this.seedCategoriesIfNeeded();
 
-    const [settings, categories, transactions, budgets] = await Promise.all([
+    const [settings, categories, transactions, budgets, goals, recurrences] = await Promise.all([
       this.database.getSettings(),
       this.database.getAllCategories(),
       this.database.getAllTransactions(),
       this.database.getAllBudgets(),
+      this.database.getAllGoals(),
+      this.database.getAllRecurrences(),
     ]);
 
     this.settings.set(settings ?? DEFAULT_SETTINGS);
     this.categories.set(categories);
     this.transactions.set(transactions);
     this.budgets.set(budgets);
+    this.goals.set(goals);
+    this.recurrences.set(recurrences);
     this.isReady.set(true);
   }
 
@@ -232,11 +277,315 @@ export class AppStore {
     this.settings.set(settings);
     this.transactions.set(demoTransactions);
     this.budgets.set(demoBudgets);
+    this.goals.set([]);
+    this.recurrences.set([]);
+  }
+
+  async addTransaction(input: CreateTransactionInput): Promise<Transaction> {
+    const now = new Date().toISOString();
+    const goalId = input.goalId?.trim() || undefined;
+    const transaction: Transaction = {
+      id: crypto.randomUUID(),
+      type: input.type,
+      amountInCents: input.amountInCents,
+      date: input.date,
+      categoryId: input.categoryId,
+      note: input.note.trim(),
+      goalId,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    await this.database.putTransaction(transaction);
+    this.transactions.update((transactions) => [...transactions, transaction]);
+
+    if (goalId) {
+      await this.addGoalContribution(goalId, input.amountInCents, input.date, transaction.id);
+    }
+
+    return transaction;
+  }
+
+  async updateTransaction(
+    transactionId: string,
+    patch: Partial<CreateTransactionInput>,
+  ): Promise<void> {
+    const existing = this.transactions().find((transaction) => transaction.id === transactionId);
+    if (!existing) {
+      throw new Error('Transaction introuvable');
+    }
+
+    const nextGoalId =
+      patch.goalId !== undefined ? patch.goalId.trim() || undefined : existing.goalId;
+
+    const updated: Transaction = {
+      ...existing,
+      type: patch.type ?? existing.type,
+      amountInCents: patch.amountInCents ?? existing.amountInCents,
+      date: patch.date ?? existing.date,
+      categoryId: patch.categoryId ?? existing.categoryId,
+      note: patch.note !== undefined ? patch.note.trim() : existing.note,
+      goalId: nextGoalId,
+      updatedAt: new Date().toISOString(),
+    };
+
+    await this.database.putTransaction(updated);
+    this.transactions.update((transactions) =>
+      transactions.map((transaction) =>
+        transaction.id === transactionId ? updated : transaction,
+      ),
+    );
+
+    await this.syncTransactionGoalContribution(existing, updated);
+  }
+
+  async deleteTransaction(transactionId: string): Promise<void> {
+    const existing = this.transactions().find((transaction) => transaction.id === transactionId);
+    await this.database.deleteTransaction(transactionId);
+    this.transactions.update((transactions) =>
+      transactions.filter((transaction) => transaction.id !== transactionId),
+    );
+
+    if (existing?.goalId) {
+      await this.removeGoalContributionByTransaction(existing.goalId, transactionId);
+    }
+  }
+
+  async addCategory(input: CreateCategoryInput): Promise<Category> {
+    const category: Category = {
+      id: crypto.randomUUID(),
+      name: input.name.trim(),
+      icon: input.icon,
+      color: input.color,
+      isSystem: false,
+    };
+
+    await this.database.putCategory(category);
+    this.categories.update((categories) => [...categories, category]);
+    return category;
+  }
+
+  async archiveCategory(categoryId: string): Promise<void> {
+    const existing = this.categories().find((category) => category.id === categoryId);
+    if (!existing || existing.isSystem) {
+      throw new Error('Catégorie non archivable');
+    }
+
+    const archived: Category = {
+      ...existing,
+      archivedAt: new Date().toISOString(),
+    };
+
+    await this.database.putCategory(archived);
+    this.categories.update((categories) =>
+      categories.map((category) => (category.id === categoryId ? archived : category)),
+    );
+  }
+
+  async addGoal(input: CreateGoalInput): Promise<SavingsGoal> {
+    const goal: SavingsGoal = {
+      id: crypto.randomUUID(),
+      name: input.name.trim(),
+      targetAmountInCents: input.targetAmountInCents,
+      targetDate: input.targetDate || undefined,
+      icon: input.icon,
+      createdAt: new Date().toISOString(),
+      contributions: [],
+    };
+
+    await this.database.putGoal(goal);
+    this.goals.update((goals) => [...goals, goal]);
+    return goal;
+  }
+
+  async addGoalContribution(
+    goalId: string,
+    amountInCents: number,
+    date = getTodayIsoDate(),
+    transactionId?: string,
+  ): Promise<void> {
+    const existing = this.goals().find((goal) => goal.id === goalId);
+    if (!existing) {
+      throw new Error('Objectif introuvable');
+    }
+
+    const contribution: GoalContribution = {
+      id: crypto.randomUUID(),
+      amountInCents,
+      date,
+      transactionId,
+    };
+
+    const updated: SavingsGoal = {
+      ...existing,
+      contributions: [...existing.contributions, contribution],
+      completedAt: undefined,
+    };
+
+    const savedInCents = sumContributions(updated.contributions);
+    if (savedInCents >= updated.targetAmountInCents) {
+      updated.completedAt = new Date().toISOString();
+    }
+
+    await this.database.putGoal(updated);
+    this.goals.update((goals) => goals.map((goal) => (goal.id === goalId ? updated : goal)));
+  }
+
+  async deleteGoalContribution(goalId: string, contributionId: string): Promise<void> {
+    const existing = this.goals().find((goal) => goal.id === goalId);
+    if (!existing) {
+      throw new Error('Objectif introuvable');
+    }
+
+    const updated: SavingsGoal = {
+      ...existing,
+      contributions: existing.contributions.filter(
+        (contribution) => contribution.id !== contributionId,
+      ),
+      completedAt: undefined,
+    };
+
+    const savedInCents = sumContributions(updated.contributions);
+    if (savedInCents >= updated.targetAmountInCents) {
+      updated.completedAt = existing.completedAt ?? new Date().toISOString();
+    } else {
+      updated.completedAt = undefined;
+    }
+
+    await this.database.putGoal(updated);
+    this.goals.update((goals) => goals.map((goal) => (goal.id === goalId ? updated : goal)));
+  }
+
+  async updateGoal(goalId: string, patch: Partial<CreateGoalInput>): Promise<void> {
+    const existing = this.goals().find((goal) => goal.id === goalId);
+    if (!existing) {
+      throw new Error('Objectif introuvable');
+    }
+
+    const updated: SavingsGoal = {
+      ...existing,
+      name: patch.name !== undefined ? patch.name.trim() : existing.name,
+      targetAmountInCents: patch.targetAmountInCents ?? existing.targetAmountInCents,
+      targetDate:
+        patch.targetDate !== undefined ? patch.targetDate || undefined : existing.targetDate,
+      icon: patch.icon ?? existing.icon,
+    };
+
+    await this.database.putGoal(updated);
+    this.goals.update((goals) => goals.map((goal) => (goal.id === goalId ? updated : goal)));
+  }
+
+  async deleteGoal(goalId: string): Promise<void> {
+    await this.database.deleteGoal(goalId);
+    this.goals.update((goals) => goals.filter((goal) => goal.id !== goalId));
+  }
+
+  async addRecurrence(input: CreateRecurrenceInput): Promise<Recurrence> {
+    const now = new Date().toISOString();
+    const recurrence: Recurrence = {
+      id: crypto.randomUUID(),
+      type: input.type,
+      amountInCents: input.amountInCents,
+      categoryId: input.categoryId,
+      note: input.note.trim(),
+      frequency: input.frequency,
+      startDate: input.startDate,
+      endDate: input.endDate || undefined,
+      isPaused: false,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    await this.database.putRecurrence(recurrence);
+    this.recurrences.update((recurrences) => [...recurrences, recurrence]);
+    return recurrence;
+  }
+
+  async updateRecurrence(
+    recurrenceId: string,
+    patch: Partial<CreateRecurrenceInput & { isPaused: boolean }>,
+  ): Promise<void> {
+    const existing = this.recurrences().find((recurrence) => recurrence.id === recurrenceId);
+    if (!existing) {
+      throw new Error('Récurrence introuvable');
+    }
+
+    const updated: Recurrence = {
+      ...existing,
+      ...patch,
+      note: patch.note !== undefined ? patch.note.trim() : existing.note,
+      endDate: patch.endDate !== undefined ? patch.endDate || undefined : existing.endDate,
+      updatedAt: new Date().toISOString(),
+    };
+
+    await this.database.putRecurrence(updated);
+    this.recurrences.update((recurrences) =>
+      recurrences.map((recurrence) =>
+        recurrence.id === recurrenceId ? updated : recurrence,
+      ),
+    );
+  }
+
+  async deleteRecurrence(recurrenceId: string): Promise<void> {
+    await this.database.deleteRecurrence(recurrenceId);
+    this.recurrences.update((recurrences) =>
+      recurrences.filter((recurrence) => recurrence.id !== recurrenceId),
+    );
   }
 
   setSelectedMonth(year: number, monthIndex: number): void {
     const month = (monthIndex + 1).toString().padStart(2, '0');
     this.selectedMonthKey.set(`${year}-${month}`);
+  }
+
+  private async syncTransactionGoalContribution(
+    previous: Transaction,
+    next: Transaction,
+  ): Promise<void> {
+    if (previous.goalId) {
+      await this.removeGoalContributionByTransaction(previous.goalId, previous.id);
+    }
+
+    if (next.goalId) {
+      await this.addGoalContribution(
+        next.goalId,
+        next.amountInCents,
+        next.date,
+        next.id,
+      );
+    }
+  }
+
+  private async removeGoalContributionByTransaction(
+    goalId: string,
+    transactionId: string,
+  ): Promise<void> {
+    const existing = this.goals().find((goal) => goal.id === goalId);
+    if (!existing) {
+      return;
+    }
+
+    const remaining = existing.contributions.filter(
+      (contribution) => contribution.transactionId !== transactionId,
+    );
+
+    if (remaining.length === existing.contributions.length) {
+      return;
+    }
+
+    const updated: SavingsGoal = {
+      ...existing,
+      contributions: remaining,
+      completedAt: undefined,
+    };
+
+    const savedInCents = sumContributions(updated.contributions);
+    if (savedInCents >= updated.targetAmountInCents) {
+      updated.completedAt = existing.completedAt ?? new Date().toISOString();
+    }
+
+    await this.database.putGoal(updated);
+    this.goals.update((goals) => goals.map((goal) => (goal.id === goalId ? updated : goal)));
   }
 
   private async seedCategoriesIfNeeded(): Promise<void> {
@@ -246,9 +595,7 @@ export class AppStore {
       return;
     }
 
-    await Promise.all(
-      SYSTEM_CATEGORIES.map((category) => this.database.putCategory(category)),
-    );
+    await Promise.all(SYSTEM_CATEGORIES.map((category) => this.database.putCategory(category)));
     this.categories.set(SYSTEM_CATEGORIES);
   }
 }
@@ -275,6 +622,54 @@ function formatShortDate(isoDate: string): string {
   return date.toLocaleDateString('fr-FR', {
     day: 'numeric',
     month: 'short',
+    year: 'numeric',
+  });
+}
+
+function getTodayIsoDate(): string {
+  const today = new Date();
+  const month = (today.getMonth() + 1).toString().padStart(2, '0');
+  const day = today.getDate().toString().padStart(2, '0');
+  return `${today.getFullYear()}-${month}-${day}`;
+}
+
+function sumContributions(contributions: GoalContribution[]): number {
+  return contributions.reduce((total, contribution) => total + contribution.amountInCents, 0);
+}
+
+function pickPrimarySavingsGoal(
+  goals: SavingsGoal[],
+  monthKey: string,
+): SavingsGoalSummary | null {
+  const activeGoal =
+    goals.find((goal) => !goal.completedAt) ??
+    [...goals].sort((left, right) => right.createdAt.localeCompare(left.createdAt))[0];
+
+  if (!activeGoal) {
+    return null;
+  }
+
+  const savedInCents = sumContributions(activeGoal.contributions);
+  const monthlyContributionInCents = activeGoal.contributions
+    .filter((contribution) => contribution.date.startsWith(monthKey))
+    .reduce((total, contribution) => total + contribution.amountInCents, 0);
+
+  return {
+    id: activeGoal.id,
+    name: activeGoal.name,
+    targetDateLabel: activeGoal.targetDate
+      ? `Objectif : ${formatMonthYear(activeGoal.targetDate)}`
+      : 'Sans date cible',
+    savedInCents,
+    targetInCents: activeGoal.targetAmountInCents,
+    monthlyContributionInCents,
+    icon: activeGoal.icon,
+  };
+}
+
+function formatMonthYear(isoDate: string): string {
+  return new Date(isoDate).toLocaleDateString('fr-FR', {
+    month: 'long',
     year: 'numeric',
   });
 }

@@ -1,19 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
-
-interface GoalItem {
-  id: string;
-  name: string;
-  icon: string;
-  targetDateLabel: string;
-  savedInCents: number;
-  targetInCents: number;
-  monthlyContributionInCents: number;
-  status: 'active' | 'completed';
-}
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { AppStore } from '../../core/store/app.store';
+import { SavingsGoal } from '../../core/models/goal.model';
+import { calculateProgressPercent, formatCurrency } from '../../shared/utils/format-currency';
 
 @Component({
   selector: 'app-goals',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterLink],
   template: `
     <div class="space-y-6">
       <div class="flex items-center justify-between gap-3">
@@ -29,13 +23,13 @@ interface GoalItem {
             }
           </p>
         </div>
-        <button
-          type="button"
+        <a
+          routerLink="/objectifs/creer"
           class="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-[12px] font-semibold text-white transition-opacity hover:opacity-90"
         >
           <span class="material-symbols-outlined text-[16px]" aria-hidden="true">add</span>
           Créer un objectif
-        </button>
+        </a>
       </div>
 
       @if (activeGoals().length > 0) {
@@ -43,7 +37,7 @@ interface GoalItem {
           <h3 class="label-caps mb-3 text-text-muted">En cours</h3>
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             @for (goal of activeGoals(); track goal.id) {
-              <article class="bento-card p-5">
+              <a [routerLink]="['/objectifs', goal.id]" class="bento-card block p-5 transition-colors hover:border-accent/40">
                 <div class="mb-4 flex items-start justify-between">
                   <div class="flex items-center gap-3">
                     <div
@@ -55,7 +49,7 @@ interface GoalItem {
                     </div>
                     <div>
                       <p class="text-[14px] font-semibold text-text">{{ goal.name }}</p>
-                      <p class="text-[11px] text-text-muted">{{ goal.targetDateLabel }}</p>
+                      <p class="text-[11px] text-text-muted">{{ targetDateLabel(goal) }}</p>
                     </div>
                   </div>
                   <span class="text-[12px] font-semibold text-accent"
@@ -64,10 +58,10 @@ interface GoalItem {
                 </div>
                 <div class="mb-2 flex justify-between text-[12px]">
                   <span class="monetary-tabular font-medium text-text">{{
-                    formatCents(goal.savedInCents)
+                    formatCurrency(savedInCents(goal))
                   }}</span>
                   <span class="text-text-muted"
-                    >sur {{ formatCents(goal.targetInCents) }}</span
+                    >sur {{ formatCurrency(goal.targetAmountInCents) }}</span
                   >
                 </div>
                 <div class="h-2 overflow-hidden rounded-full bg-page">
@@ -76,7 +70,8 @@ interface GoalItem {
                     [style.width.%]="goalPercent(goal)"
                   ></div>
                 </div>
-              </article>
+                <p class="mt-3 text-[11px] font-medium text-accent">Ouvrir · Ajouter une contribution</p>
+              </a>
             }
           </div>
         </div>
@@ -87,17 +82,18 @@ interface GoalItem {
           <h3 class="label-caps mb-3 text-text-muted">Atteints</h3>
           <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
             @for (goal of completedGoals(); track goal.id) {
-              <article class="bento-card flex items-center gap-3 p-4">
-                <span
-                  class="material-symbols-outlined text-income"
-                  aria-hidden="true"
+              <a
+                [routerLink]="['/objectifs', goal.id]"
+                class="bento-card flex items-center gap-3 p-4 transition-colors hover:border-accent/40"
+              >
+                <span class="material-symbols-outlined text-income" aria-hidden="true"
                   >check_circle</span
                 >
                 <div>
                   <p class="text-[13px] font-semibold text-text">{{ goal.name }}</p>
-                  <p class="text-[11px] text-text-muted">{{ goal.targetDateLabel }}</p>
+                  <p class="text-[11px] text-text-muted">{{ targetDateLabel(goal) }}</p>
                 </div>
-              </article>
+              </a>
             }
           </div>
         </div>
@@ -118,41 +114,49 @@ interface GoalItem {
               avec ton vrai suivi, sur cet appareil.
             </p>
           </div>
-          <button
-            type="button"
+          <a
+            routerLink="/objectifs/creer"
             class="rounded-lg bg-accent px-5 py-2.5 text-[13px] font-semibold text-white transition-opacity hover:opacity-90"
           >
             Créer mon premier objectif
-          </button>
+          </a>
         </section>
       }
     </div>
   `,
 })
 export class Goals {
-  /** Vide par défaut : les objectifs viendront du store local, pas de fausses données. */
-  protected readonly allGoals = signal<GoalItem[]>([]);
+  private readonly appStore = inject(AppStore);
+
+  protected readonly formatCurrency = formatCurrency;
+  protected readonly allGoals = computed(() => this.appStore.goals());
 
   protected readonly activeGoals = computed(() =>
-    this.allGoals().filter((goal) => goal.status === 'active'),
+    this.allGoals().filter((goal) => !goal.completedAt),
   );
 
   protected readonly completedGoals = computed(() =>
-    this.allGoals().filter((goal) => goal.status === 'completed'),
+    this.allGoals().filter((goal) => Boolean(goal.completedAt)),
   );
 
-  protected goalPercent(goal: GoalItem): number {
-    if (goal.targetInCents <= 0) {
-      return 0;
-    }
-    return Math.min(100, Math.round((goal.savedInCents / goal.targetInCents) * 100));
+  protected savedInCents(goal: SavingsGoal): number {
+    return goal.contributions.reduce(
+      (total, contribution) => total + contribution.amountInCents,
+      0,
+    );
   }
 
-  protected formatCents(cents: number): string {
-    return (cents / 100).toLocaleString('fr-FR', {
-      style: 'currency',
-      currency: 'EUR',
-      maximumFractionDigits: 0,
-    });
+  protected goalPercent(goal: SavingsGoal): number {
+    return calculateProgressPercent(this.savedInCents(goal), goal.targetAmountInCents);
+  }
+
+  protected targetDateLabel(goal: SavingsGoal): string {
+    if (!goal.targetDate) {
+      return 'Sans date cible';
+    }
+    return `Objectif : ${new Date(goal.targetDate).toLocaleDateString('fr-FR', {
+      month: 'long',
+      year: 'numeric',
+    })}`;
   }
 }
