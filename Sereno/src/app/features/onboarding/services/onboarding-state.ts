@@ -17,7 +17,7 @@ export class OnboardingState {
   readonly currentStep = signal<OnboardingStep>('welcome');
   readonly initialBalanceInCents = signal(0);
   readonly monthlyIncomeInCents = signal(0);
-  readonly incomeLabel = signal('Revenu mensuel');
+  readonly incomeLabel = signal('Salaire');
   readonly budgetDrafts = signal<OnboardingBudgetDraft[]>([]);
 
   setStep(step: OnboardingStep): void {

@@ -19,6 +19,10 @@ describe('Sidebar', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
+  it('should render the Sereno logo', () => {
+    expect(fixture.nativeElement.querySelector('app-sereno-logo')).toBeTruthy();
+  });
+
   it('should expose eight navigation items', () => {
     const links = fixture.nativeElement.querySelectorAll('nav a');
     expect(links.length).toBe(8);

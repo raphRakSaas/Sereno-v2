@@ -21,11 +21,12 @@ describe('AppShell (integration)', () => {
     }).compileComponents();
   });
 
-  it('should render sidebar navigation', () => {
+  it('should render sidebar navigation and brand logo', () => {
     const fixture = TestBed.createComponent(AppShell);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('Accueil');
     expect(compiled.textContent).toContain('Nouvelle transaction');
+    expect(compiled.querySelector('app-sereno-logo')).toBeTruthy();
   });
 });

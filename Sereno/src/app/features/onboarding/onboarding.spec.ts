@@ -54,6 +54,12 @@ describe('Onboarding (integration)', () => {
     expect(fixture.nativeElement.textContent).toContain('Bienvenue sur Sereno');
   });
 
+  it('should render the Sereno logo', () => {
+    const fixture = TestBed.createComponent(Onboarding);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('app-sereno-logo')).toBeTruthy();
+  });
+
   it('should render the lottie panel', () => {
     const fixture = TestBed.createComponent(Onboarding);
     fixture.detectChanges();
@@ -72,6 +78,45 @@ describe('Onboarding (integration)', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent).toContain('Solde initial');
+  });
+
+  it('should select an income category from the dropdown and update the label', () => {
+    const fixture = TestBed.createComponent(Onboarding);
+    fixture.detectChanges();
+
+    fixture.componentInstance['goToStep']('income');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('select')).toBeTruthy();
+    expect(fixture.nativeElement.textContent).toContain('Catégorie');
+    expect(fixture.nativeElement.textContent).toContain('Libellé');
+
+    fixture.componentInstance['incomeCategoryControl'].setValue('family-allowance');
+    fixture.detectChanges();
+
+    const state = fixture.debugElement.injector.get(OnboardingState);
+    expect(state.incomeLabel()).toBe('Allocation familiale (CAF)');
+
+    const labelInput = fixture.nativeElement.querySelector(
+      'input[type="text"]',
+    ) as HTMLInputElement;
+    expect(labelInput.value).toBe('Allocation familiale (CAF)');
+  });
+
+  it('should keep a customizable label field next to the category dropdown', () => {
+    const fixture = TestBed.createComponent(Onboarding);
+    fixture.detectChanges();
+
+    fixture.componentInstance['goToStep']('income');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('input[type="text"]')).toBeTruthy();
+
+    fixture.componentInstance['incomeLabelControl'].setValue('Salaire Acme');
+    fixture.detectChanges();
+
+    const state = fixture.debugElement.injector.get(OnboardingState);
+    expect(state.incomeLabel()).toBe('Salaire Acme');
   });
 
   it('should persist onboarding data on completion', async () => {
@@ -96,7 +141,7 @@ describe('Onboarding (integration)', () => {
     expect(completeOnboarding).toHaveBeenCalledWith({
       initialBalanceInCents: 150000,
       monthlyIncomeInCents: 280000,
-      incomeLabel: 'Revenu mensuel',
+      incomeLabel: 'Salaire',
       budgets: [{ categoryId: 'cat-groceries', amountInCents: 40000 }],
     });
   });

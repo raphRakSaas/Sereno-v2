@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { SerenoLogo } from '../../../shared/components/sereno-logo/sereno-logo';
 
 interface NavItem {
   label: string;
@@ -10,23 +11,15 @@ interface NavItem {
 @Component({
   selector: 'app-sidebar',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, SerenoLogo],
   template: `
     <aside
       class="fixed top-0 left-0 z-20 flex h-full w-sidebar flex-col gap-4 border-r border-border bg-surface px-4 py-6"
       aria-label="Navigation principale"
     >
-      <div class="mb-4 flex items-center gap-3 px-2">
-        <div
-          class="flex h-8 w-8 items-center justify-center rounded bg-accent text-sm font-bold text-white"
-          aria-hidden="true"
-        >
-          S
-        </div>
-        <div>
-          <p class="text-[24px] font-semibold tracking-tight text-accent">sereno</p>
-          <p class="text-[13px] leading-none text-text-muted">Finance personnelle</p>
-        </div>
+      <div class="mb-4 px-2">
+        <app-sereno-logo variant="full" size="sm" />
+        <p class="mt-2 text-[13px] leading-none text-text-muted">Finance personnelle</p>
       </div>
 
       <button
