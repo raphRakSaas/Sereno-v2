@@ -7,49 +7,52 @@ import { formatCurrency } from '../../../../shared/utils/format-currency';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="bento-card overflow-hidden" aria-labelledby="transactions-title">
-      <header class="flex items-center justify-between border-b border-border p-6">
-        <h2 id="transactions-title" class="text-[15px] font-semibold uppercase tracking-wide text-text">
+      <header class="flex items-center justify-between border-b border-border px-5 py-4">
+        <h2
+          id="transactions-title"
+          class="text-[13px] font-semibold uppercase tracking-wide text-text"
+        >
           Transactions récentes
         </h2>
-        <button type="button" class="label-caps text-accent hover:tracking-widest">Tout voir</button>
+        <button type="button" class="label-caps text-accent hover:underline">Tout voir</button>
       </header>
 
       <div class="overflow-x-auto">
         <table class="w-full min-w-[640px] text-left">
           <thead class="border-b border-border bg-page">
             <tr>
-              <th class="label-caps px-6 py-3 text-text-muted">Détails</th>
-              <th class="label-caps px-6 py-3 text-text-muted">Catégorie</th>
-              <th class="label-caps px-6 py-3 text-text-muted">Date</th>
-              <th class="label-caps px-6 py-3 text-right text-text-muted">Montant</th>
+              <th class="label-caps px-5 py-2.5 text-text-muted">Détails</th>
+              <th class="label-caps px-5 py-2.5 text-text-muted">Catégorie</th>
+              <th class="label-caps px-5 py-2.5 text-text-muted">Date</th>
+              <th class="label-caps px-5 py-2.5 text-right text-text-muted">Montant</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-border/40">
             @for (transaction of transactions(); track transaction.id) {
-              <tr class="h-11 cursor-pointer transition-colors hover:bg-page">
-                <td class="px-6">
-                  <div class="flex items-center gap-3">
+              <tr class="h-10 cursor-pointer transition-colors hover:bg-page">
+                <td class="px-5">
+                  <div class="flex items-center gap-2.5">
                     <div
-                      class="flex h-8 w-8 items-center justify-center rounded bg-accent-surface text-accent"
+                      class="flex h-7 w-7 items-center justify-center rounded-md bg-accent-surface text-accent"
                     >
-                      <span class="material-symbols-outlined text-[18px]" aria-hidden="true">
+                      <span class="material-symbols-outlined text-[16px]" aria-hidden="true">
                         {{ transaction.icon }}
                       </span>
                     </div>
                     <div>
-                      <p class="text-sm font-medium text-text">{{ transaction.label }}</p>
+                      <p class="text-[13px] font-medium text-text">{{ transaction.label }}</p>
                       <p class="text-[11px] text-text-muted">{{ transaction.note }}</p>
                     </div>
                     @if (transaction.hasReceipt) {
                       <span
-                        class="material-symbols-outlined text-[16px] text-text-muted"
+                        class="material-symbols-outlined text-[15px] text-text-muted"
                         aria-label="Justificatif joint"
                         >attach_file</span
                       >
                     }
                   </div>
                 </td>
-                <td class="px-6">
+                <td class="px-5">
                   <span
                     class="rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide"
                     [class]="categoryClass(transaction.categoryTone)"
@@ -57,9 +60,9 @@ import { formatCurrency } from '../../../../shared/utils/format-currency';
                     {{ transaction.categoryName }}
                   </span>
                 </td>
-                <td class="px-6 text-[13px] text-text-muted">{{ transaction.dateLabel }}</td>
+                <td class="px-5 text-[12px] text-text-muted">{{ transaction.dateLabel }}</td>
                 <td
-                  class="px-6 text-right text-sm font-medium monetary-tabular"
+                  class="px-5 text-right text-[13px] font-medium monetary-tabular"
                   [class.text-income]="transaction.type === 'income'"
                   [class.text-text]="transaction.type === 'expense'"
                 >

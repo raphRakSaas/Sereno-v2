@@ -31,7 +31,16 @@ describe('Home (integration)', () => {
     const fixture = TestBed.createComponent(Home);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('Budgets mensuels');
     expect(compiled.textContent).toContain('Logement');
-    expect(compiled.textContent).toContain('Courses');
+  });
+
+  it('should render goals and Sereno insights placeholders', () => {
+    const fixture = TestBed.createComponent(Home);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('Objectifs');
+    expect(compiled.textContent).toContain('Analyses de Sereno');
+    expect(compiled.textContent).toContain('Bienvenue sur ton aperçu');
   });
 });
