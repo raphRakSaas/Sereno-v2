@@ -101,8 +101,9 @@ import { MoneyInput } from '../../shared/components/money-input/money-input';
             formControlName="frequency"
             class="h-11 w-full rounded-lg border border-border bg-surface px-4 text-sm text-text outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
           >
-            <option value="monthly">Mensuelle</option>
+            <option value="daily">Quotidienne</option>
             <option value="weekly">Hebdomadaire</option>
+            <option value="monthly">Mensuelle</option>
             <option value="yearly">Annuelle</option>
           </select>
         </label>

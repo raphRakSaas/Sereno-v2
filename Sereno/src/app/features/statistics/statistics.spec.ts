@@ -64,13 +64,28 @@ describe('Statistics (integration)', () => {
     expect(element.textContent).toContain("Taux d'épargne");
   });
 
-  it('should display évolution chart section', () => {
+  it('should show chart switcher tabs', () => {
     const fixture = TestBed.createComponent(Statistics);
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
-    expect(element.textContent).toContain('Évolution sur 6 mois');
-    const svg = element.querySelector('svg');
-    expect(svg).toBeTruthy();
+    expect(element.textContent).toContain('Évolution');
+    expect(element.textContent).toContain('Barres');
+    expect(element.textContent).toContain('Répartition');
+    expect(element.textContent).toContain('Épargne');
+    expect(element.querySelectorAll('[role="tab"]').length).toBe(4);
+  });
+
+  it('should switch chart view when a tab is clicked', () => {
+    const fixture = TestBed.createComponent(Statistics);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    const tabs = Array.from(element.querySelectorAll('[role="tab"]')) as HTMLButtonElement[];
+    const barsTab = tabs.find((tab) => tab.textContent?.includes('Barres'));
+    barsTab?.click();
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance['selectedChart']()).toBe('bars');
+    expect(element.textContent).toContain('Dépenses en barres');
   });
 
   it('should render top transactions section', () => {

@@ -124,6 +124,25 @@ describe('AppStore', () => {
     expect(appStore.transactions()[0].goalId).toBe(goalId);
   });
 
+  it('should create a recurrence when adding a recurring transaction', async () => {
+    const transaction = await appStore.addTransaction({
+      type: 'expense',
+      amountInCents: 85000,
+      date: '2026-07-05',
+      categoryId: 'cat-housing',
+      note: 'Loyer',
+      recurrence: {
+        frequency: 'monthly',
+        startDate: '2026-07-05',
+      },
+    });
+
+    expect(transaction.recurrenceId).toBeTruthy();
+    expect(appStore.recurrences()).toHaveLength(1);
+    expect(appStore.recurrences()[0].frequency).toBe('monthly');
+    expect(appStore.recurrences()[0].lastGeneratedAt).toBe('2026-07-05');
+  });
+
   it('should delete a transaction', async () => {
     const transaction = await appStore.addTransaction({
       type: 'expense',

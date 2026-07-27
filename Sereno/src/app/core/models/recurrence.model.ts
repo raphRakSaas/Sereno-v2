@@ -1,6 +1,6 @@
 import { TransactionType } from './transaction.model';
 
-export type RecurrenceFrequency = 'weekly' | 'monthly' | 'yearly';
+export type RecurrenceFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly';
 
 export interface Recurrence {
   id: string;

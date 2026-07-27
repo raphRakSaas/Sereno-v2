@@ -12,6 +12,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
 import { AppStore } from '../../core/store/app.store';
 import { Category } from '../../core/models/category.model';
+import { RecurrenceFrequency } from '../../core/models/recurrence.model';
 import { TransactionType } from '../../core/models/transaction.model';
 import { MoneyInput } from '../../shared/components/money-input/money-input';
 
@@ -116,6 +117,84 @@ import { MoneyInput } from '../../shared/components/money-input/money-input';
           />
         </label>
 
+        <div>
+          <span class="label-caps mb-2 block text-text-muted">Transaction récurrente</span>
+          <div class="flex overflow-hidden rounded-lg border border-border">
+            <button
+              type="button"
+              class="flex-1 px-3 py-2.5 text-[13px] font-semibold transition-colors"
+              [class.bg-page]="!isRecurring()"
+              [class.text-text]="!isRecurring()"
+              [class.text-text-muted]="isRecurring()"
+              (click)="setRecurring(false)"
+            >
+              Non
+            </button>
+            <button
+              type="button"
+              class="flex-1 px-3 py-2.5 text-[13px] font-semibold transition-colors"
+              [class.bg-accent]="isRecurring()"
+              [class.text-white]="isRecurring()"
+              [class.text-text-muted]="!isRecurring()"
+              (click)="setRecurring(true)"
+            >
+              Oui
+            </button>
+          </div>
+          <p class="mt-1 text-[11px] text-text-muted">
+            Par défaut non — active pour créer aussi une récurrence (loyer, salaire…).
+          </p>
+        </div>
+
+        @if (isRecurring()) {
+          <div class="space-y-4 rounded-xl border border-border bg-page/50 p-4">
+            <label class="block">
+              <span class="label-caps mb-2 block text-text-muted">Fréquence</span>
+              <select
+                formControlName="recurrenceFrequency"
+                class="h-11 w-full rounded-lg border border-border bg-surface px-4 text-sm text-text outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+              >
+                <option value="daily">Tous les jours</option>
+                <option value="weekly">Toutes les semaines</option>
+                <option value="monthly">Tous les mois</option>
+                <option value="yearly">Tous les ans</option>
+              </select>
+            </label>
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <label class="block">
+                <span class="label-caps mb-2 block text-text-muted">Début</span>
+                <input
+                  type="date"
+                  formControlName="recurrenceStartDate"
+                  class="h-11 w-full rounded-lg border border-border bg-surface px-4 text-sm text-text outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+                />
+              </label>
+              <label class="block">
+                <span class="label-caps mb-2 block text-text-muted">Fin (optionnel)</span>
+                <input
+                  type="date"
+                  formControlName="recurrenceEndDate"
+                  class="h-11 w-full rounded-lg border border-border bg-surface px-4 text-sm text-text outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+                />
+              </label>
+            </div>
+
+            @if (
+              submitted() &&
+              form.controls.recurrenceEndDate.value &&
+              form.controls.recurrenceEndDate.value < form.controls.recurrenceStartDate.value
+            ) {
+              <p class="text-[12px] text-accent">La date de fin doit être après la date de début.</p>
+            }
+
+            <p class="text-[11px] leading-relaxed text-text-muted">
+              La transaction d'aujourd'hui est enregistrée maintenant. Sereno créera les
+              prochaines occurrences selon la fréquence choisie.
+            </p>
+          </div>
+        }
+
         <label class="block">
           <span class="label-caps mb-2 block text-text-muted">Contribuer à un objectif</span>
           <select
@@ -190,6 +269,7 @@ export class TransactionForm {
   protected readonly isEditMode = computed(() => Boolean(this.transactionId()));
 
   protected readonly transactionType = signal<TransactionType>('expense');
+  protected readonly isRecurring = signal(false);
   protected readonly amountInCents = signal(0);
   protected readonly submitted = signal(false);
   protected readonly isSaving = signal(false);
@@ -201,6 +281,9 @@ export class TransactionForm {
     date: [getTodayIsoDate(), Validators.required],
     note: [''],
     goalId: [''],
+    recurrenceFrequency: this.formBuilder.nonNullable.control<RecurrenceFrequency>('monthly'),
+    recurrenceStartDate: [getTodayIsoDate(), Validators.required],
+    recurrenceEndDate: [''],
   });
 
   protected readonly activeGoals = computed(() =>
@@ -237,11 +320,13 @@ export class TransactionForm {
 
         this.transactionType.set(existing.type);
         this.amountInCents.set(existing.amountInCents);
+        this.isRecurring.set(Boolean(existing.recurrenceId));
         this.form.patchValue({
           categoryId: existing.categoryId,
           date: existing.date,
           note: existing.note,
           goalId: existing.goalId ?? '',
+          recurrenceStartDate: existing.date,
         });
         this.formHydrated.set(true);
         return;
@@ -263,6 +348,16 @@ export class TransactionForm {
     }
   }
 
+  protected setRecurring(enabled: boolean): void {
+    this.isRecurring.set(enabled);
+    if (enabled) {
+      const transactionDate = this.form.controls.date.value;
+      if (!this.form.controls.recurrenceStartDate.value) {
+        this.form.controls.recurrenceStartDate.setValue(transactionDate);
+      }
+    }
+  }
+
   protected onAmountChange(amountInCents: number): void {
     this.amountInCents.set(amountInCents);
   }
@@ -276,10 +371,18 @@ export class TransactionForm {
       return;
     }
 
+    const values = this.form.getRawValue();
+    if (
+      this.isRecurring() &&
+      values.recurrenceEndDate &&
+      values.recurrenceEndDate < values.recurrenceStartDate
+    ) {
+      return;
+    }
+
     this.isSaving.set(true);
 
     try {
-      const values = this.form.getRawValue();
       const payload = {
         type: this.transactionType(),
         amountInCents: this.amountInCents(),
@@ -287,11 +390,26 @@ export class TransactionForm {
         categoryId: values.categoryId,
         note: values.note,
         goalId: values.goalId || undefined,
+        recurrence:
+          this.isRecurring() && !this.isEditMode()
+            ? {
+                frequency: values.recurrenceFrequency,
+                startDate: values.recurrenceStartDate || values.date,
+                endDate: values.recurrenceEndDate || undefined,
+              }
+            : undefined,
       };
 
       const editId = this.transactionId();
       if (editId) {
-        await this.appStore.updateTransaction(editId, payload);
+        await this.appStore.updateTransaction(editId, {
+          type: payload.type,
+          amountInCents: payload.amountInCents,
+          date: payload.date,
+          categoryId: payload.categoryId,
+          note: payload.note,
+          goalId: payload.goalId,
+        });
         await this.router.navigateByUrl('/activite');
         return;
       }
@@ -300,8 +418,17 @@ export class TransactionForm {
 
       if (addAnother) {
         this.amountInCents.set(0);
-        this.form.patchValue({ note: '', date: getTodayIsoDate(), goalId: values.goalId });
+        this.isRecurring.set(false);
+        this.form.patchValue({
+          note: '',
+          date: getTodayIsoDate(),
+          goalId: values.goalId,
+          recurrenceEndDate: '',
+          recurrenceStartDate: getTodayIsoDate(),
+        });
         this.submitted.set(false);
+      } else if (payload.recurrence) {
+        await this.router.navigateByUrl('/recurrences');
       } else if (values.goalId) {
         await this.router.navigate(['/objectifs', values.goalId]);
       } else {

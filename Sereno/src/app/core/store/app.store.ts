@@ -31,6 +31,12 @@ export interface CreateTransactionInput {
   categoryId: string;
   note: string;
   goalId?: string;
+  /** Si présent, crée aussi une récurrence et lie la transaction. */
+  recurrence?: {
+    frequency: Recurrence['frequency'];
+    startDate: string;
+    endDate?: string;
+  };
 }
 
 export interface CreateCategoryInput {
@@ -284,6 +290,31 @@ export class AppStore {
   async addTransaction(input: CreateTransactionInput): Promise<Transaction> {
     const now = new Date().toISOString();
     const goalId = input.goalId?.trim() || undefined;
+
+    let recurrenceId: string | undefined;
+    if (input.recurrence) {
+      const recurrence = await this.addRecurrence({
+        type: input.type,
+        amountInCents: input.amountInCents,
+        categoryId: input.categoryId,
+        note: input.note.trim() || 'Transaction récurrente',
+        frequency: input.recurrence.frequency,
+        startDate: input.recurrence.startDate,
+        endDate: input.recurrence.endDate,
+      });
+      recurrenceId = recurrence.id;
+
+      const withGenerated: Recurrence = {
+        ...recurrence,
+        lastGeneratedAt: input.date,
+        updatedAt: now,
+      };
+      await this.database.putRecurrence(withGenerated);
+      this.recurrences.update((recurrences) =>
+        recurrences.map((item) => (item.id === recurrence.id ? withGenerated : item)),
+      );
+    }
+
     const transaction: Transaction = {
       id: crypto.randomUUID(),
       type: input.type,
@@ -292,6 +323,7 @@ export class AppStore {
       categoryId: input.categoryId,
       note: input.note.trim(),
       goalId,
+      recurrenceId,
       createdAt: now,
       updatedAt: now,
     };

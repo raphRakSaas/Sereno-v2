@@ -5,6 +5,7 @@ import { Recurrence, RecurrenceFrequency } from '../../core/models/recurrence.mo
 import { formatCurrency } from '../../shared/utils/format-currency';
 
 const FREQUENCY_LABELS: Record<RecurrenceFrequency, string> = {
+  daily: 'Quotidien',
   monthly: 'Mensuel',
   weekly: 'Hebdomadaire',
   yearly: 'Annuel',
@@ -214,6 +215,8 @@ export class Recurrences {
 
 function monthlyEquivalent(recurrence: Recurrence): number {
   switch (recurrence.frequency) {
+    case 'daily':
+      return Math.round(recurrence.amountInCents * 30);
     case 'weekly':
       return Math.round(recurrence.amountInCents * 4.33);
     case 'yearly':

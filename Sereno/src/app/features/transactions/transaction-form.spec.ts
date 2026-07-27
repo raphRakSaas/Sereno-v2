@@ -54,12 +54,36 @@ describe('TransactionForm (integration)', () => {
     }).compileComponents();
   });
 
+  it('should render create form with recurrence toggle defaulting to no', () => {
+    const fixture = TestBed.createComponent(TransactionForm);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    const component = fixture.componentInstance;
+
+    expect(element.textContent).toContain('Nouvelle transaction');
+    expect(element.textContent).toContain('Transaction récurrente');
+    expect(component['isRecurring']()).toBe(false);
+    expect(element.textContent).not.toContain('Tous les jours');
+  });
+
+  it('should reveal frequency options when recurring is enabled', () => {
+    const fixture = TestBed.createComponent(TransactionForm);
+    fixture.detectChanges();
+    fixture.componentInstance['setRecurring'](true);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.textContent).toContain('Tous les jours');
+    expect(element.textContent).toContain('Toutes les semaines');
+    expect(element.textContent).toContain('Tous les mois');
+    expect(element.textContent).toContain('Fin (optionnel)');
+  });
+
   it('should render create form with goal contribution select', () => {
     const fixture = TestBed.createComponent(TransactionForm);
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
 
-    expect(element.textContent).toContain('Nouvelle transaction');
     expect(element.textContent).toContain('Contribuer à un objectif');
     expect(element.textContent).toContain('Fonds urgence');
   });
