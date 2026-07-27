@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { AppStore } from '../../store/app.store';
 import { shiftMonth } from '../../../shared/utils/format-month';
 import { Sidebar } from '../sidebar/sidebar';
 import { TopBar } from '../top-bar/top-bar';
@@ -24,18 +25,25 @@ import { TopBar } from '../top-bar/top-bar';
   `,
 })
 export class AppShell {
-  protected readonly selectedYear = signal(2026);
-  protected readonly selectedMonthIndex = signal(6);
+  private readonly appStore = inject(AppStore);
+
+  protected readonly selectedYear = computed(() => {
+    const [year] = this.appStore.selectedMonthKey().split('-');
+    return Number(year);
+  });
+
+  protected readonly selectedMonthIndex = computed(() => {
+    const [, month] = this.appStore.selectedMonthKey().split('-');
+    return Number(month) - 1;
+  });
 
   protected goToPreviousMonth(): void {
     const next = shiftMonth(this.selectedYear(), this.selectedMonthIndex(), -1);
-    this.selectedYear.set(next.year);
-    this.selectedMonthIndex.set(next.monthIndex);
+    this.appStore.setSelectedMonth(next.year, next.monthIndex);
   }
 
   protected goToNextMonth(): void {
     const next = shiftMonth(this.selectedYear(), this.selectedMonthIndex(), 1);
-    this.selectedYear.set(next.year);
-    this.selectedMonthIndex.set(next.monthIndex);
+    this.appStore.setSelectedMonth(next.year, next.monthIndex);
   }
 }

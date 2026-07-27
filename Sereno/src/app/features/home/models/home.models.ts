@@ -50,5 +50,5 @@ export interface HomeDashboardData {
   budgets: BudgetProgress[];
   transactions: RecentTransaction[];
   categorySlices: CategorySlice[];
-  savingsGoal: SavingsGoalSummary;
+  savingsGoal: SavingsGoalSummary | null;
 }

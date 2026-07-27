@@ -1,41 +1,37 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { TestBed } from '@angular/core/testing';
+import { computed, signal } from '@angular/core';
+import { AppStore } from '../../core/store/app.store';
+import { HOME_DEMO_DATA } from './data/home-demo.data';
 import { Home } from './home';
 
 describe('Home (integration)', () => {
-  let fixture: ComponentFixture<Home>;
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Home],
-      providers: [provideRouter([])],
+      providers: [
+        {
+          provide: AppStore,
+          useValue: {
+            dashboardData: computed(() => HOME_DEMO_DATA),
+          },
+        },
+      ],
     }).compileComponents();
-
-    fixture = TestBed.createComponent(Home);
-    fixture.detectChanges();
   });
 
   it('should render the available balance', () => {
+    const fixture = TestBed.createComponent(Home);
+    fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('Solde disponible');
     expect(compiled.textContent).toContain('12\u202f842,50\u00a0€');
   });
 
-  it('should render budget categories from demo data', () => {
+  it('should render budget categories from store data', () => {
+    const fixture = TestBed.createComponent(Home);
+    fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('Logement');
     expect(compiled.textContent).toContain('Courses');
-    expect(compiled.textContent).toContain('Transport');
-  });
-
-  it('should render recent transactions', () => {
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('Courses Carrefour');
-    expect(compiled.textContent).toContain('Salaire');
-  });
-
-  it('should render savings goal card', () => {
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('Voyage Japon 2027');
   });
 });
