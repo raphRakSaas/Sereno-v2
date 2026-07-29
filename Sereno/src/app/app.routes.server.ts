@@ -6,6 +6,14 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client,
   },
   {
+    path: 'transactions/:transactionId/modifier',
+    renderMode: RenderMode.Client,
+  },
+  {
+    path: 'objectifs/:goalId',
+    renderMode: RenderMode.Client,
+  },
+  {
     path: '**',
     renderMode: RenderMode.Prerender,
   },
