@@ -61,6 +61,19 @@
 }
 
 @layer utilities {
+  .theme-light-locked {
+    color-scheme: light;
+    --color-page: #faf8f6;
+    --color-surface: #ffffff;
+    --color-border: #e8e4e0;
+    --color-text: #171412;
+    --color-text-muted: #6b635c;
+    --color-accent: #ff4d6d;
+    --color-accent-surface: #fff0f2;
+    --color-income: #17836b;
+    --color-warning: #b4762a;
+  }
+
   .monetary-tabular {
     font-variant-numeric: tabular-nums;
   }
