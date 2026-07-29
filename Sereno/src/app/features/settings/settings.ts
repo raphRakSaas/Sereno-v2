@@ -54,7 +54,7 @@ import { CurrencyCode, ThemePreference } from '../../core/models/settings.model'
             </div>
           </div>
 
-          <div class="flex items-center justify-between border-t border-border py-2">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-t border-border py-2">
             <div>
               <p class="text-[13px] font-medium text-text">Exporter mes données</p>
               <p class="text-[11px] text-text-muted">Télécharger un fichier JSON de tes données</p>
@@ -69,7 +69,7 @@ import { CurrencyCode, ThemePreference } from '../../core/models/settings.model'
             </button>
           </div>
 
-          <div class="flex items-center justify-between border-t border-border py-2">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-t border-border py-2">
             <div>
               <p class="text-[13px] font-medium text-text">Importer des données</p>
               <p class="text-[11px] text-text-muted">Restaurer depuis un fichier JSON</p>
@@ -98,7 +98,7 @@ import { CurrencyCode, ThemePreference } from '../../core/models/settings.model'
           <h3 class="label-caps text-text-muted">Affichage</h3>
         </div>
         <div class="divide-y divide-border">
-          <div class="flex items-center justify-between px-5 py-4">
+          <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
             <div>
               <p class="text-[13px] font-medium text-text">Thème</p>
               <p class="text-[11px] text-text-muted">Apparence de l'interface</p>
@@ -115,7 +115,7 @@ import { CurrencyCode, ThemePreference } from '../../core/models/settings.model'
             </select>
           </div>
 
-          <div class="flex items-center justify-between px-5 py-4">
+          <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
             <div>
               <p class="text-[13px] font-medium text-text">Devise</p>
               <p class="text-[11px] text-text-muted">Monnaie utilisée dans l'app</p>
@@ -133,7 +133,7 @@ import { CurrencyCode, ThemePreference } from '../../core/models/settings.model'
             </select>
           </div>
 
-          <div class="flex items-center justify-between px-5 py-4">
+          <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
             <div>
               <p class="text-[13px] font-medium text-text">Afficher les centimes</p>
               <p class="text-[11px] text-text-muted">Montants avec décimales</p>
@@ -161,7 +161,7 @@ import { CurrencyCode, ThemePreference } from '../../core/models/settings.model'
           <h3 class="label-caps text-text-muted">Tes données</h3>
         </div>
         <div class="divide-y divide-border">
-          <div class="flex items-center justify-between px-5 py-4">
+          <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
             <div>
               <p class="text-[13px] font-medium text-text">Charger les données démo</p>
               <p class="text-[11px] text-text-muted">Remplace tes données par des exemples</p>
@@ -177,7 +177,7 @@ import { CurrencyCode, ThemePreference } from '../../core/models/settings.model'
             </button>
           </div>
 
-          <div class="flex items-center justify-between px-5 py-4">
+          <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
             <div>
               <p class="text-[13px] font-medium text-text">Réinitialiser toutes les données</p>
               <p class="text-[11px] text-text-muted">Supprimer définitivement toutes tes données</p>

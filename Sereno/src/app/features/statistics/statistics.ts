@@ -52,7 +52,7 @@ const PADDING = 28;
         <p class="mt-0.5 text-[12px] text-text-muted">Vue d'ensemble de ta santé financière</p>
       </div>
 
-      <div class="grid grid-cols-3 gap-gutter">
+      <div class="grid grid-cols-1 gap-gutter sm:grid-cols-3">
         <section class="bento-card p-5">
           <p class="label-caps text-text-muted">Revenus</p>
           <p class="mt-2 monetary-tabular text-[22px] font-bold text-income">

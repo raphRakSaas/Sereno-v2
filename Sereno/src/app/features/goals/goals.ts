@@ -10,7 +10,7 @@ import { calculateProgressPercent, formatCurrency } from '../../shared/utils/for
   imports: [RouterLink],
   template: `
     <div class="space-y-6">
-      <div class="flex items-center justify-between gap-3">
+      <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 class="text-[18px] font-semibold text-text">Objectifs d'épargne</h2>
           <p class="mt-0.5 text-[12px] text-text-muted">

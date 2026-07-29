@@ -15,12 +15,18 @@ import { formatMonthLabel } from '../../../shared/utils/format-month';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule],
   template: `
-    <header class="fixed top-0 right-0 left-sidebar z-10 h-16 border-b border-border bg-page/95">
-      <div class="mx-auto flex h-full max-w-content-max items-center justify-between px-page">
-        <div class="flex items-center gap-4">
-          <h1 class="text-[20px] font-semibold text-text">{{ pageTitle() }}</h1>
+    <header
+      class="fixed inset-x-0 top-0 z-10 h-16 border-b border-border bg-page/95 lg:left-sidebar"
+    >
+      <div
+        class="mx-auto flex h-full max-w-content-max items-center justify-between gap-2 px-4 sm:px-6 lg:px-page"
+      >
+        <div class="flex min-w-0 items-center gap-2 sm:gap-4">
+          <h1 class="truncate text-[16px] font-semibold text-text sm:text-[20px]">
+            {{ pageTitle() }}
+          </h1>
           <div
-            class="flex items-center gap-1 rounded-full border border-border bg-surface px-3 py-1"
+            class="flex shrink-0 items-center gap-1 rounded-full border border-border bg-surface px-3 py-1"
           >
             <span class="material-symbols-outlined text-[18px] text-accent" aria-hidden="true">
               calendar_month
@@ -29,8 +35,8 @@ import { formatMonthLabel } from '../../../shared/utils/format-month';
           </div>
         </div>
 
-        <div class="flex items-center gap-6">
-          <div class="flex items-center gap-2">
+        <div class="flex shrink-0 items-center gap-1 sm:gap-4 lg:gap-6">
+          <div class="flex items-center">
             <button
               type="button"
               class="rounded-full p-2 transition-colors hover:bg-surface"
@@ -49,9 +55,9 @@ import { formatMonthLabel } from '../../../shared/utils/format-month';
             </button>
           </div>
 
-          <div class="h-6 w-px bg-border" aria-hidden="true"></div>
+          <div class="hidden h-6 w-px bg-border sm:block" aria-hidden="true"></div>
 
-          <form class="relative" (submit)="onSubmit($event)">
+          <form class="relative hidden sm:block" (submit)="onSubmit($event)">
             <label class="relative block">
               <span class="sr-only">Rechercher</span>
               <span
@@ -61,7 +67,7 @@ import { formatMonthLabel } from '../../../shared/utils/format-month';
               >
               <input
                 type="search"
-                class="w-64 rounded-full border border-border bg-surface py-1.5 pr-4 pl-10 text-[13px] text-text outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20"
+                class="w-36 rounded-full border border-border bg-surface py-1.5 pr-4 pl-10 text-[13px] text-text outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20 md:w-48 lg:w-64"
                 placeholder="Rechercher une transaction…"
                 [ngModel]="draftQuery()"
                 (ngModelChange)="onQueryChange($event)"

@@ -15,7 +15,7 @@ interface NavItem {
   imports: [RouterLink, RouterLinkActive, SerenoLogo],
   template: `
     <aside
-      class="fixed top-0 left-0 z-20 flex h-full w-sidebar flex-col gap-4 border-r border-border bg-surface px-4 py-6"
+      class="fixed top-0 left-0 z-20 hidden h-full w-sidebar flex-col gap-4 border-r border-border bg-surface px-4 py-6 lg:flex"
       aria-label="Navigation principale"
     >
       <div class="mb-4 px-2">

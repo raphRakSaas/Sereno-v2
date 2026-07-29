@@ -17,7 +17,7 @@ const FREQUENCY_LABELS: Record<RecurrenceFrequency, string> = {
   imports: [RouterLink],
   template: `
     <div class="space-y-6">
-      <div class="flex items-center justify-between gap-3">
+      <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 class="label-caps text-text-muted">Récurrences</h2>
           <p class="mt-0.5 text-[12px] text-text-muted">Tes revenus et dépenses fixes chaque mois</p>
@@ -72,69 +72,75 @@ const FREQUENCY_LABELS: Record<RecurrenceFrequency, string> = {
         <ul role="list">
           @for (recurrence of recurrenceViews(); track recurrence.id) {
             <li
-              class="flex items-center gap-4 border-b border-border/50 px-5 py-4 transition-colors last:border-0"
+              class="flex flex-col gap-2 border-b border-border/50 px-5 py-4 transition-colors last:border-0 sm:flex-row sm:items-center sm:gap-4"
               [class.opacity-50]="recurrence.isPaused"
               [class.hover:bg-page/60]="!recurrence.isPaused"
             >
-              <div
-                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
-                [class.bg-income/10]="recurrence.type === 'income'"
-                [class.bg-accent/10]="recurrence.type === 'expense'"
-              >
+              <div class="flex min-w-0 flex-1 items-center gap-3">
+                <div
+                  class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+                  [class.bg-income/10]="recurrence.type === 'income'"
+                  [class.bg-accent/10]="recurrence.type === 'expense'"
+                >
+                  <span
+                    class="material-symbols-outlined text-[17px]"
+                    [class.text-income]="recurrence.type === 'income'"
+                    [class.text-accent]="recurrence.type === 'expense'"
+                    aria-hidden="true"
+                  >
+                    {{ recurrence.icon }}
+                  </span>
+                </div>
+
+                <div class="min-w-0 flex-1">
+                  <p class="truncate text-[13px] font-medium text-text">
+                    {{ recurrence.label }}
+                  </p>
+                  <p class="text-[11px] text-text-muted">
+                    {{ frequencyLabel(recurrence.frequency) }} · Début :
+                    {{ formatDate(recurrence.startDate) }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex shrink-0 items-center gap-3 pl-12 sm:pl-0">
+                @if (recurrence.isPaused) {
+                  <span
+                    class="rounded-full border border-border px-2 py-0.5 text-[10px] font-medium text-text-muted"
+                  >
+                    En pause
+                  </span>
+                }
+
                 <span
-                  class="material-symbols-outlined text-[17px]"
+                  class="monetary-tabular shrink-0 text-[13px] font-semibold"
                   [class.text-income]="recurrence.type === 'income'"
-                  [class.text-accent]="recurrence.type === 'expense'"
-                  aria-hidden="true"
+                  [class.text-text]="recurrence.type === 'expense'"
                 >
-                  {{ recurrence.icon }}
+                  {{ recurrence.type === 'income' ? '+' : '-'
+                  }}{{ formatCurrency(recurrence.amountInCents) }}
                 </span>
+
+                <button
+                  type="button"
+                  class="shrink-0 rounded-full p-1.5 transition-colors hover:bg-page"
+                  [attr.aria-label]="
+                    recurrence.isPaused
+                      ? 'Activer ' + recurrence.label
+                      : 'Mettre en pause ' + recurrence.label
+                  "
+                  (click)="togglePause(recurrence.id, recurrence.isPaused)"
+                >
+                  <span
+                    class="material-symbols-outlined text-[16px]"
+                    [class.text-text-muted]="!recurrence.isPaused"
+                    [class.text-income]="recurrence.isPaused"
+                    aria-hidden="true"
+                  >
+                    {{ recurrence.isPaused ? 'play_arrow' : 'pause' }}
+                  </span>
+                </button>
               </div>
-
-              <div class="min-w-0 flex-1">
-                <p class="text-[13px] font-medium text-text">{{ recurrence.label }}</p>
-                <p class="text-[11px] text-text-muted">
-                  {{ frequencyLabel(recurrence.frequency) }} · Début :
-                  {{ formatDate(recurrence.startDate) }}
-                </p>
-              </div>
-
-              @if (recurrence.isPaused) {
-                <span
-                  class="rounded-full border border-border px-2 py-0.5 text-[10px] font-medium text-text-muted"
-                >
-                  En pause
-                </span>
-              }
-
-              <span
-                class="monetary-tabular shrink-0 text-[13px] font-semibold"
-                [class.text-income]="recurrence.type === 'income'"
-                [class.text-text]="recurrence.type === 'expense'"
-              >
-                {{ recurrence.type === 'income' ? '+' : '-'
-                }}{{ formatCurrency(recurrence.amountInCents) }}
-              </span>
-
-              <button
-                type="button"
-                class="shrink-0 rounded-full p-1.5 transition-colors hover:bg-page"
-                [attr.aria-label]="
-                  recurrence.isPaused
-                    ? 'Activer ' + recurrence.label
-                    : 'Mettre en pause ' + recurrence.label
-                "
-                (click)="togglePause(recurrence.id, recurrence.isPaused)"
-              >
-                <span
-                  class="material-symbols-outlined text-[16px]"
-                  [class.text-text-muted]="!recurrence.isPaused"
-                  [class.text-income]="recurrence.isPaused"
-                  aria-hidden="true"
-                >
-                  {{ recurrence.isPaused ? 'play_arrow' : 'pause' }}
-                </span>
-              </button>
             </li>
           } @empty {
             <li class="px-5 py-10 text-center">

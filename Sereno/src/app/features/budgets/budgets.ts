@@ -9,7 +9,7 @@ import { BudgetProgress } from '../home/models/home.models';
   imports: [RouterLink],
   template: `
     <div class="space-y-6">
-      <div class="flex items-center justify-between">
+      <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 class="label-caps text-text-muted">Budgets</h2>
           <p class="mt-0.5 text-[12px] text-text-muted">Suivi de tes enveloppes budgétaires</p>
@@ -24,7 +24,7 @@ import { BudgetProgress } from '../home/models/home.models';
       </div>
 
       <!-- Summary card -->
-      <div class="grid grid-cols-3 gap-gutter">
+      <div class="grid grid-cols-1 gap-gutter sm:grid-cols-3">
         <section class="bento-card p-5">
           <p class="label-caps text-text-muted">Total planifié</p>
           <p class="mt-2 monetary-tabular text-[20px] font-bold text-text">

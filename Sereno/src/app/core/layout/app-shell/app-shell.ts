@@ -6,6 +6,7 @@ import { AppStore } from '../../store/app.store';
 import { shiftMonth } from '../../../shared/utils/format-month';
 import { Sidebar } from '../sidebar/sidebar';
 import { TopBar } from '../top-bar/top-bar';
+import { BottomNav } from '../bottom-nav/bottom-nav';
 
 const PAGE_TITLES: Record<string, string> = {
   '/': 'Aperçu global',
@@ -39,7 +40,7 @@ function resolvePageTitle(url: string): string {
 @Component({
   selector: 'app-shell',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, Sidebar, TopBar],
+  imports: [RouterOutlet, Sidebar, TopBar, BottomNav],
   template: `
     <app-sidebar />
     <app-top-bar
@@ -52,11 +53,12 @@ function resolvePageTitle(url: string): string {
       (searchChange)="onSearchChange($event)"
       (searchSubmit)="onSearchSubmit($event)"
     />
-    <main class="ml-sidebar min-h-screen pt-16">
-      <div class="mx-auto max-w-content-max px-page py-6">
+    <main class="min-h-screen pt-16 lg:ml-sidebar">
+      <div class="mx-auto max-w-content-max px-4 pt-6 pb-24 sm:px-6 lg:px-page lg:pb-6">
         <router-outlet />
       </div>
     </main>
+    <app-bottom-nav />
   `,
 })
 export class AppShell {
