@@ -10,9 +10,11 @@ describe('sereno-seo', () => {
   });
 
   it('construit une URL absolue à partir du siteUrl', () => {
-    expect(serenoAbsoluteUrl('/og/og-image.png')).toBe('https://sereno.app/og/og-image.png');
+    expect(serenoAbsoluteUrl('/og/og-image.png')).toBe(
+      'https://sereno-v2-xi.vercel.app/og/og-image.png',
+    );
     expect(serenoAbsoluteUrl('og/og-image-twitter.png')).toBe(
-      'https://sereno.app/og/og-image-twitter.png',
+      'https://sereno-v2-xi.vercel.app/og/og-image-twitter.png',
     );
   });
 });

@@ -1,5 +1,7 @@
 {
+  "buildCommand": "ng build && cp dist/Sereno/browser/index.csr.html dist/Sereno/browser/index.html",
+  "outputDirectory": "dist/Sereno/browser",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.csr.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

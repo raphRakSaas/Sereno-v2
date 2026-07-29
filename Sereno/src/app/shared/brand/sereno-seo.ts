@@ -1,6 +1,6 @@
-/** SEO & Open Graph — mettre à jour `siteUrl` avec le domaine de production. */
+/** SEO & Open Graph — mettre à jour `siteUrl` si le domaine de production change. */
 export const SERENO_SEO = {
-  siteUrl: 'https://sereno.app',
+  siteUrl: 'https://sereno-v2-xi.vercel.app',
   title: 'Sereno — Gère ton budget en toute sérénité',
   description:
     'Sereno t’aide à voir clairement où va ton argent, sans jugement. Simple, local, sans compte ni connexion bancaire.',
