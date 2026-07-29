@@ -23,7 +23,7 @@ interface NavItem {
 
       <div
         id="bottom-nav-more-sheet"
-        class="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-40 rounded-t-2xl border border-border bg-surface p-3 shadow-xl lg:hidden"
+        class="fixed inset-x-4 bottom-[calc(5.5rem+env(safe-area-inset-bottom))] z-40 rounded-2xl border border-border bg-surface p-3 shadow-xl lg:hidden"
       >
         <nav class="space-y-1" aria-label="Navigation secondaire">
           @for (item of moreItems; track item.route) {
@@ -52,55 +52,58 @@ interface NavItem {
       </div>
     }
 
-    <a
-      routerLink="/transactions/nouvelle"
-      class="fixed bottom-[calc(2.25rem+env(safe-area-inset-bottom))] left-1/2 z-30 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full bg-accent text-white shadow-lg transition-opacity hover:opacity-90 lg:hidden"
-      aria-label="Nouvelle transaction"
-      (click)="closeMore()"
-    >
-      <span class="material-symbols-outlined text-[26px]" aria-hidden="true">add</span>
-    </a>
-
     <nav
-      class="fixed inset-x-0 bottom-0 z-30 flex h-16 items-stretch border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] lg:hidden"
+      class="fixed inset-x-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-30 flex h-16 items-center justify-between rounded-full border border-border bg-surface px-3 shadow-[0_8px_30px_rgba(23,20,18,0.12)] lg:hidden"
       aria-label="Navigation principale"
     >
       @for (item of leftItems; track item.route) {
         <a
-          class="flex flex-1 flex-col items-center justify-center gap-0.5"
           [routerLink]="item.route"
-          routerLinkActive="text-accent"
+          [attr.aria-label]="item.label"
+          routerLinkActive=""
           [routerLinkActiveOptions]="{ exact: item.route === '/' }"
           #link="routerLinkActive"
+          class="flex h-11 w-11 items-center justify-center rounded-full transition-colors"
+          [class.bg-accent-surface]="link.isActive"
+          [class.text-accent]="link.isActive"
           [class.text-text-muted]="!link.isActive"
         >
           <span class="material-symbols-outlined text-[22px]" aria-hidden="true">{{
             item.icon
           }}</span>
-          <span class="text-[10px] font-medium">{{ item.label }}</span>
         </a>
       }
 
-      <div class="w-14 flex-none" aria-hidden="true"></div>
+      <a
+        routerLink="/transactions/nouvelle"
+        class="flex h-11 w-11 items-center justify-center rounded-full bg-accent text-white shadow-md transition-opacity hover:opacity-90"
+        aria-label="Nouvelle transaction"
+        (click)="closeMore()"
+      >
+        <span class="material-symbols-outlined text-[24px]" aria-hidden="true">add</span>
+      </a>
 
       @for (item of rightItems; track item.route) {
         <a
-          class="flex flex-1 flex-col items-center justify-center gap-0.5"
           [routerLink]="item.route"
-          routerLinkActive="text-accent"
+          [attr.aria-label]="item.label"
+          routerLinkActive=""
           #link="routerLinkActive"
+          class="flex h-11 w-11 items-center justify-center rounded-full transition-colors"
+          [class.bg-accent-surface]="link.isActive"
+          [class.text-accent]="link.isActive"
           [class.text-text-muted]="!link.isActive"
         >
           <span class="material-symbols-outlined text-[22px]" aria-hidden="true">{{
             item.icon
           }}</span>
-          <span class="text-[10px] font-medium">{{ item.label }}</span>
         </a>
       }
 
       <button
         type="button"
-        class="flex flex-1 flex-col items-center justify-center gap-0.5"
+        class="flex h-11 w-11 items-center justify-center rounded-full transition-colors"
+        [class.bg-accent-surface]="isMoreOpen()"
         [class.text-accent]="isMoreOpen()"
         [class.text-text-muted]="!isMoreOpen()"
         aria-controls="bottom-nav-more-sheet"
@@ -109,7 +112,6 @@ interface NavItem {
         (click)="toggleMore()"
       >
         <span class="material-symbols-outlined text-[22px]" aria-hidden="true">more_horiz</span>
-        <span class="text-[10px] font-medium">Plus</span>
       </button>
     </nav>
   `,
@@ -122,16 +124,14 @@ export class BottomNav {
   protected readonly leftItems: NavItem[] = [
     { label: 'Accueil', route: '/', icon: 'home' },
     { label: 'Activité', route: '/activite', icon: 'history' },
-    { label: 'Calendrier', route: '/calendrier', icon: 'calendar_today' },
   ];
 
-  protected readonly rightItems: NavItem[] = [
-    { label: 'Budgets', route: '/budgets', icon: 'account_balance_wallet' },
-    { label: 'Objectifs', route: '/objectifs', icon: 'ads_click' },
-  ];
+  protected readonly rightItems: NavItem[] = [{ label: 'Budgets', route: '/budgets', icon: 'account_balance_wallet' }];
 
   protected readonly moreItems: NavItem[] = [
+    { label: 'Calendrier', route: '/calendrier', icon: 'calendar_today' },
     { label: 'Statistiques', route: '/statistiques', icon: 'query_stats' },
+    { label: 'Objectifs', route: '/objectifs', icon: 'ads_click' },
     { label: 'Récurrences', route: '/recurrences', icon: 'repeat' },
     { label: 'Réglages', route: '/reglages', icon: 'settings' },
   ];
