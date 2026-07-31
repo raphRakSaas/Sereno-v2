@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
 import { BottomNav } from './bottom-nav';
+import { BottomNavScrollService } from './bottom-nav-scroll.service';
 import { AppStore } from '../../store/app.store';
 import { DEFAULT_SETTINGS } from '../../models/settings.model';
 import { providePwaTestMocks } from '../../pwa/pwa-test.providers';
@@ -43,6 +44,18 @@ describe('BottomNav', () => {
     expect(nav.className).toContain('grid-cols-5');
     expect(nav.className).toContain('justify-items-center');
     expect(nav.querySelectorAll(':scope > a, :scope > button').length).toBe(5);
+  });
+
+  it('should slide the navigation out of view when scrolling down', () => {
+    const scrollService = TestBed.inject(BottomNavScrollService);
+    const wrapper = fixture.nativeElement.querySelector('div.fixed') as HTMLElement;
+
+    scrollService.updateScrollPosition(0);
+    scrollService.updateScrollPosition(120);
+    fixture.detectChanges();
+
+    expect(wrapper.className).toContain('translate-y-[calc(100%+1rem)]');
+    expect(wrapper.className).toContain('pointer-events-none');
   });
 });
 
