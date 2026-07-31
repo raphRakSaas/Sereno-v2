@@ -8,7 +8,8 @@ import { Sidebar } from '../sidebar/sidebar';
 import { TopBar } from '../top-bar/top-bar';
 import { BottomNav } from '../bottom-nav/bottom-nav';
 import { PwaUpdateBanner } from '../../../shared/components/pwa-update-banner/pwa-update-banner';
-import { PwaIosInstallGuide } from '../../../shared/components/pwa-ios-install-guide/pwa-ios-install-guide';
+import { PwaInstallGuide } from '../../../shared/components/pwa-install-guide/pwa-install-guide';
+import { PwaInstallBanner } from '../../../shared/components/pwa-install-banner/pwa-install-banner';
 
 const PAGE_TITLES: Record<string, string> = {
   '/': 'Aperçu global',
@@ -45,11 +46,12 @@ function resolvePageTitle(url: string): string {
   host: {
     class: 'block w-full max-w-full min-w-0 overflow-x-clip',
   },
-  imports: [RouterOutlet, Sidebar, TopBar, BottomNav, PwaUpdateBanner, PwaIosInstallGuide],
+  imports: [RouterOutlet, Sidebar, TopBar, BottomNav, PwaUpdateBanner, PwaInstallGuide, PwaInstallBanner],
   template: `
     <app-sidebar />
     <app-pwa-update-banner />
-    <app-pwa-ios-install-guide />
+    <app-pwa-install-guide />
+    <app-pwa-install-banner />
     <app-top-bar
       [pageTitle]="pageTitle()"
       [year]="selectedYear()"

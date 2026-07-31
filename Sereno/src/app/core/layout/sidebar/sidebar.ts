@@ -120,9 +120,17 @@ export class Sidebar {
     }
   });
 
-  protected readonly installLabel = computed(() =>
-    this.isInstalled() ? 'Application installée' : 'Télécharger Sereno',
-  );
+  protected readonly installLabel = computed(() => {
+    if (this.isInstalled()) {
+      return 'Application installée';
+    }
+
+    if (this.pwaInstallService.platform() === 'ios') {
+      return 'Installer (tutoriel)';
+    }
+
+    return 'Télécharger Sereno';
+  });
 
   protected async installApp(): Promise<void> {
     await this.pwaInstallService.install();

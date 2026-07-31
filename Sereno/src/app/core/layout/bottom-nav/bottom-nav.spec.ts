@@ -38,10 +38,11 @@ describe('BottomNav', () => {
     expect(compiled.textContent).toContain('Plus');
   });
 
-  it('should keep the navigation bar centered with symmetric horizontal insets', () => {
+  it('should distribute five navigation items evenly', () => {
     const nav = fixture.nativeElement.querySelector('nav[aria-label="Navigation principale"]') as HTMLElement;
-    expect(nav.className).toContain('left-4');
-    expect(nav.className).toContain('right-4');
+    expect(nav.className).toContain('grid-cols-5');
+    expect(nav.className).toContain('justify-items-center');
+    expect(nav.querySelectorAll(':scope > a, :scope > button').length).toBe(5);
   });
 });
 

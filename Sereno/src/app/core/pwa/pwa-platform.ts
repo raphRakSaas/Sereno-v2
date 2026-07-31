@@ -1,5 +1,19 @@
 export type PwaPlatform = 'ios' | 'android' | 'desktop' | 'unknown';
 
+export type PwaBrowser =
+  | 'safari-ios'
+  | 'chrome-ios'
+  | 'firefox-ios'
+  | 'edge-ios'
+  | 'safari-desktop'
+  | 'chrome-desktop'
+  | 'edge-desktop'
+  | 'firefox-desktop'
+  | 'samsung-internet'
+  | 'chrome-android'
+  | 'firefox-android'
+  | 'unknown';
+
 export interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
   prompt(): Promise<void>;
@@ -24,6 +38,58 @@ export function detectPwaPlatform(userAgent: string): PwaPlatform {
   return 'unknown';
 }
 
+export function detectPwaBrowser(userAgent: string): PwaBrowser {
+  const normalizedAgent = userAgent.toLowerCase();
+  const isIos = /iphone|ipad|ipod/.test(normalizedAgent);
+  const isAndroid = /android/.test(normalizedAgent);
+
+  if (isIos) {
+    if (/crios/.test(normalizedAgent)) {
+      return 'chrome-ios';
+    }
+
+    if (/fxios/.test(normalizedAgent)) {
+      return 'firefox-ios';
+    }
+
+    if (/edgios/.test(normalizedAgent)) {
+      return 'edge-ios';
+    }
+
+    return 'safari-ios';
+  }
+
+  if (isAndroid) {
+    if (/samsungbrowser/.test(normalizedAgent)) {
+      return 'samsung-internet';
+    }
+
+    if (/firefox/.test(normalizedAgent)) {
+      return 'firefox-android';
+    }
+
+    return 'chrome-android';
+  }
+
+  if (/edg\//.test(normalizedAgent)) {
+    return 'edge-desktop';
+  }
+
+  if (/firefox/.test(normalizedAgent)) {
+    return 'firefox-desktop';
+  }
+
+  if (/chrome/.test(normalizedAgent)) {
+    return 'chrome-desktop';
+  }
+
+  if (/safari/.test(normalizedAgent)) {
+    return 'safari-desktop';
+  }
+
+  return 'unknown';
+}
+
 export function isStandaloneDisplayMode(): boolean {
   if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
     return false;
@@ -38,4 +104,8 @@ export function isStandaloneDisplayMode(): boolean {
 
 export function isServiceWorkerSupported(): boolean {
   return typeof window !== 'undefined' && 'serviceWorker' in navigator;
+}
+
+export function needsManualInstallGuide(platform: PwaPlatform, canNativeInstall: boolean): boolean {
+  return platform === 'ios' || !canNativeInstall;
 }

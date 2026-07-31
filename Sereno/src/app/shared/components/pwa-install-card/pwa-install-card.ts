@@ -53,7 +53,11 @@ export class PwaInstallCard {
     }
 
     if (this.platform() === 'ios') {
-      return 'Installer sur cet iPhone';
+      return 'Voir le tutoriel';
+    }
+
+    if (!this.canNativeInstall()) {
+      return 'Voir le tutoriel';
     }
 
     return 'Télécharger Sereno';
@@ -67,14 +71,14 @@ export class PwaInstallCard {
     }
 
     if (this.platform() === 'ios') {
-      return 'Ajoute Sereno à ton écran d’accueil pour une expérience plein écran, comme une vraie application.';
+      return 'Sur iPhone, appuie sur le bouton pour afficher le tutoriel adapté à ton navigateur.';
     }
 
-    if (this.canNativeInstall()) {
-      return 'Installe Sereno en un clic pour un accès rapide, hors ligne et plein écran.';
+    if (!this.canNativeInstall()) {
+      return 'Ton navigateur ne propose pas l’installation automatique. Un tutoriel pas à pas est disponible.';
     }
 
-    return 'Installe Sereno pour y accéder plus vite, même sans réseau.';
+    return 'Installe Sereno en un clic pour un accès rapide, hors ligne et plein écran.';
   });
 
   protected async onInstallClick(): Promise<void> {

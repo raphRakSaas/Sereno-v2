@@ -68,7 +68,7 @@ interface NavItem {
     }
 
     <nav
-      class="fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] left-4 right-4 z-30 grid grid-cols-6 items-end gap-0 rounded-2xl border border-border bg-surface px-1 py-2 shadow-[0_8px_30px_rgba(23,20,18,0.12)] lg:hidden"
+      class="fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] left-4 right-4 z-30 grid w-auto grid-cols-5 items-end justify-items-center gap-0 rounded-2xl border border-border bg-surface px-1 py-2 shadow-[0_8px_30px_rgba(23,20,18,0.12)] lg:hidden"
       aria-label="Navigation principale"
     >
       @for (item of leftItems; track item.route) {
@@ -77,7 +77,7 @@ interface NavItem {
           [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
           routerLinkActive=""
           #link="routerLinkActive"
-          class="flex min-w-0 flex-col items-center justify-end gap-0.5 px-0.5 py-1 text-center transition-colors"
+          class="flex w-full min-w-0 flex-col items-center justify-end gap-0.5 px-0.5 py-1 text-center transition-colors"
           [class.text-accent]="link.isActive"
           [class.text-text-muted]="!link.isActive"
         >
@@ -93,7 +93,7 @@ interface NavItem {
 
       <a
         routerLink="/transactions/nouvelle"
-        class="flex min-w-0 flex-col items-center justify-end gap-0.5 px-0.5 py-1 text-center text-accent"
+        class="flex w-full min-w-0 flex-col items-center justify-end gap-0.5 px-0.5 py-1 text-center text-accent"
         aria-label="Nouvelle transaction"
         (click)="closeMore()"
       >
@@ -110,7 +110,7 @@ interface NavItem {
           [routerLink]="item.route"
           routerLinkActive=""
           #link="routerLinkActive"
-          class="flex min-w-0 flex-col items-center justify-end gap-0.5 px-0.5 py-1 text-center transition-colors"
+          class="flex w-full min-w-0 flex-col items-center justify-end gap-0.5 px-0.5 py-1 text-center transition-colors"
           [class.text-accent]="link.isActive"
           [class.text-text-muted]="!link.isActive"
         >
@@ -126,7 +126,7 @@ interface NavItem {
 
       <button
         type="button"
-        class="flex min-w-0 flex-col items-center justify-end gap-0.5 px-0.5 py-1 text-center transition-colors"
+        class="flex w-full min-w-0 flex-col items-center justify-end gap-0.5 px-0.5 py-1 text-center transition-colors"
         [class.text-accent]="isMoreOpen()"
         [class.text-text-muted]="!isMoreOpen()"
         aria-controls="bottom-nav-more-sheet"
@@ -192,9 +192,17 @@ export class BottomNav {
     }
   });
 
-  protected readonly installLabel = computed(() =>
-    this.isInstalled() ? 'Application installée' : 'Télécharger Sereno',
-  );
+  protected readonly installLabel = computed(() => {
+    if (this.isInstalled()) {
+      return 'Application installée';
+    }
+
+    if (this.pwaInstallService.platform() === 'ios') {
+      return 'Installer (tutoriel)';
+    }
+
+    return 'Télécharger Sereno';
+  });
 
   protected async installApp(): Promise<void> {
     await this.pwaInstallService.install();
