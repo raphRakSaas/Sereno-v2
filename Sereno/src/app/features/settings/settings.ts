@@ -20,6 +20,7 @@ import { CurrencyCode, ThemePreference } from '../../core/models/settings.model'
 import { ImportDataDialog } from '../../shared/components/import-data-dialog/import-data-dialog';
 import { PwaInstallCard } from '../../shared/components/pwa-install-card/pwa-install-card';
 import { PwaUpdateCard } from '../../shared/components/pwa-update-card/pwa-update-card';
+import { FeedbackService } from '../../core/services/feedback.service';
 
 @Component({
   selector: 'app-settings',
@@ -258,6 +259,7 @@ import { PwaUpdateCard } from '../../shared/components/pwa-update-card/pwa-updat
 export class Settings {
   private readonly appStore = inject(AppStore);
   private readonly router = inject(Router);
+  private readonly feedbackService = inject(FeedbackService);
 
   protected readonly importFileInput = viewChild<ElementRef<HTMLInputElement>>('importInput');
   protected readonly settings = this.appStore.settings;
@@ -309,7 +311,7 @@ export class Settings {
           title: 'Export Sereno',
           text: 'Sauvegarde de mes données Sereno',
         });
-        this.flash('Export prêt à être enregistré.');
+        this.showExportFeedback(payload, 'Export prêt à être enregistré.');
         return;
       } catch (error) {
         if (error instanceof DOMException && error.name === 'AbortError') {
@@ -325,7 +327,7 @@ export class Settings {
     anchor.download = fileName;
     anchor.click();
     URL.revokeObjectURL(url);
-    this.flash('Export téléchargé.');
+    this.showExportFeedback(payload, 'Export téléchargé.');
   }
 
   protected async onImportFile(event: Event): Promise<void> {
@@ -367,15 +369,17 @@ export class Settings {
 
     try {
       const summary = await this.appStore.importData(pending.payload, mode);
-      const modeLabel = mode === 'merge' ? 'Fusion réussie' : 'Import réussi';
-      this.flash(
-        `${modeLabel} : ${summary.transactions} transactions, ${summary.budgets} budgets, ${summary.goals} objectifs, ${summary.recurrences} récurrences.`,
-      );
+      this.feedbackService.showAfterReload(this.buildImportFeedback(summary));
       globalThis.location.reload();
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Impossible d'importer ce fichier.";
-      this.flash(message, 'error');
+      this.feedbackService.show({
+        title: 'Import impossible',
+        detail: message,
+        tone: 'error',
+        kind: 'import',
+      });
     } finally {
       this.isBusy.set(false);
     }
@@ -421,6 +425,38 @@ export class Settings {
     } finally {
       this.isBusy.set(false);
     }
+  }
+
+  private showExportFeedback(payload: SerenoExportPayload, title: string): void {
+    this.feedbackService.show({
+      title,
+      detail: this.buildDataSummary({
+        transactions: payload.transactions.length,
+        budgets: payload.budgets.length,
+        goals: payload.goals.length,
+        recurrences: payload.recurrences.length,
+      }),
+      tone: 'success',
+      kind: 'export',
+    });
+  }
+
+  private buildImportFeedback(summary: SerenoImportSummary) {
+    return {
+      title: summary.mode === 'merge' ? 'Fusion réussie' : 'Import réussi',
+      detail: this.buildDataSummary(summary),
+      tone: 'success' as const,
+      kind: 'import' as const,
+    };
+  }
+
+  private buildDataSummary(data: {
+    transactions: number;
+    budgets: number;
+    goals: number;
+    recurrences: number;
+  }): string {
+    return `${data.transactions} transactions, ${data.recurrences} récurrences, ${data.budgets} budgets et ${data.goals} objectifs.`;
   }
 
   private flash(message: string, tone: 'success' | 'error' = 'success'): void {

@@ -10,6 +10,7 @@ import { BottomNav } from '../bottom-nav/bottom-nav';
 import { PwaUpdateBanner } from '../../../shared/components/pwa-update-banner/pwa-update-banner';
 import { PwaInstallGuide } from '../../../shared/components/pwa-install-guide/pwa-install-guide';
 import { PwaInstallBanner } from '../../../shared/components/pwa-install-banner/pwa-install-banner';
+import { FeedbackToast } from '../../../shared/components/feedback-toast/feedback-toast';
 
 const PAGE_TITLES: Record<string, string> = {
   '/': 'Aperçu global',
@@ -46,9 +47,10 @@ function resolvePageTitle(url: string): string {
   host: {
     class: 'block w-full max-w-full min-w-0 overflow-x-clip',
   },
-  imports: [RouterOutlet, Sidebar, TopBar, BottomNav, PwaUpdateBanner, PwaInstallGuide, PwaInstallBanner],
+  imports: [RouterOutlet, Sidebar, TopBar, BottomNav, PwaUpdateBanner, PwaInstallGuide, PwaInstallBanner, FeedbackToast],
   template: `
     <app-sidebar />
+    <app-feedback-toast />
     <app-pwa-update-banner />
     <app-pwa-install-guide />
     <app-pwa-install-banner />
