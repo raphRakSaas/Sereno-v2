@@ -3,6 +3,7 @@ import { ONBOARDING_BUDGET_CATEGORY_IDS } from '../../../core/data/system-catego
 
 export type OnboardingStep =
   | 'welcome'
+  | 'demo-preview'
   | 'initial-balance'
   | 'income'
   | 'budgets'

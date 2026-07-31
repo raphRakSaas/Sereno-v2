@@ -60,10 +60,53 @@ describe('Onboarding (integration)', () => {
     expect(fixture.nativeElement.querySelector('app-sereno-logo')).toBeTruthy();
   });
 
-  it('should render the lottie panel', () => {
+  it('should render the lottie panel in the desktop aside', () => {
     const fixture = TestBed.createComponent(Onboarding);
     fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('app-onboarding-lottie')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('aside app-onboarding-lottie')).toBeTruthy();
+  });
+
+  it('should open demo preview before loading demo data and allow going back', () => {
+    const fixture = TestBed.createComponent(Onboarding);
+    fixture.detectChanges();
+
+    const demoButton = [...fixture.nativeElement.querySelectorAll('button')].find(
+      (element: Element) => element.textContent?.includes("Charger des données d'exemple"),
+    ) as HTMLButtonElement;
+
+    demoButton.click();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Découvrir avec des exemples');
+    expect(loadDemoData).not.toHaveBeenCalled();
+
+    const backButton = [...fixture.nativeElement.querySelectorAll('button')].find(
+      (element: Element) => element.textContent?.trim() === 'Retour',
+    ) as HTMLButtonElement;
+
+    backButton.click();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Bienvenue sur Sereno');
+  });
+
+  it('should load demo data only after confirmation', async () => {
+    const fixture = TestBed.createComponent(Onboarding);
+    const router = TestBed.inject(Router);
+    fixture.detectChanges();
+
+    fixture.componentInstance['goToStep']('demo-preview');
+    fixture.detectChanges();
+
+    const confirmButton = [...fixture.nativeElement.querySelectorAll('button')].find(
+      (element: Element) => element.textContent?.includes('Confirmer et commencer'),
+    ) as HTMLButtonElement;
+
+    confirmButton.click();
+    await fixture.whenStable();
+
+    expect(loadDemoData).toHaveBeenCalledTimes(1);
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/');
   });
 
   it('should move to initial balance step', () => {

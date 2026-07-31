@@ -16,7 +16,7 @@ export interface AppSettings {
 
 export const DEFAULT_SETTINGS: AppSettings = {
   id: 'app',
-  theme: 'system',
+  theme: 'light',
   currency: 'EUR',
   showCents: true,
   startScreen: '/',

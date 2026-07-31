@@ -28,21 +28,21 @@ import {
   providers: [OnboardingState],
   imports: [ReactiveFormsModule, MoneyInput, OnboardingLottie, SerenoLogo],
   template: `
-    <div class="theme-light-locked grid min-h-screen min-w-0 overflow-x-clip lg:grid-cols-2">
+    <div class="theme-light-locked grid min-h-dvh w-full max-w-full min-w-0 overflow-x-clip lg:grid-cols-2">
       <div
-        class="relative flex min-h-screen flex-col bg-white px-4 py-6 sm:px-8 lg:px-12 xl:px-16"
+        class="relative flex min-h-dvh w-full min-w-0 flex-col bg-white px-4 py-4 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:px-8 sm:py-6 lg:px-12 xl:px-16"
       >
         <header class="shrink-0">
           <app-sereno-logo variant="full" size="md" />
         </header>
 
-        <div class="flex flex-1 items-center justify-center py-8">
-          <div class="w-full max-w-xl">
+        <div class="flex min-h-0 flex-1 items-center justify-center overflow-y-auto py-4 sm:py-8">
+          <div class="w-full min-w-0 max-w-xl">
             @switch (state.currentStep()) {
               @case ('welcome') {
                 <div class="space-y-6 text-center">
                   <div class="space-y-3">
-                    <h1 class="text-[28px] font-semibold text-text">Bienvenue sur Sereno</h1>
+                    <h1 class="text-2xl font-semibold text-text sm:text-[28px]">Bienvenue sur Sereno</h1>
                     <p class="text-[15px] leading-relaxed text-text-muted">
                       Sereno t'aide à voir clairement où va ton argent, sans jugement.
                       <strong class="font-semibold text-text">
@@ -61,10 +61,72 @@ import {
                     <button
                       type="button"
                       class="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-text transition-colors hover:bg-page"
+                      (click)="goToStep('demo-preview')"
+                    >
+                      Charger des données d'exemple
+                    </button>
+                  </div>
+                </div>
+              }
+
+              @case ('demo-preview') {
+                <div class="space-y-6">
+                  <header class="space-y-2 text-center sm:text-left">
+                    <h2 class="text-2xl font-semibold text-text sm:text-[24px]">
+                      Découvrir avec des exemples
+                    </h2>
+                    <p class="text-[14px] leading-relaxed text-text-muted">
+                      Sereno va charger un jeu de données fictif pour te montrer l'application en
+                      action. Tu pourras revenir en arrière si tu préfères configurer ton espace
+                      manuellement.
+                    </p>
+                  </header>
+
+                  <ul
+                    class="space-y-2 rounded-xl border border-border bg-surface p-4 text-[13px] text-text-muted"
+                  >
+                    <li class="flex items-start gap-2">
+                      <span class="material-symbols-outlined mt-0.5 text-[16px] text-accent" aria-hidden="true"
+                        >receipt_long</span
+                      >
+                      Transactions, budgets et objectifs préremplis
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span class="material-symbols-outlined mt-0.5 text-[16px] text-accent" aria-hidden="true"
+                        >devices</span
+                      >
+                      Données locales uniquement sur cet appareil
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span class="material-symbols-outlined mt-0.5 text-[16px] text-accent" aria-hidden="true"
+                        >restart_alt</span
+                      >
+                      Réinitialisable à tout moment dans les réglages
+                    </li>
+                  </ul>
+
+                  <div class="flex flex-col gap-2 pt-1 sm:flex-row">
+                    <button
+                      type="button"
+                      class="rounded-lg border border-border px-3 py-2.5 text-sm font-semibold text-text sm:flex-1"
+                      (click)="goToStep('welcome')"
+                    >
+                      Retour
+                    </button>
+                    <button
+                      type="button"
+                      class="inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-3 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60 sm:flex-[1.4]"
                       [disabled]="isSaving()"
                       (click)="loadDemoData()"
                     >
-                      Charger des données d'exemple
+                      @if (isSaving()) {
+                        Chargement…
+                      } @else {
+                        Confirmer et commencer
+                        <span class="material-symbols-outlined text-[18px]" aria-hidden="true"
+                          >arrow_forward</span
+                        >
+                      }
                     </button>
                   </div>
                 </div>
@@ -74,7 +136,7 @@ import {
                 <div class="space-y-6">
                   <header class="space-y-2">
                     <p class="label-caps text-accent">Étape 1 sur 4</p>
-                    <h2 class="text-[24px] font-semibold text-text">Solde initial</h2>
+                    <h2 class="text-2xl font-semibold text-text sm:text-[24px]">Solde initial</h2>
                     <p class="text-[14px] text-text-muted">
                       Indique combien tu as disponible aujourd'hui. Ce montant sert de point de
                       départ pour suivre ton mois.
@@ -111,7 +173,7 @@ import {
                 <div class="space-y-6">
                   <header class="space-y-2">
                     <p class="label-caps text-accent">Étape 2 sur 4</p>
-                    <h2 class="text-[24px] font-semibold text-text">Revenus du mois</h2>
+                    <h2 class="text-2xl font-semibold text-text sm:text-[24px]">Revenus du mois</h2>
                     <p class="text-[14px] text-text-muted">
                       Ajoute ton revenu principal pour ce mois. Tu pourras enregistrer d'autres
                       revenus ensuite.
@@ -170,7 +232,7 @@ import {
                 <div class="space-y-4">
                   <header class="space-y-1.5">
                     <p class="label-caps text-accent">Étape 3 sur 4</p>
-                    <h2 class="text-[24px] font-semibold text-text">Budgets de dépenses</h2>
+                    <h2 class="text-2xl font-semibold text-text sm:text-[24px]">Budgets de dépenses</h2>
                     <p class="text-[14px] text-text-muted">
                       Fixe un plafond pour les catégories que tu veux suivre. Retire celles qui ne
                       te concernent pas.
@@ -180,44 +242,48 @@ import {
                   <ul class="overflow-hidden rounded-xl border border-border bg-surface">
                     @for (category of activeBudgetCategories(); track category.id; let last = $last) {
                       <li
-                        class="flex items-center gap-3 px-3 py-2.5"
+                        class="flex flex-col gap-3 px-3 py-3 sm:flex-row sm:items-center sm:py-2.5"
                         [class.border-b]="!last"
                         [class.border-border]="!last"
                       >
-                        <span
-                          class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
-                          [style.background-color]="category.color + '22'"
-                          [style.color]="category.color"
-                          aria-hidden="true"
-                        >
-                          <span class="material-symbols-outlined text-[18px]">{{
-                            category.icon
-                          }}</span>
-                        </span>
+                        <div class="flex min-w-0 items-center gap-3 sm:flex-1">
+                          <span
+                            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+                            [style.background-color]="category.color + '22'"
+                            [style.color]="category.color"
+                            aria-hidden="true"
+                          >
+                            <span class="material-symbols-outlined text-[18px]">{{
+                              category.icon
+                            }}</span>
+                          </span>
 
-                        <span class="min-w-0 flex-1 truncate text-sm font-medium text-text">
-                          {{ category.name }}
-                        </span>
-
-                        <div class="w-28 shrink-0 sm:w-32">
-                          <app-money-input
-                            [label]="category.name"
-                            [compact]="true"
-                            [amountInCents]="state.getBudgetAmount(category.id)"
-                            (amountChange)="state.updateBudgetDraft(category.id, $event)"
-                          />
+                          <span class="min-w-0 flex-1 truncate text-sm font-medium text-text">
+                            {{ category.name }}
+                          </span>
                         </div>
 
-                        <button
-                          type="button"
-                          class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-text-muted transition-colors hover:bg-page hover:text-accent"
-                          [attr.aria-label]="'Retirer ' + category.name"
-                          (click)="excludeBudgetCategory(category.id)"
-                        >
-                          <span class="material-symbols-outlined text-[18px]" aria-hidden="true"
-                            >delete</span
+                        <div class="flex items-center gap-2 sm:shrink-0">
+                          <div class="min-w-0 flex-1 sm:w-32">
+                            <app-money-input
+                              [label]="category.name"
+                              [compact]="true"
+                              [amountInCents]="state.getBudgetAmount(category.id)"
+                              (amountChange)="state.updateBudgetDraft(category.id, $event)"
+                            />
+                          </div>
+
+                          <button
+                            type="button"
+                            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-text-muted transition-colors hover:bg-page hover:text-accent"
+                            [attr.aria-label]="'Retirer ' + category.name"
+                            (click)="excludeBudgetCategory(category.id)"
                           >
-                        </button>
+                            <span class="material-symbols-outlined text-[18px]" aria-hidden="true"
+                              >delete</span
+                            >
+                          </button>
+                        </div>
                       </li>
                     } @empty {
                       <li class="px-4 py-6 text-center text-sm text-text-muted">
@@ -276,7 +342,7 @@ import {
                     </div>
                     <div class="space-y-1.5">
                       <p class="label-caps text-accent">Étape 4 sur 4</p>
-                      <h2 class="text-[26px] font-semibold tracking-tight text-text">
+                      <h2 class="text-2xl font-semibold tracking-tight text-text sm:text-[26px]">
                         Tout est prêt
                       </h2>
                       <p class="mx-auto max-w-sm text-[14px] leading-relaxed text-text-muted">
@@ -408,26 +474,28 @@ import {
           </div>
         </div>
 
-        <footer class="shrink-0 pb-2" aria-label="Progression de l'onboarding">
-          <div class="flex items-center justify-center gap-2">
-            @for (step of steps; track step.id; let index = $index) {
-              <span
-                class="h-1.5 rounded-full transition-all"
-                [class.w-8]="step.id === state.currentStep()"
-                [class.w-4]="step.id !== state.currentStep()"
-                [class.bg-accent]="index <= currentStepIndex()"
-                [class.bg-border]="index > currentStepIndex()"
-              ></span>
-            }
-          </div>
-        </footer>
+        @if (showStepProgress()) {
+          <footer class="shrink-0 pb-2" aria-label="Progression de l'onboarding">
+            <div class="flex items-center justify-center gap-2">
+              @for (step of steps; track step.id; let index = $index) {
+                <span
+                  class="h-1.5 rounded-full transition-all"
+                  [class.w-8]="step.id === state.currentStep()"
+                  [class.w-4]="step.id !== state.currentStep()"
+                  [class.bg-accent]="index <= manualStepIndex()"
+                  [class.bg-border]="index > manualStepIndex()"
+                ></span>
+              }
+            </div>
+          </footer>
+        }
       </div>
 
       <aside
-        class="flex min-h-[320px] items-center justify-center bg-text p-6 sm:p-10 lg:min-h-screen lg:p-12"
+        class="hidden min-h-[320px] items-center justify-center bg-text p-6 sm:p-10 lg:flex lg:min-h-dvh lg:p-12"
       >
         <app-onboarding-lottie
-          class="w-full max-w-xl"
+          class="w-full max-w-xl min-w-0"
           [animationPath]="currentLottiePath()"
           [ariaLabel]="currentLottieLabel()"
         />
@@ -522,9 +590,20 @@ export class Onboarding {
     this.completionBudgetRows().reduce((total, budget) => total + budget.amountInCents, 0),
   );
 
-  protected readonly currentStepIndex = computed(() => {
-    const stepOrder = ['welcome', 'initial-balance', 'income', 'budgets', 'completion'] as const;
-    return stepOrder.indexOf(this.state.currentStep());
+  protected readonly showStepProgress = computed(() => {
+    const step = this.state.currentStep();
+    return step !== 'welcome' && step !== 'demo-preview';
+  });
+
+  protected readonly manualStepIndex = computed(() => {
+    const stepOrder = ['initial-balance', 'income', 'budgets', 'completion'] as const;
+    const currentStep = this.state.currentStep();
+
+    if (currentStep === 'welcome' || currentStep === 'demo-preview') {
+      return -1;
+    }
+
+    return stepOrder.indexOf(currentStep);
   });
 
   protected readonly currentLottiePath = computed(
