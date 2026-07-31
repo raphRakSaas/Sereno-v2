@@ -57,7 +57,7 @@ function resolvePageTitle(url: string): string {
       (searchSubmit)="onSearchSubmit($event)"
     />
     <main class="min-h-screen w-full min-w-0 overflow-x-clip pt-16 lg:ml-sidebar">
-      <div class="mx-auto w-full min-w-0 max-w-content-max px-4 pt-6 pb-24 sm:px-6 lg:px-page lg:pb-6">
+      <div class="mx-auto w-full min-w-0 max-w-content-max px-4 pt-6 pb-28 sm:px-6 lg:px-page lg:pb-6">
         <router-outlet />
       </div>
     </main>

@@ -6,6 +6,7 @@ interface NavItem {
   label: string;
   route: string;
   icon: string;
+  exact?: boolean;
 }
 
 @Component({
@@ -23,7 +24,7 @@ interface NavItem {
 
       <div
         id="bottom-nav-more-sheet"
-        class="fixed inset-x-3 bottom-[calc(5.5rem+env(safe-area-inset-bottom))] z-40 max-w-[calc(100vw-1.5rem)] rounded-2xl border border-border bg-surface p-3 shadow-xl sm:inset-x-4 lg:hidden"
+        class="fixed bottom-[calc(6.25rem+env(safe-area-inset-bottom))] left-4 right-4 z-40 rounded-2xl border border-border bg-surface p-3 shadow-xl lg:hidden"
       >
         <nav class="space-y-1" aria-label="Navigation secondaire">
           @for (item of moreItems; track item.route) {
@@ -53,57 +54,65 @@ interface NavItem {
     }
 
     <nav
-      class="fixed inset-x-2 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-30 grid h-14 w-auto max-w-[calc(100vw-1rem)] grid-cols-6 items-center rounded-full border border-border bg-surface px-1 shadow-[0_8px_30px_rgba(23,20,18,0.12)] sm:inset-x-4 sm:bottom-[calc(1rem+env(safe-area-inset-bottom))] sm:h-16 sm:max-w-[calc(100vw-2rem)] sm:px-2 lg:hidden"
+      class="fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] left-4 right-4 z-30 grid grid-cols-6 items-end gap-0 rounded-2xl border border-border bg-surface px-1 py-2 shadow-[0_8px_30px_rgba(23,20,18,0.12)] lg:hidden"
       aria-label="Navigation principale"
     >
       @for (item of leftItems; track item.route) {
         <a
           [routerLink]="item.route"
-          [attr.aria-label]="item.label"
+          [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
           routerLinkActive=""
-          [routerLinkActiveOptions]="{ exact: item.route === '/' }"
           #link="routerLinkActive"
-          class="mx-auto flex h-10 w-10 items-center justify-center rounded-full transition-colors sm:h-11 sm:w-11"
-          [class.bg-accent-surface]="link.isActive"
+          class="flex min-w-0 flex-col items-center justify-end gap-0.5 px-0.5 py-1 text-center transition-colors"
           [class.text-accent]="link.isActive"
           [class.text-text-muted]="!link.isActive"
         >
-          <span class="material-symbols-outlined text-[22px]" aria-hidden="true">{{
-            item.icon
-          }}</span>
+          <span
+            class="flex h-8 w-8 items-center justify-center rounded-full transition-colors"
+            [class.bg-accent-surface]="link.isActive"
+          >
+            <span class="material-symbols-outlined text-[20px]" aria-hidden="true">{{ item.icon }}</span>
+          </span>
+          <span class="w-full truncate text-[10px] font-medium leading-none">{{ item.label }}</span>
         </a>
       }
 
       <a
         routerLink="/transactions/nouvelle"
-        class="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-accent text-white shadow-md transition-opacity hover:opacity-90 sm:h-11 sm:w-11"
+        class="flex min-w-0 flex-col items-center justify-end gap-0.5 px-0.5 py-1 text-center text-accent"
         aria-label="Nouvelle transaction"
         (click)="closeMore()"
       >
-        <span class="material-symbols-outlined text-[22px] sm:text-[24px]" aria-hidden="true">add</span>
+        <span
+          class="flex h-9 w-9 items-center justify-center rounded-full bg-accent text-white shadow-md transition-opacity hover:opacity-90"
+        >
+          <span class="material-symbols-outlined text-[22px]" aria-hidden="true">add</span>
+        </span>
+        <span class="w-full truncate text-[10px] font-semibold leading-none">Ajouter</span>
       </a>
 
       @for (item of rightItems; track item.route) {
         <a
           [routerLink]="item.route"
-          [attr.aria-label]="item.label"
           routerLinkActive=""
           #link="routerLinkActive"
-          class="mx-auto flex h-10 w-10 items-center justify-center rounded-full transition-colors sm:h-11 sm:w-11"
-          [class.bg-accent-surface]="link.isActive"
+          class="flex min-w-0 flex-col items-center justify-end gap-0.5 px-0.5 py-1 text-center transition-colors"
           [class.text-accent]="link.isActive"
           [class.text-text-muted]="!link.isActive"
         >
-          <span class="material-symbols-outlined text-[22px]" aria-hidden="true">{{
-            item.icon
-          }}</span>
+          <span
+            class="flex h-8 w-8 items-center justify-center rounded-full transition-colors"
+            [class.bg-accent-surface]="link.isActive"
+          >
+            <span class="material-symbols-outlined text-[20px]" aria-hidden="true">{{ item.icon }}</span>
+          </span>
+          <span class="w-full truncate text-[10px] font-medium leading-none">{{ item.label }}</span>
         </a>
       }
 
       <button
         type="button"
-        class="mx-auto flex h-10 w-10 items-center justify-center rounded-full transition-colors sm:h-11 sm:w-11"
-        [class.bg-accent-surface]="isMoreOpen()"
+        class="flex min-w-0 flex-col items-center justify-end gap-0.5 px-0.5 py-1 text-center transition-colors"
         [class.text-accent]="isMoreOpen()"
         [class.text-text-muted]="!isMoreOpen()"
         aria-controls="bottom-nav-more-sheet"
@@ -111,7 +120,13 @@ interface NavItem {
         aria-label="Plus d'options"
         (click)="toggleMore()"
       >
-        <span class="material-symbols-outlined text-[22px]" aria-hidden="true">more_horiz</span>
+        <span
+          class="flex h-8 w-8 items-center justify-center rounded-full transition-colors"
+          [class.bg-accent-surface]="isMoreOpen()"
+        >
+          <span class="material-symbols-outlined text-[20px]" aria-hidden="true">more_horiz</span>
+        </span>
+        <span class="w-full truncate text-[10px] font-medium leading-none">Plus</span>
       </button>
     </nav>
   `,
@@ -122,11 +137,13 @@ export class BottomNav {
   protected readonly isMoreOpen = signal(false);
 
   protected readonly leftItems: NavItem[] = [
-    { label: 'Accueil', route: '/', icon: 'home' },
+    { label: 'Accueil', route: '/', icon: 'home', exact: true },
     { label: 'Activité', route: '/activite', icon: 'history' },
   ];
 
-  protected readonly rightItems: NavItem[] = [{ label: 'Budgets', route: '/budgets', icon: 'account_balance_wallet' }];
+  protected readonly rightItems: NavItem[] = [
+    { label: 'Budgets', route: '/budgets', icon: 'account_balance_wallet' },
+  ];
 
   protected readonly moreItems: NavItem[] = [
     { label: 'Calendrier', route: '/calendrier', icon: 'calendar_today' },
