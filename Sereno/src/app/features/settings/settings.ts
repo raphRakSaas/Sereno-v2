@@ -8,16 +8,33 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AppStore, SerenoExportPayload } from '../../core/store/app.store';
+import { AppStore } from '../../core/store/app.store';
+import {
+  parseSerenoExportPayload,
+  SerenoExportPayload,
+  SerenoImportMode,
+  SerenoImportSummary,
+  summarizeSerenoImport,
+} from '../../core/data/sereno-export';
 import { CurrencyCode, ThemePreference } from '../../core/models/settings.model';
+import { ImportDataDialog } from '../../shared/components/import-data-dialog/import-data-dialog';
 import { PwaInstallCard } from '../../shared/components/pwa-install-card/pwa-install-card';
 import { PwaUpdateCard } from '../../shared/components/pwa-update-card/pwa-update-card';
 
 @Component({
   selector: 'app-settings',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, PwaInstallCard, PwaUpdateCard],
+  imports: [FormsModule, PwaInstallCard, PwaUpdateCard, ImportDataDialog],
   template: `
+    @if (pendingImport(); as pending) {
+      <app-import-data-dialog
+        [fileName]="pending.fileName"
+        [summary]="pending.summary"
+        (cancelled)="cancelImport()"
+        (confirmed)="confirmImport($event)"
+      />
+    }
+
     <div class="max-w-2xl space-y-6">
       <div>
         <h2 class="label-caps text-text-muted">Réglages</h2>
@@ -63,7 +80,10 @@ import { PwaUpdateCard } from '../../shared/components/pwa-update-card/pwa-updat
           <div class="flex flex-wrap items-center justify-between gap-3 border-t border-border py-2">
             <div>
               <p class="text-[13px] font-medium text-text">Exporter mes données</p>
-              <p class="text-[11px] text-text-muted">Télécharger un fichier JSON de tes données</p>
+              <p class="text-[11px] text-text-muted">
+                Sauvegarde complète : réglages, transactions, budgets, objectifs, récurrences et
+                catégories.
+              </p>
             </div>
             <button
               type="button"
@@ -78,7 +98,9 @@ import { PwaUpdateCard } from '../../shared/components/pwa-update-card/pwa-updat
           <div class="flex flex-wrap items-center justify-between gap-3 border-t border-border py-2">
             <div>
               <p class="text-[13px] font-medium text-text">Importer des données</p>
-              <p class="text-[11px] text-text-muted">Restaurer depuis un fichier JSON</p>
+              <p class="text-[11px] text-text-muted">
+                Restaurer ou fusionner une sauvegarde JSON exportée depuis Sereno.
+              </p>
             </div>
             <button
               type="button"
@@ -243,6 +265,11 @@ export class Settings {
   protected readonly statusMessage = signal('');
   protected readonly statusTone = signal<'success' | 'error'>('success');
   protected readonly isBusy = signal(false);
+  protected readonly pendingImport = signal<{
+    fileName: string;
+    payload: SerenoExportPayload;
+    summary: SerenoImportSummary;
+  } | null>(null);
 
   protected openImportPicker(): void {
     this.importFileInput()?.nativeElement?.click();
@@ -263,14 +290,39 @@ export class Settings {
     this.flash(showCents ? 'Centimes affichés.' : 'Centimes masqués.');
   }
 
-  protected exportData(): void {
+  protected async exportData(): Promise<void> {
     const payload = this.appStore.exportData();
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const json = JSON.stringify(payload, null, 2);
+    const stamp = new Date().toISOString().slice(0, 10);
+    const fileName = `sereno-export-${stamp}.json`;
+    const file = new File([json], fileName, { type: 'application/json' });
+
+    const shareCapableNavigator = navigator as Navigator & {
+      canShare?: (data: ShareData) => boolean;
+      share?: (data: ShareData) => Promise<void>;
+    };
+
+    if (shareCapableNavigator.canShare?.({ files: [file] })) {
+      try {
+        await shareCapableNavigator.share({
+          files: [file],
+          title: 'Export Sereno',
+          text: 'Sauvegarde de mes données Sereno',
+        });
+        this.flash('Export prêt à être enregistré.');
+        return;
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') {
+          return;
+        }
+      }
+    }
+
+    const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
-    const stamp = new Date().toISOString().slice(0, 10);
     anchor.href = url;
-    anchor.download = `sereno-export-${stamp}.json`;
+    anchor.download = fileName;
     anchor.click();
     URL.revokeObjectURL(url);
     this.flash('Export téléchargé.');
@@ -285,14 +337,45 @@ export class Settings {
       return;
     }
 
-    this.isBusy.set(true);
     try {
       const text = await file.text();
-      const payload = JSON.parse(text) as SerenoExportPayload;
-      await this.appStore.importData(payload);
-      this.flash('Données importées avec succès.');
-    } catch {
-      this.flash("Impossible d'importer ce fichier.", 'error');
+      const payload = parseSerenoExportPayload(text);
+      this.pendingImport.set({
+        fileName: file.name,
+        payload,
+        summary: summarizeSerenoImport(payload, 'merge'),
+      });
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Impossible de lire ce fichier.";
+      this.flash(message, 'error');
+    }
+  }
+
+  protected cancelImport(): void {
+    this.pendingImport.set(null);
+  }
+
+  protected async confirmImport(mode: SerenoImportMode): Promise<void> {
+    const pending = this.pendingImport();
+    if (!pending) {
+      return;
+    }
+
+    this.pendingImport.set(null);
+    this.isBusy.set(true);
+
+    try {
+      const summary = await this.appStore.importData(pending.payload, mode);
+      const modeLabel = mode === 'merge' ? 'Fusion réussie' : 'Import réussi';
+      this.flash(
+        `${modeLabel} : ${summary.transactions} transactions, ${summary.budgets} budgets, ${summary.goals} objectifs, ${summary.recurrences} récurrences.`,
+      );
+      globalThis.location.reload();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Impossible d'importer ce fichier.";
+      this.flash(message, 'error');
     } finally {
       this.isBusy.set(false);
     }

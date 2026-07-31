@@ -27,17 +27,16 @@ import {
   listDueOccurrenceDates,
 } from '../../shared/utils/recurrence-dates';
 import { applyThemeClass } from '../../shared/utils/theme';
+import {
+  SerenoExportPayload,
+  SerenoImportMode,
+  SerenoImportSummary,
+  createSerenoExportPayload,
+  mergeSerenoData,
+  summarizeSerenoImport,
+} from '../data/sereno-export';
 
-export interface SerenoExportPayload {
-  version: 1;
-  exportedAt: string;
-  settings: AppSettings;
-  categories: Category[];
-  transactions: Transaction[];
-  budgets: Budget[];
-  goals: SavingsGoal[];
-  recurrences: Recurrence[];
-}
+export type { SerenoExportPayload, SerenoImportMode, SerenoImportSummary };
 
 export interface OnboardingPayload {
   initialBalanceInCents: number;
@@ -268,53 +267,115 @@ export class AppStore {
   }
 
   exportData(): SerenoExportPayload {
-    return {
-      version: 1,
+    return createSerenoExportPayload({
       exportedAt: new Date().toISOString(),
+      selectedMonthKey: this.selectedMonthKey(),
       settings: this.settings(),
       categories: this.categories(),
       transactions: this.transactions(),
       budgets: this.budgets(),
       goals: this.goals(),
       recurrences: this.recurrences(),
-    };
+    });
   }
 
-  async importData(payload: SerenoExportPayload): Promise<void> {
-    if (!payload || payload.version !== 1) {
-      throw new Error('Fichier d\'export Sereno invalide');
+  async importData(
+    payload: SerenoExportPayload,
+    mode: SerenoImportMode = 'replace',
+  ): Promise<SerenoImportSummary> {
+    if (mode === 'replace') {
+      await this.database.clearAll();
+
+      const settings = normalizeSettings({
+        ...DEFAULT_SETTINGS,
+        ...payload.settings,
+        id: 'app',
+        onboardingCompleted: true,
+      });
+
+      await this.persistCollections(settings, {
+        categories: payload.categories,
+        transactions: payload.transactions,
+        budgets: payload.budgets,
+        goals: payload.goals,
+        recurrences: payload.recurrences,
+      });
+
+      if (payload.categories.length === 0) {
+        await this.seedCategoriesIfNeeded();
+      }
+
+      this.searchQuery.set('');
+
+      if (/^\d{4}-\d{2}$/.test(payload.selectedMonthKey)) {
+        this.selectedMonthKey.set(payload.selectedMonthKey);
+      }
+
+      return summarizeSerenoImport(payload, mode);
     }
 
-    await this.database.clearAll();
+    const merged = mergeSerenoData(
+      {
+        categories: this.categories(),
+        transactions: this.transactions(),
+        budgets: this.budgets(),
+        goals: this.goals(),
+        recurrences: this.recurrences(),
+      },
+      {
+        categories: payload.categories,
+        transactions: payload.transactions,
+        budgets: payload.budgets,
+        goals: payload.goals,
+        recurrences: payload.recurrences,
+      },
+    );
 
-    const settings = normalizeSettings({
-      ...DEFAULT_SETTINGS,
-      ...payload.settings,
-      id: 'app',
-      onboardingCompleted: true,
-    });
+    const settings = normalizeSettings(this.settings());
 
+    await this.persistCollections(settings, merged);
+
+    return summarizeSerenoImport(
+      {
+        ...payload,
+        settings,
+        categories: merged.categories,
+        transactions: merged.transactions,
+        budgets: merged.budgets,
+        goals: merged.goals,
+        recurrences: merged.recurrences,
+      },
+      mode,
+    );
+  }
+
+  private async persistCollections(
+    settings: AppSettings,
+    collections: {
+      categories: Category[];
+      transactions: Transaction[];
+      budgets: Budget[];
+      goals: SavingsGoal[];
+      recurrences: Recurrence[];
+    },
+  ): Promise<void> {
     await this.database.putSettings(settings);
     await Promise.all([
-      ...(payload.categories ?? []).map((category) => this.database.putCategory(category)),
-      ...(payload.transactions ?? []).map((transaction) =>
-        this.database.putTransaction(transaction),
-      ),
-      ...(payload.budgets ?? []).map((budget) => this.database.putBudget(budget)),
-      ...(payload.goals ?? []).map((goal) => this.database.putGoal(goal)),
-      ...(payload.recurrences ?? []).map((recurrence) => this.database.putRecurrence(recurrence)),
+      ...collections.categories.map((category) => this.database.putCategory(category)),
+      ...collections.transactions.map((transaction) => this.database.putTransaction(transaction)),
+      ...collections.budgets.map((budget) => this.database.putBudget(budget)),
+      ...collections.goals.map((goal) => this.database.putGoal(goal)),
+      ...collections.recurrences.map((recurrence) => this.database.putRecurrence(recurrence)),
     ]);
 
-    if ((payload.categories ?? []).length === 0) {
-      await this.seedCategoriesIfNeeded();
-    }
-
     this.settings.set(settings);
-    this.categories.set(payload.categories?.length ? payload.categories : SYSTEM_CATEGORIES);
-    this.transactions.set(payload.transactions ?? []);
-    this.budgets.set(payload.budgets ?? []);
-    this.goals.set(payload.goals ?? []);
-    this.recurrences.set(payload.recurrences ?? []);
+    this.categories.set(
+      collections.categories.length > 0 ? collections.categories : SYSTEM_CATEGORIES,
+    );
+    this.transactions.set(collections.transactions);
+    this.budgets.set(collections.budgets);
+    this.goals.set(collections.goals);
+    this.recurrences.set(collections.recurrences);
     this.syncDisplayPreferences(settings);
     this.applyThemeToDom();
     await this.generateDueRecurrences();
@@ -927,6 +988,14 @@ function normalizeSettings(settings: AppSettings): AppSettings {
     theme: settings.theme ?? DEFAULT_SETTINGS.theme,
     currency: (settings.currency as CurrencyCode | undefined) ?? DEFAULT_SETTINGS.currency,
     showCents: settings.showCents ?? DEFAULT_SETTINGS.showCents,
+    initialBalanceInCents:
+      typeof settings.initialBalanceInCents === 'number'
+        ? settings.initialBalanceInCents
+        : DEFAULT_SETTINGS.initialBalanceInCents,
+    onboardingCompleted:
+      typeof settings.onboardingCompleted === 'boolean'
+        ? settings.onboardingCompleted
+        : DEFAULT_SETTINGS.onboardingCompleted,
   };
 }
 

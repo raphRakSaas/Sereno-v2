@@ -3,6 +3,7 @@ import { AppStore } from './app.store';
 import { SerenoDatabase } from '../persistence/sereno-database';
 import { DEFAULT_SETTINGS } from '../models/settings.model';
 import { SYSTEM_CATEGORIES } from '../data/system-categories';
+import { createSerenoExportPayload, parseSerenoExportPayload } from '../data/sereno-export';
 
 describe('AppStore', () => {
   let appStore: AppStore;
@@ -212,5 +213,109 @@ describe('AppStore', () => {
 
     expect(appStore.transactions()).toHaveLength(0);
     expect(database.deleteTransaction).toHaveBeenCalledWith(transaction.id);
+  });
+
+  it('should import an export payload and restore the selected month (integration)', async () => {
+    const exportPayload = createSerenoExportPayload({
+      exportedAt: '2026-07-31T12:00:00.000Z',
+      selectedMonthKey: '2026-05',
+      settings: {
+        ...DEFAULT_SETTINGS,
+        onboardingCompleted: true,
+        initialBalanceInCents: 120000,
+      },
+      categories: SYSTEM_CATEGORIES,
+      transactions: [
+        {
+          id: 'tx-import-1',
+          type: 'income',
+          amountInCents: 300000,
+          date: '2026-05-02',
+          categoryId: 'cat-income',
+          note: 'Salaire',
+          createdAt: '2026-05-02T08:00:00.000Z',
+          updatedAt: '2026-05-02T08:00:00.000Z',
+        },
+      ],
+      budgets: [
+        {
+          id: 'budget-import-1',
+          categoryId: 'cat-groceries',
+          month: '2026-05',
+          amountInCents: 45000,
+        },
+      ],
+      goals: [],
+      recurrences: [],
+    });
+
+    const summary = await appStore.importData(parseSerenoExportPayload(JSON.stringify(exportPayload)), 'replace');
+
+    expect(summary.transactions).toBe(1);
+    expect(summary.budgets).toBe(1);
+    expect(appStore.selectedMonthKey()).toBe('2026-05');
+    expect(appStore.settings().initialBalanceInCents).toBe(120000);
+    expect(appStore.dashboardData().summary.incomeInCents).toBe(300000);
+    expect(appStore.dashboardData().summary.availableBalanceInCents).toBe(420000);
+  });
+
+  it('should merge imported data with existing local data', async () => {
+    await appStore.addTransaction({
+      type: 'expense',
+      amountInCents: 1500,
+      date: '2026-07-10',
+      categoryId: 'cat-groceries',
+      note: 'Local',
+    });
+
+    const exportPayload = createSerenoExportPayload({
+      exportedAt: '2026-07-31T12:00:00.000Z',
+      selectedMonthKey: '2026-06',
+      settings: {
+        ...DEFAULT_SETTINGS,
+        onboardingCompleted: true,
+        initialBalanceInCents: 999999,
+      },
+      categories: SYSTEM_CATEGORIES,
+      transactions: [
+        {
+          id: 'tx-imported',
+          type: 'income',
+          amountInCents: 100000,
+          date: '2026-06-01',
+          categoryId: 'cat-income',
+          note: 'Import',
+          createdAt: '2026-06-01T08:00:00.000Z',
+          updatedAt: '2026-06-01T08:00:00.000Z',
+        },
+      ],
+      budgets: [],
+      goals: [],
+      recurrences: [
+        {
+          id: 'rec-imported',
+          type: 'expense',
+          amountInCents: 2000,
+          categoryId: 'cat-subscriptions',
+          note: 'Netflix',
+          frequency: 'monthly',
+          startDate: '2026-06-01',
+          isPaused: true,
+          createdAt: '2026-06-01T08:00:00.000Z',
+          updatedAt: '2026-06-01T08:00:00.000Z',
+        },
+      ],
+    });
+
+    const summary = await appStore.importData(
+      parseSerenoExportPayload(JSON.stringify(exportPayload)),
+      'merge',
+    );
+
+    expect(summary.mode).toBe('merge');
+    expect(appStore.transactions().some((transaction) => transaction.note === 'Local')).toBe(true);
+    expect(appStore.transactions().some((transaction) => transaction.note === 'Import')).toBe(true);
+    expect(appStore.recurrences()).toHaveLength(1);
+    expect(appStore.settings().initialBalanceInCents).toBe(DEFAULT_SETTINGS.initialBalanceInCents);
   });
 });
