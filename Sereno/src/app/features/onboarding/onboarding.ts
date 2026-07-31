@@ -41,8 +41,8 @@ import {
           <app-sereno-logo variant="full" size="md" />
         </header>
 
-        <main class="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto py-4 sm:py-6">
-          <div class="mx-auto w-full min-w-0 max-w-xl">
+        <main class="flex min-h-0 min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto py-4 sm:py-6">
+          <div class="mx-auto flex w-full min-w-0 max-w-xl flex-1 flex-col justify-center">
             @switch (state.currentStep()) {
               @case ('welcome') {
                 <div class="space-y-6 text-center">

@@ -71,7 +71,9 @@ describe('Onboarding (integration)', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.className).toContain('overflow-x-clip');
-    expect(fixture.nativeElement.querySelector('main')?.className).toContain('overflow-x-hidden');
+    const mainElement = fixture.nativeElement.querySelector('main');
+    expect(mainElement?.className).toContain('overflow-x-hidden');
+    expect(mainElement?.querySelector(':scope > div')?.className).toContain('justify-center');
   });
 
   it('should open demo preview before loading demo data and allow going back', () => {
