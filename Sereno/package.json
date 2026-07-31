@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "generate:og": "python3 scripts/generate-og-images.py",
+    "generate:pwa": "python3 scripts/generate-pwa-icons.py",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
