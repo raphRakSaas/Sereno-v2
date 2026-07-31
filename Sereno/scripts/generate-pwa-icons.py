@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate PWA icons from the official Sereno SVG mark."""
+"""Generate PWA icons from the Sereno mark on a rose accent background."""
 
 from __future__ import annotations
 
@@ -9,11 +9,12 @@ from pathlib import Path
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
-SVG_PATH = ROOT / "public" / "brand" / "sereno-icon.svg"
+SVG_PATH = ROOT / "public" / "brand" / "sereno-icon-pwa.svg"
 OUTPUT_DIR = ROOT / "public" / "icons"
 TMP_ICON = OUTPUT_DIR / "_sereno-icon-render.png"
 
-PAGE_BACKGROUND = (250, 248, 246)
+# Sereno accent — matches --color-accent in styles.css
+SERENO_ACCENT = (255, 77, 109)
 
 
 def render_svg_mark(icon_size: int) -> Image.Image:
@@ -37,7 +38,7 @@ def render_svg_mark(icon_size: int) -> Image.Image:
 
 
 def build_square_icon(canvas_size: int, icon_ratio: float) -> Image.Image:
-    canvas = Image.new("RGBA", (canvas_size, canvas_size), PAGE_BACKGROUND + (255,))
+    canvas = Image.new("RGBA", (canvas_size, canvas_size), SERENO_ACCENT + (255,))
     icon_size = int(canvas_size * icon_ratio)
     icon = render_svg_mark(icon_size)
 
