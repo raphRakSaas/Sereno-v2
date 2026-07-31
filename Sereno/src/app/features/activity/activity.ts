@@ -46,7 +46,7 @@ type SortKey = 'date-desc' | 'date-asc' | 'amount-desc' | 'amount-asc';
 
       <section class="bento-card p-4">
         <div class="flex flex-wrap items-center gap-3">
-          <label class="relative min-w-[200px] flex-1">
+          <label class="relative min-w-0 flex-1 sm:min-w-[200px]">
             <span class="sr-only">Rechercher une transaction</span>
             <span
               class="material-symbols-outlined absolute top-1/2 left-3 -translate-y-1/2 text-[16px] text-text-muted"

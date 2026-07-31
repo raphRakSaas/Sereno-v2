@@ -71,7 +71,7 @@ const WEEKDAY_LABELS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
         </div>
       </div>
 
-      <div class="grid grid-cols-12 gap-gutter">
+      <div class="grid min-w-0 grid-cols-12 gap-gutter">
         <section class="bento-card col-span-12 overflow-hidden p-4 xl:col-span-8">
           @if (view() === 'month') {
             <div

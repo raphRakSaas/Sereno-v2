@@ -19,7 +19,7 @@ import { AppStore } from '../../core/store/app.store';
     SerenoInsightsCard,
   ],
   template: `
-    <div class="grid grid-cols-12 gap-gutter">
+    <div class="grid min-w-0 grid-cols-12 gap-gutter">
       <div class="col-span-12 flex flex-col gap-gutter xl:col-span-8">
         <app-balance-card [summary]="dashboardData().summary" />
 

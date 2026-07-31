@@ -28,7 +28,7 @@ import {
   providers: [OnboardingState],
   imports: [ReactiveFormsModule, MoneyInput, OnboardingLottie, SerenoLogo],
   template: `
-    <div class="theme-light-locked grid min-h-screen lg:grid-cols-2">
+    <div class="theme-light-locked grid min-h-screen min-w-0 overflow-x-clip lg:grid-cols-2">
       <div
         class="relative flex min-h-screen flex-col bg-white px-4 py-6 sm:px-8 lg:px-12 xl:px-16"
       >

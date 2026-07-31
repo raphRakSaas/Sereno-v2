@@ -2,13 +2,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  inject,
   input,
   output,
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { formatMonthLabel } from '../../../shared/utils/format-month';
+import { formatMonthLabel, formatMonthLabelCompact } from '../../../shared/utils/format-month';
 
 @Component({
   selector: 'app-top-bar',
@@ -16,42 +15,57 @@ import { formatMonthLabel } from '../../../shared/utils/format-month';
   imports: [FormsModule],
   template: `
     <header
-      class="fixed inset-x-0 top-0 z-10 h-16 border-b border-border bg-page/95 lg:left-sidebar"
+      class="fixed inset-x-0 top-0 z-10 h-16 w-full max-w-full overflow-hidden border-b border-border bg-page/95 backdrop-blur-sm lg:left-sidebar"
     >
       <div
-        class="mx-auto flex h-full max-w-content-max items-center justify-between gap-2 px-4 sm:px-6 lg:px-page"
+        class="mx-auto flex h-full w-full min-w-0 max-w-content-max items-center justify-between gap-2 px-3 sm:px-6 lg:px-page"
       >
-        <div class="flex min-w-0 items-center gap-2 sm:gap-4">
-          <h1 class="truncate text-[16px] font-semibold text-text sm:text-[20px]">
-            {{ pageTitle() }}
-          </h1>
-          <div
-            class="flex shrink-0 items-center gap-1 rounded-full border border-border bg-surface px-3 py-1"
-          >
-            <span class="material-symbols-outlined text-[18px] text-accent" aria-hidden="true">
-              calendar_month
-            </span>
-            <span class="text-[13px] font-semibold text-accent">{{ monthLabel() }}</span>
-          </div>
-        </div>
+        <h1 class="min-w-0 flex-1 truncate text-[15px] font-semibold text-text sm:text-[20px]">
+          {{ pageTitle() }}
+        </h1>
 
         <div class="flex shrink-0 items-center gap-1 sm:gap-4 lg:gap-6">
-          <div class="flex items-center">
+          <div class="flex items-center rounded-full border border-border bg-surface sm:border-0 sm:bg-transparent">
             <button
               type="button"
-              class="rounded-full p-2 transition-colors hover:bg-surface"
+              class="rounded-full p-1.5 transition-colors hover:bg-page sm:hover:bg-surface sm:p-2"
               aria-label="Mois précédent"
               (click)="previousMonth.emit()"
             >
-              <span class="material-symbols-outlined" aria-hidden="true">chevron_left</span>
+              <span class="material-symbols-outlined text-[20px] sm:text-[24px]" aria-hidden="true"
+                >chevron_left</span
+              >
             </button>
+
+            <div class="flex items-center gap-1 px-1 sm:hidden">
+              <span class="material-symbols-outlined text-[16px] text-accent" aria-hidden="true">
+                calendar_month
+              </span>
+              <span class="whitespace-nowrap text-[11px] font-semibold text-accent">{{
+                monthLabelCompact()
+              }}</span>
+            </div>
+
+            <div
+              class="hidden items-center gap-1 rounded-full border border-border bg-surface px-3 py-1 sm:flex"
+            >
+              <span class="material-symbols-outlined text-[18px] text-accent" aria-hidden="true">
+                calendar_month
+              </span>
+              <span class="whitespace-nowrap text-[13px] font-semibold text-accent">{{
+                monthLabel()
+              }}</span>
+            </div>
+
             <button
               type="button"
-              class="rounded-full p-2 transition-colors hover:bg-surface"
+              class="rounded-full p-1.5 transition-colors hover:bg-page sm:hover:bg-surface sm:p-2"
               aria-label="Mois suivant"
               (click)="nextMonth.emit()"
             >
-              <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
+              <span class="material-symbols-outlined text-[20px] sm:text-[24px]" aria-hidden="true"
+                >chevron_right</span
+              >
             </button>
           </div>
 
@@ -95,6 +109,10 @@ export class TopBar {
 
   protected readonly monthLabel = computed(() =>
     formatMonthLabel(this.year(), this.monthIndex()),
+  );
+
+  protected readonly monthLabelCompact = computed(() =>
+    formatMonthLabelCompact(this.year(), this.monthIndex()),
   );
 
   constructor() {

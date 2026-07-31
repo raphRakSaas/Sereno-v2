@@ -18,6 +18,13 @@ describe('TopBar', () => {
   it('should display the formatted month label', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('Juillet 2026');
+    expect(compiled.textContent).toContain('Juil. 26');
+  });
+
+  it('should keep the page title on its own line for mobile width', () => {
+    const title = fixture.nativeElement.querySelector('h1') as HTMLHeadingElement;
+    expect(title.className).toContain('flex-1');
+    expect(title.className).toContain('truncate');
   });
 
   it('should emit searchSubmit when the search form is submitted', () => {

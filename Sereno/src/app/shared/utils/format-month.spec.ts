@@ -1,8 +1,14 @@
-import { formatMonthLabel, shiftMonth } from './format-month';
+import { formatMonthLabel, formatMonthLabelCompact, shiftMonth } from './format-month';
 
 describe('formatMonthLabel', () => {
   it('should format a French month label', () => {
     expect(formatMonthLabel(2026, 6)).toBe('Juillet 2026');
+  });
+});
+
+describe('formatMonthLabelCompact', () => {
+  it('should format a compact French month label', () => {
+    expect(formatMonthLabelCompact(2026, 6)).toBe('Juil. 26');
   });
 });
 

@@ -87,7 +87,7 @@ const PADDING = 28;
         </section>
       </div>
 
-      <div class="grid grid-cols-12 gap-gutter">
+      <div class="grid min-w-0 grid-cols-12 gap-gutter">
         <section class="bento-card col-span-12 p-5 xl:col-span-8">
           <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>

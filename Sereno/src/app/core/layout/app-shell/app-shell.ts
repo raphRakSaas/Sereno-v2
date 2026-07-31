@@ -40,6 +40,9 @@ function resolvePageTitle(url: string): string {
 @Component({
   selector: 'app-shell',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    class: 'block w-full max-w-full min-w-0 overflow-x-clip',
+  },
   imports: [RouterOutlet, Sidebar, TopBar, BottomNav],
   template: `
     <app-sidebar />
@@ -53,8 +56,8 @@ function resolvePageTitle(url: string): string {
       (searchChange)="onSearchChange($event)"
       (searchSubmit)="onSearchSubmit($event)"
     />
-    <main class="min-h-screen pt-16 lg:ml-sidebar">
-      <div class="mx-auto max-w-content-max px-4 pt-6 pb-24 sm:px-6 lg:px-page lg:pb-6">
+    <main class="min-h-screen w-full min-w-0 overflow-x-clip pt-16 lg:ml-sidebar">
+      <div class="mx-auto w-full min-w-0 max-w-content-max px-4 pt-6 pb-24 sm:px-6 lg:px-page lg:pb-6">
         <router-outlet />
       </div>
     </main>

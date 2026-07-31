@@ -23,7 +23,7 @@ interface NavItem {
 
       <div
         id="bottom-nav-more-sheet"
-        class="fixed inset-x-4 bottom-[calc(5.5rem+env(safe-area-inset-bottom))] z-40 rounded-2xl border border-border bg-surface p-3 shadow-xl lg:hidden"
+        class="fixed inset-x-3 bottom-[calc(5.5rem+env(safe-area-inset-bottom))] z-40 max-w-[calc(100vw-1.5rem)] rounded-2xl border border-border bg-surface p-3 shadow-xl sm:inset-x-4 lg:hidden"
       >
         <nav class="space-y-1" aria-label="Navigation secondaire">
           @for (item of moreItems; track item.route) {
@@ -53,7 +53,7 @@ interface NavItem {
     }
 
     <nav
-      class="fixed inset-x-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-30 flex h-16 items-center justify-between rounded-full border border-border bg-surface px-3 shadow-[0_8px_30px_rgba(23,20,18,0.12)] lg:hidden"
+      class="fixed inset-x-2 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-30 grid h-14 w-auto max-w-[calc(100vw-1rem)] grid-cols-6 items-center rounded-full border border-border bg-surface px-1 shadow-[0_8px_30px_rgba(23,20,18,0.12)] sm:inset-x-4 sm:bottom-[calc(1rem+env(safe-area-inset-bottom))] sm:h-16 sm:max-w-[calc(100vw-2rem)] sm:px-2 lg:hidden"
       aria-label="Navigation principale"
     >
       @for (item of leftItems; track item.route) {
@@ -63,7 +63,7 @@ interface NavItem {
           routerLinkActive=""
           [routerLinkActiveOptions]="{ exact: item.route === '/' }"
           #link="routerLinkActive"
-          class="flex h-11 w-11 items-center justify-center rounded-full transition-colors"
+          class="mx-auto flex h-10 w-10 items-center justify-center rounded-full transition-colors sm:h-11 sm:w-11"
           [class.bg-accent-surface]="link.isActive"
           [class.text-accent]="link.isActive"
           [class.text-text-muted]="!link.isActive"
@@ -76,11 +76,11 @@ interface NavItem {
 
       <a
         routerLink="/transactions/nouvelle"
-        class="flex h-11 w-11 items-center justify-center rounded-full bg-accent text-white shadow-md transition-opacity hover:opacity-90"
+        class="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-accent text-white shadow-md transition-opacity hover:opacity-90 sm:h-11 sm:w-11"
         aria-label="Nouvelle transaction"
         (click)="closeMore()"
       >
-        <span class="material-symbols-outlined text-[24px]" aria-hidden="true">add</span>
+        <span class="material-symbols-outlined text-[22px] sm:text-[24px]" aria-hidden="true">add</span>
       </a>
 
       @for (item of rightItems; track item.route) {
@@ -89,7 +89,7 @@ interface NavItem {
           [attr.aria-label]="item.label"
           routerLinkActive=""
           #link="routerLinkActive"
-          class="flex h-11 w-11 items-center justify-center rounded-full transition-colors"
+          class="mx-auto flex h-10 w-10 items-center justify-center rounded-full transition-colors sm:h-11 sm:w-11"
           [class.bg-accent-surface]="link.isActive"
           [class.text-accent]="link.isActive"
           [class.text-text-muted]="!link.isActive"
@@ -102,7 +102,7 @@ interface NavItem {
 
       <button
         type="button"
-        class="flex h-11 w-11 items-center justify-center rounded-full transition-colors"
+        class="mx-auto flex h-10 w-10 items-center justify-center rounded-full transition-colors sm:h-11 sm:w-11"
         [class.bg-accent-surface]="isMoreOpen()"
         [class.text-accent]="isMoreOpen()"
         [class.text-text-muted]="!isMoreOpen()"
