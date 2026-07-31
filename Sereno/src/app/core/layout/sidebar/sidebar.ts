@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AppStore } from '../../store/app.store';
+import { PwaInstallService } from '../../pwa/pwa-install.service';
 import { SerenoLogo } from '../../../shared/components/sereno-logo/sereno-logo';
 
 interface NavItem {
@@ -50,6 +51,16 @@ interface NavItem {
       </nav>
 
       <div class="mt-auto space-y-1 border-t border-border pt-4">
+        <button
+          type="button"
+          class="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-text-muted transition-colors hover:text-accent"
+          (click)="installApp()"
+        >
+          <span class="material-symbols-outlined" aria-hidden="true">{{
+            isInstalled() ? 'check_circle' : 'download'
+          }}</span>
+          <span class="label-caps">{{ installLabel() }}</span>
+        </button>
         <a
           routerLink="/reglages"
           class="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-text-muted transition-colors hover:text-accent"
@@ -72,6 +83,9 @@ interface NavItem {
 })
 export class Sidebar {
   private readonly appStore = inject(AppStore);
+  private readonly pwaInstallService = inject(PwaInstallService);
+
+  protected readonly isInstalled = this.pwaInstallService.isInstalled;
 
   protected readonly navItems: NavItem[] = [
     { label: 'Accueil', route: '/', icon: 'home' },
@@ -105,6 +119,14 @@ export class Sidebar {
         return 'contrast';
     }
   });
+
+  protected readonly installLabel = computed(() =>
+    this.isInstalled() ? 'Application installée' : 'Télécharger Sereno',
+  );
+
+  protected async installApp(): Promise<void> {
+    await this.pwaInstallService.install();
+  }
 
   protected toggleTheme(): void {
     this.appStore.toggleTheme();

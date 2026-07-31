@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, HostListener, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AppStore } from '../../store/app.store';
+import { PwaInstallService } from '../../pwa/pwa-install.service';
 
 interface NavItem {
   label: string;
@@ -27,6 +28,19 @@ interface NavItem {
         class="fixed bottom-[calc(6.25rem+env(safe-area-inset-bottom))] left-4 right-4 z-40 rounded-2xl border border-border bg-surface p-3 shadow-xl lg:hidden"
       >
         <nav class="space-y-1" aria-label="Navigation secondaire">
+          <button
+            type="button"
+            class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors"
+            [class.text-accent]="isInstalled()"
+            [class.text-text-muted]="!isInstalled()"
+            (click)="installApp()"
+          >
+            <span class="material-symbols-outlined" aria-hidden="true">{{
+              isInstalled() ? 'check_circle' : 'download'
+            }}</span>
+            <span class="text-[14px]">{{ installLabel() }}</span>
+          </button>
+
           @for (item of moreItems; track item.route) {
             <a
               class="flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors"
@@ -133,6 +147,9 @@ interface NavItem {
 })
 export class BottomNav {
   private readonly appStore = inject(AppStore);
+  private readonly pwaInstallService = inject(PwaInstallService);
+
+  protected readonly isInstalled = this.pwaInstallService.isInstalled;
 
   protected readonly isMoreOpen = signal(false);
 
@@ -174,6 +191,15 @@ export class BottomNav {
         return 'contrast';
     }
   });
+
+  protected readonly installLabel = computed(() =>
+    this.isInstalled() ? 'Application installée' : 'Télécharger Sereno',
+  );
+
+  protected async installApp(): Promise<void> {
+    await this.pwaInstallService.install();
+    this.closeMore();
+  }
 
   protected toggleMore(): void {
     this.isMoreOpen.update((open) => !open);

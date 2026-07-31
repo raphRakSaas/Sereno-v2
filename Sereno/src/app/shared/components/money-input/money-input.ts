@@ -4,6 +4,7 @@ import {
   effect,
   input,
   output,
+  signal,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { formatMoneyInput, parseMoneyInput } from '../../utils/parse-money-input';
@@ -31,6 +32,7 @@ import { formatMoneyInput, parseMoneyInput } from '../../utils/parse-money-input
           [class.px-3]="compact()"
           [class.text-right]="compact()"
           [class.monetary-tabular]="compact()"
+          (focus)="onFocus($event)"
           (blur)="onBlur()"
         />
         <span
@@ -59,25 +61,50 @@ export class MoneyInput {
     validators: [Validators.required],
   });
 
+  private readonly isFocused = signal(false);
+
   constructor() {
     effect(() => {
-      const formatted = formatMoneyInput(this.amountInCents());
-      if (this.control.value !== formatted) {
-        this.control.setValue(formatted, { emitEvent: false });
+      if (this.isFocused()) {
+        return;
+      }
+
+      const displayValue = this.toDisplayValue(this.amountInCents());
+      if (this.control.value !== displayValue) {
+        this.control.setValue(displayValue, { emitEvent: false });
       }
     });
   }
 
+  protected onFocus(event: FocusEvent): void {
+    this.isFocused.set(true);
+
+    const parsedAmount = parseMoneyInput(this.control.value);
+    if (parsedAmount === null || parsedAmount === 0) {
+      this.control.setValue('');
+      return;
+    }
+
+    const inputElement = event.target as HTMLInputElement;
+    queueMicrotask(() => inputElement.select());
+  }
+
   protected onBlur(): void {
+    this.isFocused.set(false);
+
     const parsed = parseMoneyInput(this.control.value);
 
     if (parsed === null) {
-      this.control.setValue(formatMoneyInput(0));
+      this.control.setValue('');
       this.amountChange.emit(0);
       return;
     }
 
     this.control.setValue(formatMoneyInput(parsed));
     this.amountChange.emit(parsed);
+  }
+
+  private toDisplayValue(amountInCents: number): string {
+    return amountInCents === 0 ? '' : formatMoneyInput(amountInCents);
   }
 }

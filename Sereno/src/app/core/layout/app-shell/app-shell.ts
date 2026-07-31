@@ -7,6 +7,8 @@ import { shiftMonth } from '../../../shared/utils/format-month';
 import { Sidebar } from '../sidebar/sidebar';
 import { TopBar } from '../top-bar/top-bar';
 import { BottomNav } from '../bottom-nav/bottom-nav';
+import { PwaUpdateBanner } from '../../../shared/components/pwa-update-banner/pwa-update-banner';
+import { PwaIosInstallGuide } from '../../../shared/components/pwa-ios-install-guide/pwa-ios-install-guide';
 
 const PAGE_TITLES: Record<string, string> = {
   '/': 'Aperçu global',
@@ -43,9 +45,11 @@ function resolvePageTitle(url: string): string {
   host: {
     class: 'block w-full max-w-full min-w-0 overflow-x-clip',
   },
-  imports: [RouterOutlet, Sidebar, TopBar, BottomNav],
+  imports: [RouterOutlet, Sidebar, TopBar, BottomNav, PwaUpdateBanner, PwaIosInstallGuide],
   template: `
     <app-sidebar />
+    <app-pwa-update-banner />
+    <app-pwa-ios-install-guide />
     <app-top-bar
       [pageTitle]="pageTitle()"
       [year]="selectedYear()"

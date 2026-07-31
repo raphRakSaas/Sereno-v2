@@ -4,6 +4,7 @@ import { signal } from '@angular/core';
 import { AppShell } from './app-shell';
 import { AppStore } from '../../store/app.store';
 import { DEFAULT_SETTINGS } from '../../models/settings.model';
+import { providePwaTestMocks } from '../../pwa/pwa-test.providers';
 
 describe('AppShell (integration)', () => {
   beforeEach(async () => {
@@ -11,6 +12,7 @@ describe('AppShell (integration)', () => {
       imports: [AppShell],
       providers: [
         provideRouter([]),
+        ...providePwaTestMocks(),
         {
           provide: AppStore,
           useValue: {

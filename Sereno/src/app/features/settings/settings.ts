@@ -10,11 +10,13 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppStore, SerenoExportPayload } from '../../core/store/app.store';
 import { CurrencyCode, ThemePreference } from '../../core/models/settings.model';
+import { PwaInstallCard } from '../../shared/components/pwa-install-card/pwa-install-card';
+import { PwaUpdateService } from '../../core/pwa/pwa-update.service';
 
 @Component({
   selector: 'app-settings',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule],
+  imports: [FormsModule, PwaInstallCard],
   template: `
     <div class="max-w-2xl space-y-6">
       <div>
@@ -32,6 +34,29 @@ import { CurrencyCode, ThemePreference } from '../../core/models/settings.model'
         >
           {{ statusMessage() }}
         </p>
+      }
+
+      <app-pwa-install-card />
+
+      @if (updateAvailable()) {
+        <section class="bento-card overflow-hidden border-accent/30 bg-accent-surface/40">
+          <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
+            <div>
+              <p class="text-[13px] font-medium text-text">Mise à jour disponible</p>
+              <p class="text-[11px] text-text-muted">
+                Une nouvelle version déployée est prête à être installée.
+              </p>
+            </div>
+            <button
+              type="button"
+              class="flex items-center gap-2 rounded-lg bg-accent px-3 py-1.5 text-[12px] font-semibold text-white transition-opacity hover:opacity-90"
+              (click)="applyUpdate()"
+            >
+              <span class="material-symbols-outlined text-[14px]" aria-hidden="true">update</span>
+              Mettre à jour
+            </button>
+          </div>
+        </section>
       }
 
       <section class="bento-card overflow-hidden">
@@ -230,10 +255,12 @@ import { CurrencyCode, ThemePreference } from '../../core/models/settings.model'
 export class Settings {
   private readonly appStore = inject(AppStore);
   private readonly router = inject(Router);
+  private readonly pwaUpdateService = inject(PwaUpdateService);
 
   protected readonly importFileInput = viewChild<ElementRef<HTMLInputElement>>('importInput');
   protected readonly settings = this.appStore.settings;
   protected readonly resolvedTheme = this.appStore.resolvedTheme;
+  protected readonly updateAvailable = this.pwaUpdateService.updateAvailable;
   protected readonly statusMessage = signal('');
   protected readonly statusTone = signal<'success' | 'error'>('success');
   protected readonly isBusy = signal(false);
@@ -268,6 +295,10 @@ export class Settings {
     anchor.click();
     URL.revokeObjectURL(url);
     this.flash('Export téléchargé.');
+  }
+
+  protected applyUpdate(): void {
+    void this.pwaUpdateService.applyUpdate();
   }
 
   protected async onImportFile(event: Event): Promise<void> {

@@ -20,6 +20,7 @@
     "@angular/platform-browser": "^22.0.0",
     "@angular/platform-server": "^22.0.0",
     "@angular/router": "^22.0.0",
+    "@angular/service-worker": "^22.1.0",
     "@angular/ssr": "^22.0.8",
     "@lottiefiles/dotlottie-web": "^0.78.2",
     "express": "^5.1.0",

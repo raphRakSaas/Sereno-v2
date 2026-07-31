@@ -4,6 +4,7 @@ import { signal } from '@angular/core';
 import { BottomNav } from './bottom-nav';
 import { AppStore } from '../../store/app.store';
 import { DEFAULT_SETTINGS } from '../../models/settings.model';
+import { providePwaTestMocks } from '../../pwa/pwa-test.providers';
 
 describe('BottomNav', () => {
   let fixture: ComponentFixture<BottomNav>;
@@ -13,6 +14,7 @@ describe('BottomNav', () => {
       imports: [BottomNav],
       providers: [
         provideRouter([]),
+        ...providePwaTestMocks(),
         {
           provide: AppStore,
           useValue: {
@@ -51,6 +53,7 @@ describe('BottomNav (integration)', () => {
       imports: [BottomNav],
       providers: [
         provideRouter([]),
+        ...providePwaTestMocks(),
         {
           provide: AppStore,
           useValue: {

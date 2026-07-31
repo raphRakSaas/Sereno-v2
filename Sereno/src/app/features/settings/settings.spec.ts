@@ -4,6 +4,7 @@ import { signal } from '@angular/core';
 import { Settings } from './settings';
 import { AppStore } from '../../core/store/app.store';
 import { DEFAULT_SETTINGS } from '../../core/models/settings.model';
+import { providePwaTestMocks } from '../../core/pwa/pwa-test.providers';
 
 const updateSettings = vi.fn().mockResolvedValue(undefined);
 const exportData = vi.fn().mockReturnValue({ version: 1, settings: DEFAULT_SETTINGS });
@@ -27,15 +28,17 @@ describe('Settings (integration)', () => {
       imports: [Settings],
       providers: [
         provideRouter([]),
+        ...providePwaTestMocks(),
         { provide: AppStore, useValue: mockAppStore },
       ],
     }).compileComponents();
   });
 
-  it('should render all four settings sections', () => {
+  it('should render all settings sections including the PWA card', () => {
     const fixture = TestBed.createComponent(Settings);
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain('Application mobile');
     expect(element.textContent).toContain('Données sur cet appareil');
     expect(element.textContent).toContain('Affichage');
     expect(element.textContent).toContain('Tes données');

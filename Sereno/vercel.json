@@ -1,7 +1,19 @@
 {
   "buildCommand": "ng build && cp dist/Sereno/browser/index.csr.html dist/Sereno/browser/index.html",
   "outputDirectory": "dist/Sereno/browser",
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
+  "headers": [
+    {
+      "source": "/ngsw-worker.js",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }]
+    },
+    {
+      "source": "/ngsw.json",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }]
+    },
+    {
+      "source": "/manifest.webmanifest",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }]
+    }
   ]
 }

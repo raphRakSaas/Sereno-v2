@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router';
 import { Sidebar } from './sidebar';
 import { AppStore } from '../../store/app.store';
 import { DEFAULT_SETTINGS } from '../../models/settings.model';
+import { providePwaTestMocks } from '../../pwa/pwa-test.providers';
 
 describe('Sidebar', () => {
   let fixture: ComponentFixture<Sidebar>;
@@ -13,6 +14,7 @@ describe('Sidebar', () => {
       imports: [Sidebar],
       providers: [
         provideRouter([]),
+        ...providePwaTestMocks(),
         {
           provide: AppStore,
           useValue: {
