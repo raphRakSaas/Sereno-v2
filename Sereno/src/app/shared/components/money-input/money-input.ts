@@ -13,8 +13,11 @@ import { formatMoneyInput, parseMoneyInput } from '../../utils/parse-money-input
   selector: 'app-money-input',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule],
+  host: {
+    class: 'block w-full max-w-full min-w-0 overflow-x-clip',
+  },
   template: `
-    <label class="block" [class.flex-1]="compact()">
+    <label class="block min-w-0 max-w-full" [class.flex-1]="compact()">
       @if (label() && !compact()) {
         <span class="label-caps mb-2 block text-text-muted">{{ label() }}</span>
       }
@@ -25,7 +28,7 @@ import { formatMoneyInput, parseMoneyInput } from '../../utils/parse-money-input
           [formControl]="control"
           [attr.placeholder]="placeholder()"
           [attr.aria-label]="label() || placeholder()"
-          class="w-full rounded-lg border border-border bg-surface pr-9 text-sm text-text outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20"
+          class="touch-form-control w-full min-w-0 rounded-lg border border-border bg-surface pr-9 text-text outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20"
           [class.h-11]="!compact()"
           [class.h-9]="compact()"
           [class.px-4]="!compact()"

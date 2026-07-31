@@ -66,6 +66,14 @@ describe('Onboarding (integration)', () => {
     expect(fixture.nativeElement.querySelector('aside app-onboarding-lottie')).toBeTruthy();
   });
 
+  it('should constrain the onboarding layout to the viewport width', () => {
+    const fixture = TestBed.createComponent(Onboarding);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.className).toContain('overflow-x-clip');
+    expect(fixture.nativeElement.querySelector('main')?.className).toContain('overflow-x-hidden');
+  });
+
   it('should open demo preview before loading demo data and allow going back', () => {
     const fixture = TestBed.createComponent(Onboarding);
     fixture.detectChanges();

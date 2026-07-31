@@ -39,6 +39,7 @@ describe('Settings (integration)', () => {
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
     expect(element.textContent).toContain('Application mobile');
+    expect(element.textContent).toContain('Mises à jour');
     expect(element.textContent).toContain('Données sur cet appareil');
     expect(element.textContent).toContain('Affichage');
     expect(element.textContent).toContain('Tes données');

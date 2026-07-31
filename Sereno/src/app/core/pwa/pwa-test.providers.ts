@@ -31,7 +31,8 @@ export function providePwaTestMocks() {
       useValue: {
         updateAvailable: signal(false),
         isChecking: signal(false),
-        isEnabled: signal(false),
+        isEnabled: signal(true),
+        checkMessage: signal<string | null>(null),
         checkForUpdate: async () => false,
         applyUpdate: async () => undefined,
       },
@@ -41,6 +42,7 @@ export function providePwaTestMocks() {
       useValue: {
         isEnabled: false,
         versionUpdates: { pipe: () => ({ subscribe: () => undefined }) },
+        unrecoverable: { pipe: () => ({ subscribe: () => undefined }) },
         checkForUpdate: async () => false,
         activateUpdate: async () => true,
       },

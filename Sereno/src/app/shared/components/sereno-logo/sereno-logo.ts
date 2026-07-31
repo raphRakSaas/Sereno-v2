@@ -11,7 +11,7 @@ import {
   selector: 'app-sereno-logo',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'inline-flex items-center',
+    class: 'inline-flex max-w-full min-w-0 items-center',
   },
   template: `
     <span

@@ -25,25 +25,30 @@ import {
 @Component({
   selector: 'app-onboarding',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    class: 'block w-full max-w-full min-w-0 overflow-x-clip',
+  },
   providers: [OnboardingState],
   imports: [ReactiveFormsModule, MoneyInput, OnboardingLottie, SerenoLogo],
   template: `
-    <div class="theme-light-locked grid min-h-dvh w-full max-w-full min-w-0 overflow-x-clip lg:grid-cols-2">
+    <div
+      class="theme-light-locked flex min-h-dvh w-full min-w-0 flex-col overflow-x-hidden bg-white lg:min-h-dvh lg:flex-row"
+    >
       <div
-        class="relative flex min-h-dvh w-full min-w-0 flex-col bg-white px-4 py-4 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:px-8 sm:py-6 lg:px-12 xl:px-16"
+        class="flex min-h-dvh w-full min-w-0 flex-1 flex-col overflow-x-hidden px-4 py-4 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:px-6 sm:py-6 lg:px-12 xl:px-16"
       >
-        <header class="shrink-0">
+        <header class="shrink-0 min-w-0">
           <app-sereno-logo variant="full" size="md" />
         </header>
 
-        <div class="flex min-h-0 flex-1 items-center justify-center overflow-y-auto py-4 sm:py-8">
-          <div class="w-full min-w-0 max-w-xl">
+        <main class="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto py-4 sm:py-6">
+          <div class="mx-auto w-full min-w-0 max-w-xl">
             @switch (state.currentStep()) {
               @case ('welcome') {
                 <div class="space-y-6 text-center">
                   <div class="space-y-3">
                     <h1 class="text-2xl font-semibold text-text sm:text-[28px]">Bienvenue sur Sereno</h1>
-                    <p class="text-[15px] leading-relaxed text-text-muted">
+                    <p class="text-[15px] leading-relaxed break-words text-text-muted">
                       Sereno t'aide à voir clairement où va ton argent, sans jugement.
                       <strong class="font-semibold text-text">
                         Tes données restent sur cet appareil, sans compte ni connexion bancaire.
@@ -75,7 +80,7 @@ import {
                     <h2 class="text-2xl font-semibold text-text sm:text-[24px]">
                       Découvrir avec des exemples
                     </h2>
-                    <p class="text-[14px] leading-relaxed text-text-muted">
+                    <p class="text-[14px] leading-relaxed break-words text-text-muted">
                       Sereno va charger un jeu de données fictif pour te montrer l'application en
                       action. Tu pourras revenir en arrière si tu préfères configurer ton espace
                       manuellement.
@@ -137,7 +142,7 @@ import {
                   <header class="space-y-2">
                     <p class="label-caps text-accent">Étape 1 sur 4</p>
                     <h2 class="text-2xl font-semibold text-text sm:text-[24px]">Solde initial</h2>
-                    <p class="text-[14px] text-text-muted">
+                    <p class="text-[14px] break-words text-text-muted">
                       Indique combien tu as disponible aujourd'hui. Ce montant sert de point de
                       départ pour suivre ton mois.
                     </p>
@@ -150,17 +155,17 @@ import {
                     (amountChange)="state.updateInitialBalance($event)"
                   />
 
-                  <div class="flex gap-2 pt-2">
+                  <div class="flex flex-col gap-2 pt-2 sm:flex-row">
                     <button
                       type="button"
-                      class="flex-1 rounded-lg border border-border px-3 py-2 text-sm font-semibold text-text"
+                      class="min-w-0 rounded-lg border border-border px-3 py-2 text-sm font-semibold text-text sm:flex-1"
                       (click)="goToStep('welcome')"
                     >
                       Retour
                     </button>
                     <button
                       type="button"
-                      class="flex-1 rounded-lg bg-accent px-3 py-2 text-sm font-semibold text-white"
+                      class="min-w-0 rounded-lg bg-accent px-3 py-2 text-sm font-semibold text-white sm:flex-1"
                       (click)="goToStep('income')"
                     >
                       Continuer
@@ -174,7 +179,7 @@ import {
                   <header class="space-y-2">
                     <p class="label-caps text-accent">Étape 2 sur 4</p>
                     <h2 class="text-2xl font-semibold text-text sm:text-[24px]">Revenus du mois</h2>
-                    <p class="text-[14px] text-text-muted">
+                    <p class="text-[14px] break-words text-text-muted">
                       Ajoute ton revenu principal pour ce mois. Tu pourras enregistrer d'autres
                       revenus ensuite.
                     </p>
@@ -184,7 +189,7 @@ import {
                     <span class="label-caps mb-2 block text-text-muted">Catégorie</span>
                     <select
                       [formControl]="incomeCategoryControl"
-                      class="h-11 w-full rounded-lg border border-border bg-surface px-4 text-sm text-text outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+                      class="touch-form-control h-11 w-full min-w-0 rounded-lg border border-border bg-surface px-4 text-text outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
                     >
                       @for (option of incomeTypeOptions; track option.id) {
                         <option [value]="option.id">{{ option.label }}</option>
@@ -197,7 +202,7 @@ import {
                     <input
                       type="text"
                       [formControl]="incomeLabelControl"
-                      class="h-11 w-full rounded-lg border border-border bg-surface px-4 text-sm text-text outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+                      class="touch-form-control h-11 w-full min-w-0 rounded-lg border border-border bg-surface px-4 text-text outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
                       placeholder="Ex. Salaire Acme, CAF..."
                       (blur)="syncIncomeLabel()"
                     />
@@ -209,17 +214,17 @@ import {
                     (amountChange)="state.updateIncome($event, incomeLabelControl.value)"
                   />
 
-                  <div class="flex gap-2 pt-2">
+                  <div class="flex flex-col gap-2 pt-2 sm:flex-row">
                     <button
                       type="button"
-                      class="flex-1 rounded-lg border border-border px-3 py-2 text-sm font-semibold text-text"
+                      class="min-w-0 rounded-lg border border-border px-3 py-2 text-sm font-semibold text-text sm:flex-1"
                       (click)="goToStep('initial-balance')"
                     >
                       Retour
                     </button>
                     <button
                       type="button"
-                      class="flex-1 rounded-lg bg-accent px-3 py-2 text-sm font-semibold text-white"
+                      class="min-w-0 rounded-lg bg-accent px-3 py-2 text-sm font-semibold text-white sm:flex-1"
                       (click)="goToStep('budgets')"
                     >
                       Continuer
@@ -233,7 +238,7 @@ import {
                   <header class="space-y-1.5">
                     <p class="label-caps text-accent">Étape 3 sur 4</p>
                     <h2 class="text-2xl font-semibold text-text sm:text-[24px]">Budgets de dépenses</h2>
-                    <p class="text-[14px] text-text-muted">
+                    <p class="text-[14px] break-words text-text-muted">
                       Fixe un plafond pour les catégories que tu veux suivre. Retire celles qui ne
                       te concernent pas.
                     </p>
@@ -263,15 +268,13 @@ import {
                           </span>
                         </div>
 
-                        <div class="flex items-center gap-2 sm:shrink-0">
-                          <div class="min-w-0 flex-1 sm:w-32">
-                            <app-money-input
-                              [label]="category.name"
-                              [compact]="true"
-                              [amountInCents]="state.getBudgetAmount(category.id)"
-                              (amountChange)="state.updateBudgetDraft(category.id, $event)"
-                            />
-                          </div>
+                        <div class="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
+                          <app-money-input
+                            [label]="category.name"
+                            [compact]="true"
+                            [amountInCents]="state.getBudgetAmount(category.id)"
+                            (amountChange)="state.updateBudgetDraft(category.id, $event)"
+                          />
 
                           <button
                             type="button"
@@ -312,17 +315,17 @@ import {
                     </div>
                   }
 
-                  <div class="flex gap-2 pt-1">
+                  <div class="flex flex-col gap-2 pt-1 sm:flex-row">
                     <button
                       type="button"
-                      class="flex-1 rounded-lg border border-border px-3 py-2 text-sm font-semibold text-text"
+                      class="min-w-0 rounded-lg border border-border px-3 py-2 text-sm font-semibold text-text sm:flex-1"
                       (click)="goToStep('income')"
                     >
                       Retour
                     </button>
                     <button
                       type="button"
-                      class="flex-1 rounded-lg bg-accent px-3 py-2 text-sm font-semibold text-white"
+                      class="min-w-0 rounded-lg bg-accent px-3 py-2 text-sm font-semibold text-white sm:flex-1"
                       (click)="goToStep('completion')"
                     >
                       Continuer
@@ -352,8 +355,8 @@ import {
                     </div>
                   </header>
 
-                  <div class="overflow-hidden rounded-2xl border border-border bg-surface shadow-[0_1px_2px_rgba(23,20,18,0.04)]">
-                    <div class="grid gap-px bg-border sm:grid-cols-3">
+                  <div class="min-w-0 overflow-hidden rounded-2xl border border-border bg-surface shadow-[0_1px_2px_rgba(23,20,18,0.04)]">
+                    <div class="grid min-w-0 gap-px bg-border sm:grid-cols-3">
                       <div class="bg-surface px-4 py-4 text-center sm:text-left">
                         <div class="mb-2 flex items-center justify-center gap-1.5 sm:justify-start">
                           <span
@@ -472,10 +475,10 @@ import {
               }
             }
           </div>
-        </div>
+        </main>
 
         @if (showStepProgress()) {
-          <footer class="shrink-0 pb-2" aria-label="Progression de l'onboarding">
+          <footer class="shrink-0 min-w-0 pb-2" aria-label="Progression de l'onboarding">
             <div class="flex items-center justify-center gap-2">
               @for (step of steps; track step.id; let index = $index) {
                 <span
@@ -492,10 +495,10 @@ import {
       </div>
 
       <aside
-        class="hidden min-h-[320px] items-center justify-center bg-text p-6 sm:p-10 lg:flex lg:min-h-dvh lg:p-12"
+        class="hidden min-w-0 overflow-hidden bg-text p-6 sm:p-10 lg:flex lg:min-h-dvh lg:w-1/2 lg:max-w-[50%] lg:flex-1 lg:items-center lg:justify-center lg:p-12"
       >
         <app-onboarding-lottie
-          class="w-full max-w-xl min-w-0"
+          class="w-full max-w-lg min-w-0"
           [animationPath]="currentLottiePath()"
           [ariaLabel]="currentLottieLabel()"
         />

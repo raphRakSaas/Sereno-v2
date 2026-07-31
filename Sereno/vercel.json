@@ -1,5 +1,5 @@
 {
-  "buildCommand": "ng build && cp dist/Sereno/browser/index.csr.html dist/Sereno/browser/index.html",
+  "buildCommand": "ng build && node scripts/sync-pwa-build.mjs",
   "outputDirectory": "dist/Sereno/browser",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
   "headers": [
