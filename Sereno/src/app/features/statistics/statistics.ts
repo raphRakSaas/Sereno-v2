@@ -6,6 +6,7 @@ import {
   signal,
 } from '@angular/core';
 import { AppStore } from '../../core/store/app.store';
+import { SERENO_COLORS, SERENO_PIE_COLORS } from '../../shared/brand/sereno-colors';
 
 type ChartView = 'evolution' | 'bars' | 'pie' | 'savings';
 
@@ -36,7 +37,7 @@ const CHART_TABS: ChartTab[] = [
   { id: 'savings', label: 'Épargne', icon: 'savings' },
 ];
 
-const PIE_COLORS = ['#FF4D6D', '#17836B', '#E8A838', '#6B7FD7', '#9B59B6', '#3498DB'];
+const PIE_COLORS = [...SERENO_PIE_COLORS];
 
 const SVG_WIDTH = 480;
 const SVG_HEIGHT = 200;
@@ -130,7 +131,7 @@ const PADDING = 28;
                 <polyline
                   [attr.points]="incomePolyline()"
                   fill="none"
-                  stroke="#17836b"
+                  [attr.stroke]="incomeColor"
                   stroke-width="2.5"
                   stroke-linejoin="round"
                   stroke-linecap="round"
@@ -138,18 +139,18 @@ const PADDING = 28;
                 <polyline
                   [attr.points]="expensesPolyline()"
                   fill="none"
-                  stroke="#ff4d6d"
+                  [attr.stroke]="expenseColor"
                   stroke-width="2.5"
                   stroke-linejoin="round"
                   stroke-linecap="round"
                 />
                 @for (point of chartPoints(); track point.label) {
-                  <circle [attr.cx]="point.x" [attr.cy]="incomeY(point.incomeInCents)" r="3" fill="#17836b" />
+                  <circle [attr.cx]="point.x" [attr.cy]="incomeY(point.incomeInCents)" r="3" [attr.fill]="incomeColor" />
                   <circle
                     [attr.cx]="point.x"
                     [attr.cy]="expenseY(point.expensesInCents)"
                     r="3"
-                    fill="#ff4d6d"
+                    [attr.fill]="expenseColor"
                   />
                   <text
                     [attr.x]="point.x"
@@ -188,7 +189,7 @@ const PADDING = 28;
                     [attr.width]="bar.width"
                     [attr.height]="bar.height"
                     rx="4"
-                    fill="#ff4d6d"
+                    [attr.fill]="expenseColor"
                     opacity="0.9"
                   />
                   <text
@@ -285,7 +286,7 @@ const PADDING = 28;
                     [attr.width]="bar.width"
                     [attr.height]="bar.height"
                     rx="4"
-                    [attr.fill]="bar.positive ? '#17836b' : '#ff4d6d'"
+                    [attr.fill]="bar.positive ? incomeColor : expenseColor"
                     opacity="0.9"
                   />
                   <text
@@ -398,6 +399,8 @@ const PADDING = 28;
 export class Statistics {
   private readonly appStore = inject(AppStore);
 
+  protected readonly incomeColor = SERENO_COLORS.income;
+  protected readonly expenseColor = SERENO_COLORS.expense;
   protected readonly chartTabs = CHART_TABS;
   protected readonly svgWidth = SVG_WIDTH;
   protected readonly svgHeight = SVG_HEIGHT;

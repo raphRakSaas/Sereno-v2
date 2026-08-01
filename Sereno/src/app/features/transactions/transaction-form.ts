@@ -212,7 +212,7 @@ import { MoneyInput } from '../../shared/components/money-input/money-input';
         </label>
 
         @if (errorMessage()) {
-          <p class="rounded-lg bg-accent/10 px-3 py-2 text-[12px] text-accent">{{ errorMessage() }}</p>
+          <p class="rounded-lg bg-error/10 px-3 py-2 text-[12px] text-error">{{ errorMessage() }}</p>
         }
 
         <div class="flex flex-col gap-2 sm:flex-row sm:justify-end">

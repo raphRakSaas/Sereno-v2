@@ -15,13 +15,13 @@ import { FeedbackKind, FeedbackService } from '../../../core/services/feedback.s
           class="flex items-start gap-3 rounded-2xl border px-4 py-3 shadow-[0_12px_40px_rgba(23,20,18,0.16)] backdrop-blur-sm"
           [class.border-income/30]="message.tone === 'success'"
           [class.bg-income/10]="message.tone === 'success'"
-          [class.border-accent/30]="message.tone === 'error'"
-          [class.bg-accent/10]="message.tone === 'error'"
+          [class.border-error/30]="message.tone === 'error'"
+          [class.bg-error/10]="message.tone === 'error'"
         >
           <span
             class="material-symbols-outlined mt-0.5 shrink-0 text-[20px]"
             [class.text-income]="message.tone === 'success'"
-            [class.text-accent]="message.tone === 'error'"
+            [class.text-error]="message.tone === 'error'"
             aria-hidden="true"
           >
             {{ iconName() }}
@@ -31,7 +31,7 @@ import { FeedbackKind, FeedbackService } from '../../../core/services/feedback.s
             <p
               class="text-[13px] font-semibold"
               [class.text-income]="message.tone === 'success'"
-              [class.text-accent]="message.tone === 'error'"
+              [class.text-error]="message.tone === 'error'"
             >
               {{ message.title }}
             </p>

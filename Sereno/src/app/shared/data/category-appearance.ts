@@ -1,3 +1,5 @@
+import { SERENO_COLORS } from '../brand/sereno-colors';
+
 /** Icônes Material Symbols proposées à la création d'une catégorie. */
 export const CATEGORY_ICON_OPTIONS = [
   'shopping_bag',
@@ -20,15 +22,15 @@ export const CATEGORY_ICON_OPTIONS = [
 
 /** Palette de couleurs pour les catégories personnalisées. */
 export const CATEGORY_COLOR_OPTIONS = [
-  '#FF4D6D',
-  '#FF8095',
-  '#17836B',
+  SERENO_COLORS.accent,
+  SERENO_COLORS.accentLight,
+  SERENO_COLORS.income,
+  SERENO_COLORS.incomeLight,
+  SERENO_COLORS.accentDeep,
+  SERENO_COLORS.incomeDeep,
   '#E8A838',
   '#6B7FD7',
   '#9B59B6',
-  '#3498DB',
-  '#E67E22',
-  '#1ABC9C',
   '#34495E',
 ] as const;
 

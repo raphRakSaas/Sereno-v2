@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate PWA icons from the Sereno mark on a rose accent background."""
+"""Generate PWA icons from the Sereno mark on a sky-blue accent background."""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ OUTPUT_DIR = ROOT / "public" / "icons"
 TMP_ICON = OUTPUT_DIR / "_sereno-icon-render.png"
 
 # Sereno accent — matches --color-accent in styles.css
-SERENO_ACCENT = (255, 77, 109)
+SERENO_ACCENT = (43, 127, 212)
 
 
 def render_svg_mark(icon_size: int) -> Image.Image:

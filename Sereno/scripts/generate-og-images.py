@@ -13,20 +13,20 @@ ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = ROOT / "public" / "og"
 LOGO_PATH = ROOT / "public" / "brand" / "sereno-logo.png"
 
-PAGE = (250, 248, 246)
+PAGE = (244, 249, 252)
 SURFACE = (255, 255, 255)
-TEXT = (23, 20, 18)
-TEXT_MUTED = (107, 99, 92)
-BORDER = (232, 228, 224)
-ACCENT = (255, 77, 109)
+TEXT = (15, 23, 42)
+TEXT_MUTED = (92, 107, 122)
+BORDER = (220, 232, 240)
+ACCENT = (43, 127, 212)
 
 CHART_COLORS = [
-    (255, 77, 109),
-    (255, 128, 149),
-    (255, 179, 191),
-    (23, 131, 107),
-    (180, 118, 42),
-    (255, 217, 223),
+    (43, 127, 212),
+    (61, 154, 95),
+    (107, 184, 232),
+    (123, 196, 138),
+    (30, 107, 184),
+    (45, 122, 74),
 ]
 
 FONT_REGULAR = "/System/Library/Fonts/Supplemental/Arial.ttf"

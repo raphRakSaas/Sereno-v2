@@ -47,8 +47,8 @@ import { FeedbackService } from '../../core/services/feedback.service';
           class="rounded-lg px-4 py-3 text-[12px]"
           [class.bg-income/10]="statusTone() === 'success'"
           [class.text-income]="statusTone() === 'success'"
-          [class.bg-accent/10]="statusTone() === 'error'"
-          [class.text-accent]="statusTone() === 'error'"
+          [class.bg-error/10]="statusTone() === 'error'"
+          [class.text-error]="statusTone() === 'error'"
         >
           {{ statusMessage() }}
         </p>

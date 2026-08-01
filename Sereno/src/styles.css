@@ -1,19 +1,20 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-page: #faf8f6;
+  --color-page: #f4f9fc;
   --color-surface: #ffffff;
-  --color-border: #e8e4e0;
-  --color-text: #171412;
-  --color-text-muted: #6b635c;
-  --color-accent: #ff4d6d;
-  --color-accent-surface: #fff0f2;
-  --color-income: #17836b;
+  --color-border: #dce8f0;
+  --color-text: #0f172a;
+  --color-text-muted: #5c6b7a;
+  --color-accent: #2b7fd4;
+  --color-accent-surface: #e8f3fc;
+  --color-income: #3d9a5f;
   --color-warning: #b4762a;
-  --color-chart-1: #ff4d6d;
-  --color-chart-2: #ff8095;
-  --color-chart-3: #ffb3bf;
-  --color-chart-4: #ffd9df;
+  --color-error: #c45c5c;
+  --color-chart-1: #2b7fd4;
+  --color-chart-2: #3d9a5f;
+  --color-chart-3: #6bb8e8;
+  --color-chart-4: #7bc48a;
 
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 
@@ -42,19 +43,20 @@
 
   html.dark {
     color-scheme: dark;
-    --color-page: #12100f;
-    --color-surface: #1c1917;
-    --color-border: #2f2a27;
-    --color-text: #f5f1ed;
-    --color-text-muted: #a8a09a;
-    --color-accent: #ff6b84;
-    --color-accent-surface: #3a1820;
-    --color-income: #2bb892;
+    --color-page: #0c1218;
+    --color-surface: #151d26;
+    --color-border: #243040;
+    --color-text: #f0f6fc;
+    --color-text-muted: #94a8b8;
+    --color-accent: #5aa8e8;
+    --color-accent-surface: #1a2d42;
+    --color-income: #4db878;
     --color-warning: #d4a04a;
-    --color-chart-1: #ff6b84;
-    --color-chart-2: #ff8fa3;
-    --color-chart-3: #c45c6e;
-    --color-chart-4: #8a3d4c;
+    --color-error: #e07070;
+    --color-chart-1: #5aa8e8;
+    --color-chart-2: #4db878;
+    --color-chart-3: #3d7ab8;
+    --color-chart-4: #3d8a58;
   }
 
   body {
@@ -78,15 +80,16 @@
 @layer utilities {
   .theme-light-locked {
     color-scheme: light;
-    --color-page: #faf8f6;
+    --color-page: #f4f9fc;
     --color-surface: #ffffff;
-    --color-border: #e8e4e0;
-    --color-text: #171412;
-    --color-text-muted: #6b635c;
-    --color-accent: #ff4d6d;
-    --color-accent-surface: #fff0f2;
-    --color-income: #17836b;
+    --color-border: #dce8f0;
+    --color-text: #0f172a;
+    --color-text-muted: #5c6b7a;
+    --color-accent: #2b7fd4;
+    --color-accent-surface: #e8f3fc;
+    --color-income: #3d9a5f;
     --color-warning: #b4762a;
+    --color-error: #c45c5c;
   }
 
   .monetary-tabular {

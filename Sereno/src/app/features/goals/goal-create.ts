@@ -77,7 +77,7 @@ import { GOAL_ICON_OPTIONS } from '../../shared/data/category-appearance';
         </div>
 
         @if (errorMessage()) {
-          <p class="rounded-lg bg-accent/10 px-3 py-2 text-[12px] text-accent">{{ errorMessage() }}</p>
+          <p class="rounded-lg bg-error/10 px-3 py-2 text-[12px] text-error">{{ errorMessage() }}</p>
         }
 
         <div class="flex justify-end gap-2">

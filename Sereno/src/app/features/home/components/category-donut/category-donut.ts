@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { CategorySlice } from '../../models/home.models';
 import { formatCurrency } from '../../../../shared/utils/format-currency';
+import { SERENO_CHART_RAMP } from '../../../../shared/brand/sereno-colors';
 
 @Component({
   selector: 'app-category-donut',
@@ -15,7 +16,7 @@ import { formatCurrency } from '../../../../shared/utils/format-currency';
 
       <div class="relative mb-4 h-40 w-40">
         <svg class="h-full w-full -rotate-90" viewBox="0 0 36 36" aria-hidden="true">
-          <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#e8e4e0" stroke-width="3" />
+          <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#dce8f0" stroke-width="3" />
           @for (segment of segments(); track segment.id) {
             <circle
               cx="18"
@@ -58,7 +59,7 @@ export class CategoryDonut {
   readonly totalExpensesInCents = input.required<number>();
   protected readonly formatCurrency = formatCurrency;
 
-  private readonly chartColors = ['#ff4d6d', '#ff8095', '#ffb3bf', '#ffd9df'];
+  private readonly chartColors = [...SERENO_CHART_RAMP];
 
   protected readonly segments = computed(() => {
     let offset = 0;
