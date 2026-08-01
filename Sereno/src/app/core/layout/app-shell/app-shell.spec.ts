@@ -36,4 +36,14 @@ describe('AppShell (integration)', () => {
     expect(compiled.textContent).toContain('Nouvelle transaction');
     expect(compiled.querySelector('app-sereno-logo')).toBeTruthy();
   });
+
+  it('should size main content to viewport width minus sidebar on desktop', () => {
+    const fixture = TestBed.createComponent(AppShell);
+    fixture.detectChanges();
+
+    const mainElement = fixture.nativeElement.querySelector('main') as HTMLElement;
+    expect(mainElement.className).toContain('lg:ml-sidebar');
+    expect(mainElement.className).toContain('lg:w-[calc(100%-var(--spacing-sidebar))]');
+    expect(mainElement.className).toContain('w-full');
+  });
 });
